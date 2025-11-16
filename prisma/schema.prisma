@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  password     String?
+  nickname     String    @unique
+  points       Int       @default(0)
+  myDongne     String?   // 동네별 소모임용
+  school       String?   // 아이러브스쿨용
+  profileImage String?
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  // Relations
+  posts        Post[]
+  comments     Comment[]
+  
+  @@map("users")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  title     String
+  content   String    @default("")
+  category  String    // 예: "market", "jobs", "local-unjeong", "pet-walk"
+  viewCount Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  // Relations
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  marketItem MarketItem?
+  
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@map("comments")
+}
+
+model MarketItem {
+  id        String   @id @default(cuid())
+  postId    String   @unique
+  price     Int      @default(0)
+  status    String   @default("FOR_SALE") // "FOR_SALE", "RESERVED", "SOLD_OUT"
+  location  String?  // 거래 희망 장소
+  images    String?  // JSON 문자열로 이미지 URL 배열 저장
+  
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@map("market_items")
+}
