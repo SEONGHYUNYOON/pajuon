@@ -39,13 +39,21 @@ export async function GET(request: NextRequest) {
       throw alumniError;
     }
 
-    const formattedAlumni = alumni?.map((alumnus) => ({
+    interface AlumniProfile {
+      id: string;
+      nickname: string;
+      profile_image: string | null;
+      citizen_rank: string | null;
+      activity_points: number | null;
+    }
+
+    const formattedAlumni = (alumni || []).map((alumnus: AlumniProfile) => ({
       id: alumnus.id,
       nickname: alumnus.nickname,
       profileImage: alumnus.profile_image,
       rank: alumnus.citizen_rank || "파주새댁",
       activityPoints: alumnus.activity_points || 0,
-    })) || [];
+    }));
 
     return NextResponse.json({ alumni: formattedAlumni }, { status: 200 });
   } catch (error) {
