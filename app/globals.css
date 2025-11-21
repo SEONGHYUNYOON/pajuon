@@ -2,73 +2,65 @@
 @import "tailwindcss";
 
 :root {
-  /* 배경색 - 깨끗한 배경 */
-  --background: #f8f9fa;
-  --background-darker: #e9ecef;
-  --foreground: #333333;
+  /* 2025 힙한 앱 스타일 색상 시스템 */
+  --background: #FFFFFF;
+  --background-section: #F8F9FA;
+  --foreground: #1A1A1A;
   
-  /* 파주 테마 색상 팔레트 */
-  /* 파주 블루 - 평화, 임진각 상징 */
-  --paju-blue: #005f99;
-  --paju-blue-light: #338cb8;
-  --paju-blue-dark: #003f66;
+  /* Primary: 쨍하고 힙한 파란색 */
+  --primary: #0D4FFF;
+  --primary-light: #3D6FFF;
+  --primary-dark: #0A3FCC;
   
-  /* 파주 그린 - 자연, DMZ 상징 */
-  --paju-green: #419e66;
-  --paju-green-light: #6bb889;
-  --paju-green-dark: #2d7a4a;
+  /* Secondary: 파주시 그린 */
+  --secondary: #2CBC85;
+  --secondary-light: #4DD4A0;
+  --secondary-dark: #229A6B;
   
-  /* 파주 웜 - 커뮤니티의 따뜻함 */
-  --paju-warm: #f5a623;
-  --paju-warm-light: #ffc46b;
-  
-  /* 기존 브랜딩 컬러 (호환성 유지) */
-  --paju-orange: #FF9800;
-  --paju-orange-light: #FFB74D;
-  --paju-orange-dark: #F57C00;
-  --paju-gray: #F5F5F5;
-  --paju-text: #333333;
-  --paju-text-light: #666666;
-  
-  /* 등급별 컬러 */
-  --rank-newbie: #9E9E9E;      /* 파주새댁 */
-  --rank-jang: #4CAF50;        /* 이장 */
-  --rank-dong: #2196F3;        /* 동장 */
-  --rank-mayor: #FF9800;       /* 시장 */
-  --rank-honor: #9C27B0;       /* 명예시민 */
+  /* 호환성을 위한 기존 변수 유지 */
+  --paju-blue: #0D4FFF;
+  --paju-blue-light: #3D6FFF;
+  --paju-blue-dark: #0A3FCC;
+  --paju-green: #2CBC85;
+  --paju-green-light: #4DD4A0;
+  --paju-green-dark: #229A6B;
 }
 
 @theme inline {
   /* 배경색 */
   --color-background: var(--background);
-  --color-background-darker: var(--background-darker);
+  --color-background-section: var(--background-section);
   --color-foreground: var(--foreground);
   
-  /* 파주 테마 색상 */
-  --color-paju-blue: var(--paju-blue);
-  --color-paju-blue-light: var(--paju-blue-light);
-  --color-paju-blue-dark: var(--paju-blue-dark);
-  --color-paju-green: var(--paju-green);
-  --color-paju-green-light: var(--paju-green-light);
-  --color-paju-green-dark: var(--paju-green-dark);
-  --color-paju-warm: var(--paju-warm);
-  --color-paju-warm-light: var(--paju-warm-light);
+  /* Primary & Secondary - 직접 색상 값 사용 */
+  --color-primary: #0D4FFF;
+  --color-primary-light: #3D6FFF;
+  --color-primary-dark: #0A3FCC;
+  --color-secondary: #2CBC85;
+  --color-secondary-light: #4DD4A0;
+  --color-secondary-dark: #229A6B;
   
-  /* 폰트 - Pretendard, Noto Sans KR, 시스템 폰트 순 */
+  /* 호환성 */
+  --color-paju-blue: #0D4FFF;
+  --color-paju-blue-light: #3D6FFF;
+  --color-paju-blue-dark: #0A3FCC;
+  --color-paju-green: #2CBC85;
+  --color-paju-green-light: #4DD4A0;
+  --color-paju-green-dark: #229A6B;
+  
+  /* 폰트 - Pretendard, 넓은 줄간격 */
   --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-geist-mono);
   
-  /* 그림자 효과 */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* 그림자 - 플랫 디자인 지향 */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+  --shadow-none: none;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.75; /* leading-relaxed */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
