@@ -16,6 +16,8 @@ import UserDashboardWidget from "@/components/dashboard/UserDashboardWidget";
 import RecentActivity from "@/components/home/RecentActivity";
 import BoardListWidget from "@/components/home/BoardListWidget";
 import LoginWidget from "@/components/home/LoginWidget";
+import WeatherWidget from "@/components/home/WeatherWidget";
+import BalanceGameWidget from "@/components/home/BalanceGameWidget";
 import Card from "@/components/ui/Card";
 
 export default function Home() {
@@ -215,6 +217,16 @@ export default function Home() {
             <div className="space-y-6">
               {/* 로그인 위젯 */}
               <LoginWidget />
+
+              {/* 날씨 위젯 */}
+              <div className="mt-6">
+                <WeatherWidget />
+              </div>
+
+              {/* 밸런스 게임 위젯 */}
+              <div className="mt-6">
+                <BalanceGameWidget />
+              </div>
 
               {/* 실시간 인기 검색어 */}
               <Card className="p-6">
