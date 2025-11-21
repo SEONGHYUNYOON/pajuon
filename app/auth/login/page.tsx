@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { createClient } from "@/utils/supabase/client";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -15,6 +18,7 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,51 +26,53 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
+      const supabase = createClient();
+      
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
-        redirect: false,
       });
 
-      if (result?.error) {
+      if (signInError) {
         setError("이메일 또는 비밀번호가 올바르지 않습니다.");
         setIsLoading(false);
-      } else {
+        return;
+      }
+
+      if (data.user) {
         // 로그인 성공
         const callbackUrl = searchParams.get("callbackUrl") || "/";
         router.push(callbackUrl);
         router.refresh();
       }
     } catch (err) {
+      console.error("Login error:", err);
       setError("로그인 중 오류가 발생했습니다.");
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    signIn(provider.toLowerCase(), {
-      callbackUrl: searchParams.get("callbackUrl") || "/",
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* 헤더 */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">ON</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+              <span className="text-white font-bold text-3xl">ON</span>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">로그인</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">로그인</h2>
+          <p className="text-lg text-gray-600">
             파주온에 오신 것을 환영합니다
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            파주 시민을 위한, 파주 시민에 의한 커뮤니티
           </p>
         </div>
 
         {/* 로그인 폼 */}
-        <div className="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+        <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -75,71 +81,65 @@ export default function LoginPage() {
             )}
 
             {/* 이메일 */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                이메일
-              </label>
-              <div className="relative">
-                <EnvelopeIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="이메일을 입력하세요"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
+            <div className="relative">
+              <EnvelopeIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+              <Input
+                label="이메일"
+                type="email"
+                required
+                className="pl-12"
+                placeholder="이메일을 입력하세요"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                error={error && !formData.email ? "이메일을 입력해주세요" : undefined}
+              />
             </div>
 
             {/* 비밀번호 */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                비밀번호
-              </label>
-              <div className="relative">
-                <LockClosedIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="비밀번호를 입력하세요"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                />
-              </div>
+            <div className="relative">
+              <LockClosedIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+              <Input
+                label="비밀번호"
+                type="password"
+                required
+                className="pl-12"
+                placeholder="비밀번호를 입력하세요"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                error={error && !formData.password ? "비밀번호를 입력해주세요" : undefined}
+              />
             </div>
 
-            {/* 비밀번호 찾기 */}
+            {/* 비밀번호 찾기 및 로그인 상태 유지 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                   로그인 상태 유지
                 </label>
               </div>
-              <Link href="/auth/forgot-password" className="text-sm text-green-600 hover:text-green-700">
+              <Link href="/auth/forgot-password" className="text-sm text-green-600 hover:text-green-700 font-medium">
                 비밀번호 찾기
               </Link>
             </div>
 
             {/* 로그인 버튼 */}
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={isLoading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {isLoading ? "로그인 중..." : "로그인"}
-            </button>
+            </Button>
           </form>
 
           {/* 구분선 */}
@@ -156,26 +156,28 @@ export default function LoginPage() {
 
           {/* 소셜 로그인 */}
           <div className="mt-6 space-y-3">
-            <button
+            <Button
               type="button"
-              onClick={() => handleSocialLogin("카카오")}
-              className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium transition-colors"
+              variant="outline"
+              fullWidth
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 border-yellow-400"
             >
               <span className="mr-2">💬</span>
               카카오 로그인
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              onClick={() => handleSocialLogin("네이버")}
-              className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-green-500 hover:bg-green-600 text-white font-medium transition-colors"
+              variant="outline"
+              fullWidth
+              className="bg-green-500 hover:bg-green-600 text-white border-green-500"
             >
               <span className="mr-2">N</span>
               네이버 로그인
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              onClick={() => handleSocialLogin("구글")}
-              className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              variant="outline"
+              fullWidth
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -196,7 +198,7 @@ export default function LoginPage() {
                 />
               </svg>
               구글 로그인
-            </button>
+            </Button>
           </div>
 
           {/* 회원가입 링크 */}
@@ -208,8 +210,23 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

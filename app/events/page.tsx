@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { CalendarIcon, MapPinIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import EventCalendar from "@/components/events/EventCalendar";
 
 const events = [
   {
@@ -38,6 +42,26 @@ const events = [
 ];
 
 export default function EventsPage() {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // 더미 이벤트 데이터 (실제로는 API에서 가져옴)
+  const calendarEvents = events.map((event) => ({
+    id: event.id.toString(),
+    title: event.title,
+    startDate: new Date(event.date),
+    type: event.type === "미팅" ? "MATCHMAKING" : "OTHER",
+  }));
+
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    // 해당 날짜의 이벤트 필터링 등
+  };
+
+  const handleEventClick = (event: any) => {
+    // 이벤트 상세 페이지로 이동
+    window.location.href = `/events/${event.id}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,6 +72,15 @@ export default function EventsPage() {
           <p className="text-lg text-gray-600">
             PAJU ON에서 주최하는 공식 이벤트에 참여해보세요
           </p>
+        </div>
+
+        {/* 이벤트 캘린더 */}
+        <div className="mb-12">
+          <EventCalendar
+            events={calendarEvents}
+            onDateClick={handleDateClick}
+            onEventClick={handleEventClick}
+          />
         </div>
 
         {/* 이벤트 목록 */}

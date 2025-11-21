@@ -15,44 +15,41 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { name: "홈", path: "/" },
   {
-    name: "파주NOW",
+    name: "커뮤니티",
     children: [
-      { name: "오늘의 파주", path: "/now/issue" },
-      { name: "파주ON 소식", path: "/news" },
-      { name: "파주 신고센터", path: "/now/report" },
+      { name: "등산 모임", path: "/community/hiking" },
+      { name: "라이딩 모임", path: "/community/riding" },
+      { name: "고지 축구", path: "/community/goji-soccer" },
+      { name: "자유게시판", path: "/community/general" },
     ],
   },
   {
-    name: "파주LIFE",
+    name: "아이러브스쿨",
     children: [
-      { name: "파주장터", path: "/life/market" },
-      { name: "파주 일자리", path: "/life/jobs" },
-      { name: "파주 쿠폰&제휴", path: "/life/coupon" },
-      { name: "파주 맛집/카페", path: "/life/hot-place" },
-      { name: "파주 육아/교육", path: "/life/education" },
+      { name: "우리 학교 동창 찾기", path: "/school" },
     ],
   },
   {
-    name: "함께해요",
+    name: "만남과 이벤트",
     children: [
-      { name: "파주ON모임", path: "/groups" },
-      { name: "아이러브스쿨", path: "/school" },
-      { name: "동네별 소모임", path: "/community/local" },
-      { name: "반려동물ON", path: "/community/pet" },
+      { name: "함께 캠핑하기", path: "/events/camping" },
+      { name: "선남선녀 미팅", path: "/events/matchmaking" },
     ],
   },
   {
-    name: "파주PLAY",
+    name: "파주 소식 & 핫플",
     children: [
-      { name: "파주ON 관광", path: "/tourism" },
-      { name: "파주ON TV", path: "/play/tv" },
-      { name: "파주 추억앨범", path: "/play/album" },
-      { name: "ON-이벤트", path: "/events" },
-      { name: "이달의 챌린지", path: "/play/challenge" },
+      { name: "파주 뉴스", path: "/news" },
+      { name: "맛집/카페 추천", path: "/life/hot-place" },
     ],
   },
-  { name: "파주MAP", path: "/map" },
-  { name: "고객센터", path: "/support" },
+  {
+    name: "관광 & 정보",
+    children: [
+      { name: "DMZ 땅굴 관광 가이드", path: "/tourism/dmz" },
+      { name: "생활 정보", path: "/tourism/info" },
+    ],
+  },
 ];
 
 export default function Header() {
@@ -85,18 +82,18 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-orange-50 to-green-50 shadow-md border-b-2 border-orange-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* 로고 */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">ON</span>
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+                <span className="text-white font-bold text-xl md:text-2xl">ON</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-gray-900">PAJU ON</span>
-                <span className="text-xs text-gray-500 -mt-1">파주온</span>
+                <span className="text-xl md:text-2xl font-bold text-gray-900">PAJU ON</span>
+                <span className="text-xs md:text-sm text-gray-600 -mt-1 font-medium">파주온</span>
               </div>
             </div>
           </Link>
@@ -113,20 +110,20 @@ export default function Header() {
                 {item.path ? (
                   <Link
                     href={item.path}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActivePath(item.path)
-                        ? "bg-green-50 text-green-700"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                        ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-white/80 hover:text-green-700 hover:shadow-sm"
                     }`}
                   >
                     {item.name}
                   </Link>
                 ) : (
                   <button
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1 ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
                       isMenuActive(item)
-                        ? "bg-green-50 text-green-700"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-white/80 hover:text-orange-700 hover:shadow-sm"
                     }`}
                   >
                     <span>{item.name}</span>
@@ -136,15 +133,15 @@ export default function Header() {
 
                 {/* 드롭다운 메뉴 */}
                 {item.children && hoveredMenu === item.name && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 overflow-hidden">
                     {item.children.map((child) => (
                       <Link
                         key={child.path}
                         href={child.path}
-                        className={`block px-4 py-2 text-sm transition-colors ${
+                        className={`block px-4 py-3 text-sm transition-all duration-200 ${
                           isActivePath(child.path)
-                            ? "bg-green-50 text-green-700 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
+                            ? "bg-gradient-to-r from-green-50 to-orange-50 text-green-700 font-semibold border-l-4 border-green-500"
+                            : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700 hover:font-medium"
                         }`}
                       >
                         {child.name}
@@ -157,19 +154,19 @@ export default function Header() {
           </nav>
 
           {/* 사용자 메뉴 영역 */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-3">
             {isLoggedIn ? (
               <>
                 <Link
                   href="/my-page"
-                  className="hidden md:flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                  className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <UserCircleIcon className="w-5 h-5" />
                   <span>{userNickname || "마이페이지"}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="hidden md:block px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                  className="hidden md:block px-4 py-2 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   로그아웃
                 </button>
@@ -178,13 +175,13 @@ export default function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="hidden md:block px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                  className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
                 >
                   로그인
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="hidden md:block px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                  className="hidden sm:block px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
                 >
                   회원가입
                 </Link>
@@ -193,8 +190,9 @@ export default function Header() {
             
             {/* 모바일 메뉴 버튼 */}
             <button
-              className="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-white/80 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="메뉴 열기"
             >
               <svg
                 className="w-6 h-6"
@@ -217,17 +215,17 @@ export default function Header() {
 
         {/* 모바일 네비게이션 */}
         {isMenuOpen && (
-          <nav className="lg:hidden pb-4 border-t border-gray-200 mt-2 pt-4">
+          <nav className="lg:hidden pb-4 border-t-2 border-orange-200 mt-2 pt-4 bg-white/95 backdrop-blur-sm rounded-b-xl">
             <div className="flex flex-col space-y-1">
               {menuItems.map((item) => (
                 <div key={item.name}>
                   {item.path ? (
                     <Link
                       href={item.path}
-                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                         isActivePath(item.path)
-                          ? "bg-green-50 text-green-700"
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
+                          : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700"
                       }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -235,19 +233,19 @@ export default function Header() {
                     </Link>
                   ) : (
                     <div>
-                      <div className="px-4 py-3 text-sm font-medium text-gray-700">
+                      <div className="px-4 py-3 text-sm font-semibold text-gray-800 bg-gradient-to-r from-orange-100 to-green-100 rounded-lg">
                         {item.name}
                       </div>
                       {item.children && (
-                        <div className="pl-6 space-y-1">
+                        <div className="pl-4 mt-1 space-y-1">
                           {item.children.map((child) => (
                             <Link
                               key={child.path}
                               href={child.path}
-                              className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                              className={`block px-4 py-2.5 rounded-lg text-sm transition-all duration-200 ${
                                 isActivePath(child.path)
-                                  ? "bg-green-50 text-green-700 font-medium"
-                                  : "text-gray-600 hover:bg-gray-50"
+                                  ? "bg-gradient-to-r from-green-100 to-orange-100 text-green-700 font-semibold border-l-4 border-green-500"
+                                  : "text-gray-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700"
                               }`}
                               onClick={() => setIsMenuOpen(false)}
                             >
@@ -264,7 +262,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/my-page"
-                    className="mt-4 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center justify-center"
+                    className="mt-4 px-4 py-3 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 shadow-sm flex items-center justify-center border-2 border-orange-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <UserCircleIcon className="w-5 h-5 mr-2" />
@@ -275,7 +273,7 @@ export default function Header() {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="mt-2 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                    className="mt-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all duration-200"
                   >
                     로그아웃
                   </button>
@@ -284,14 +282,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/auth/login"
-                    className="mt-4 px-4 py-3 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                    className="mt-4 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     로그인
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="mt-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                    className="mt-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     회원가입

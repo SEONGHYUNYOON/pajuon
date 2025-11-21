@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -10,6 +12,8 @@ import {
   VideoCameraIcon,
   FireIcon,
 } from "@heroicons/react/24/outline";
+import UserDashboardWidget from "@/components/dashboard/UserDashboardWidget";
+import RecentActivity from "@/components/home/RecentActivity";
 
 export default function Home() {
   // 더미 데이터 (실제로는 API에서 가져올 데이터)
@@ -63,25 +67,37 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-green-50/30">
       {/* 히어로 섹션 */}
-      <section className="relative bg-gradient-to-r from-green-600 via-green-500 to-orange-500 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-r from-green-600 via-green-500 to-orange-500 text-white py-24 overflow-hidden">
+        {/* 배경 장식 */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
+              🎉 파주 시민을 위한, 파주 시민에 의한 커뮤니티
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               파주가 켜진다
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
-              파주의 모든 것이 있는 로컬 커뮤니티 플랫폼
+            <p className="text-xl md:text-3xl mb-4 text-white/95 font-medium">
+              파주 시민을 위한, 파주 시민에 의한
+            </p>
+            <p className="text-lg md:text-xl mb-10 text-white/90">
+              참여형 로컬 커뮤니티 플랫폼
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/groups"
-                className="px-8 py-4 bg-white text-green-600 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg"
+                className="px-8 py-4 bg-white text-green-600 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 모임 찾기
               </Link>
               <Link
                 href="/news"
-                className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold text-lg hover:bg-white/30 transition-colors border-2 border-white"
+                className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold text-lg hover:bg-white/30 transition-all border-2 border-white shadow-lg"
               >
                 파주 소식 보기
               </Link>
@@ -91,6 +107,21 @@ export default function Home() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* 유저 대시보드 위젯 */}
+        <section className="mb-12">
+          <UserDashboardWidget />
+        </section>
+
+        {/* 최근 활동 */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <SparklesIcon className="w-8 h-8 text-orange-500" />
+              <h2 className="text-3xl font-bold text-gray-900">최근 활동</h2>
+            </div>
+          </div>
+          <RecentActivity />
+        </section>
         {/* 신규 개설 모임 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">

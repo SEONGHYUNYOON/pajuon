@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarIcon, MapPinIcon, UserGroupIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { CalendarIcon, MapPinIcon, UserGroupIcon, ClockIcon, HeartIcon } from "@heroicons/react/24/outline";
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
   // 실제로는 params.id로 API 호출하여 데이터를 가져와야 함
@@ -15,6 +17,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     participants: 45,
     maxParticipants: 50,
     status: "신청중",
+    type: "미팅",
     description: `파주 지역 미혼 남녀를 위한 특별한 만남의 시간입니다. 
     자연스러운 레크레이션과 대화를 통해 새로운 인연을 만들어보세요.
     즐거운 게임과 활동을 통해 부담 없이 서로를 알아갈 수 있습니다.`,
@@ -33,19 +36,65 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
       { time: "17:00", activity: "행사 종료" },
     ],
   };
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
     age: "",
-    phone: "",
-    email: "",
+    gender: "",
     introduction: "",
+    maritalStatus: "single", // 미혼 확인용
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 실제로는 API 호출
-    alert("신청이 완료되었습니다!");
+    
+    if (!session?.user) {
+      alert("로그인이 필요합니다.");
+      router.push("/auth/login");
+      return;
+    }
+
+    if (formData.maritalStatus !== "single") {
+      alert("미팅 이벤트는 미혼 분들만 신청 가능합니다.");
+      return;
+    }
+
+    if (!formData.age || !formData.gender || !formData.introduction) {
+      alert("모든 필수 항목을 입력해주세요.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/events/matchmaking/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          eventId: params.id,
+          age: parseInt(formData.age),
+          gender: formData.gender,
+          introduction: formData.introduction,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("미팅 신청이 완료되었습니다! 관리자 승인 후 참가 가능합니다.");
+        setFormData({ age: "", gender: "", introduction: "", maritalStatus: "single" });
+      } else {
+        alert(data.error || "신청 중 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error("Apply error:", error);
+      alert("신청 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -127,85 +176,109 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          {/* 참가 신청 폼 */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">참가 신청</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    이름 *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
+          {/* 참가 신청 폼 (미팅 이벤트인 경우) */}
+          {event.type === "미팅" && (
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-br from-pink-50 to-orange-50 rounded-xl shadow-sm p-6 sticky top-24 border-2 border-pink-200">
+                <div className="flex items-center mb-4">
+                  <HeartIcon className="w-6 h-6 text-pink-600 mr-2" />
+                  <h2 className="text-xl font-bold text-gray-900">미팅 신청</h2>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    나이 *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    연락처 *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    이메일 *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    간단한 자기소개
-                  </label>
-                  <textarea
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={formData.introduction}
-                    onChange={(e) =>
-                      setFormData({ ...formData, introduction: e.target.value })
-                    }
-                    placeholder="간단한 자기소개를 작성해주세요 (선택사항)"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-                >
-                  신청하기
-                </button>
-                <p className="text-xs text-gray-500 text-center">
-                  신청 후 취소는 행사 3일 전까지 가능합니다
+                <p className="text-sm text-gray-600 mb-6">
+                  미혼 남녀만 신청 가능합니다. 정확한 정보를 입력해주세요.
                 </p>
-              </form>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      결혼 상태 *
+                    </label>
+                    <select
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      value={formData.maritalStatus}
+                      onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
+                    >
+                      <option value="single">미혼</option>
+                      <option value="married">기혼</option>
+                      <option value="divorced">이혼</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      나이 *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="20"
+                      max="50"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      value={formData.age}
+                      onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                      placeholder="만 나이를 입력해주세요"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      성별 *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, gender: "MALE" })}
+                        className={`px-4 py-2 rounded-lg border-2 transition-colors ${
+                          formData.gender === "MALE"
+                            ? "border-pink-500 bg-pink-100 text-pink-700"
+                            : "border-gray-300 hover:border-pink-300"
+                        }`}
+                      >
+                        남성
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, gender: "FEMALE" })}
+                        className={`px-4 py-2 rounded-lg border-2 transition-colors ${
+                          formData.gender === "FEMALE"
+                            ? "border-pink-500 bg-pink-100 text-pink-700"
+                            : "border-gray-300 hover:border-pink-300"
+                        }`}
+                      >
+                        여성
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      자기소개 *
+                    </label>
+                    <textarea
+                      rows={5}
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      value={formData.introduction}
+                      onChange={(e) =>
+                        setFormData({ ...formData, introduction: e.target.value })
+                      }
+                      placeholder="자신을 소개해주세요. 취미, 직업, 성격 등을 자유롭게 작성해주세요."
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.introduction.length}/500자
+                    </p>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || formData.maritalStatus !== "single"}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-pink-600 to-orange-600 text-white rounded-lg hover:from-pink-700 hover:to-orange-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "신청 중..." : "미팅 신청하기"}
+                  </button>
+                  <p className="text-xs text-gray-500 text-center">
+                    신청 후 관리자 승인을 거쳐 참가가 확정됩니다
+                  </p>
+                </form>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

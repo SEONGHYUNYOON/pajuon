@@ -40,51 +40,130 @@ git push -u origin main
 
 ### 2.2 프로젝트 설정
 
-#### A. 데이터베이스 연결 (중요!)
-1. 프로젝트 설정 화면에서 **"Storage"** 탭을 클릭합니다.
-2. **"Vercel Postgres"**를 선택합니다.
-3. **"Connect Database"** 버튼을 클릭합니다.
-4. 데이터베이스 생성 설정:
-   - 리전: **Seoul (South Korea)** 선택
-   - 데이터베이스 이름: 원하는 이름 입력 (예: `paju-on-db`)
-5. 연결이 완료되면 Vercel이 자동으로 `DATABASE_URL` 환경 변수를 생성합니다.
+#### A. 데이터베이스 연결 - Supabase 설정 (중요!)
 
-#### B. Prisma 스키마 업데이트 (PostgreSQL 사용 시)
+**Supabase 프로젝트 생성 및 설정:**
 
-Vercel Postgres를 사용할 경우, `prisma/schema.prisma` 파일의 datasource를 수정해야 합니다:
+1. [Supabase.com](https://supabase.com)에 접속하여 계정을 생성하거나 로그인합니다.
+2. "New Project" 버튼을 클릭하여 새 프로젝트를 생성합니다.
+3. 프로젝트 설정:
+   - **Name**: 프로젝트 이름 입력 (예: `paju-on`)
+   - **Database Password**: 강력한 비밀번호 설정 (반드시 저장해두세요!)
+   - **Region**: **Northeast Asia (Seoul)** 선택 (한국 서버)
+   - **Pricing Plan**: Free tier 선택 (시작 시)
+4. 프로젝트 생성이 완료될 때까지 대기합니다 (약 2-3분 소요).
+
+**Supabase에서 필요한 키 가져오기:**
+
+1. Supabase 대시보드에서 프로젝트를 선택합니다.
+2. 왼쪽 사이드바에서 **"Settings"** (톱니바퀴 아이콘) 클릭
+3. **"API"** 섹션으로 이동합니다.
+4. 다음 정보를 복사합니다:
+   - **Project URL**: `https://xxxxx.supabase.co` 형식의 URL
+   - **anon public key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` 형식의 긴 문자열
+   - **service_role key** (선택사항, 서버 사이드에서만 사용): `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` 형식
+
+**데이터베이스 연결 문자열 (Connection String) 가져오기:**
+
+1. Supabase 대시보드에서 **"Settings"** → **"Database"** 섹션으로 이동
+2. **"Connection string"** 섹션에서 **"URI"** 탭을 선택
+3. 연결 문자열을 복사합니다. 형식은 다음과 같습니다:
+   ```
+   postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/postgres?sslmode=require
+   ```
+   ⚠️ **주의**: `[YOUR-PASSWORD]` 부분을 위에서 설정한 데이터베이스 비밀번호로 교체해야 합니다!
+
+**로컬 .env 파일 설정:**
+
+`.env` 파일에 다음을 추가하세요:
+
+```env
+# Database (Supabase PostgreSQL)
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.xxxxx.supabase.co:5432/postgres?sslmode=require"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key-here-change-in-production"
+
+# Supabase (선택사항 - Supabase 클라이언트 사용 시)
+NEXT_PUBLIC_SUPABASE_URL="https://xxxxx.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**로컬에서 데이터베이스 마이그레이션 실행:**
+
+```bash
+# Prisma Client 재생성
+npx prisma generate
+
+# 데이터베이스 마이그레이션 실행
+npx prisma db push
+
+# 또는 마이그레이션 파일 사용
+npx prisma migrate dev
+```
+
+#### B. Prisma 스키마 확인
+
+`prisma/schema.prisma` 파일이 이미 PostgreSQL로 설정되어 있는지 확인하세요:
 
 ```prisma
 datasource db {
-  provider = "postgresql"  // sqlite → postgresql로 변경
+  provider = "postgresql"  // ✅ 이미 postgresql로 설정됨
   url      = env("DATABASE_URL")
 }
 ```
 
-변경 후 다시 커밋하고 푸시하세요:
-```bash
-git add prisma/schema.prisma
-git commit -m "chore: Update Prisma schema for PostgreSQL"
-git push
-```
+이미 PostgreSQL로 설정되어 있으므로 추가 변경이 필요 없습니다.
 
-#### C. 환경 변수 설정
+#### C. Vercel 환경 변수 설정
 
-프로젝트 설정 화면에서 **"Environment Variables"** 탭으로 이동합니다.
+Vercel 프로젝트 설정 화면에서 **"Environment Variables"** 탭으로 이동합니다.
 
 다음 환경 변수들을 추가하세요:
 
-1. **DATABASE_URL** (자동 생성됨 - Vercel Postgres가 주입)
-   - 이미 Vercel Postgres 연결 시 자동으로 설정됩니다.
-   - 수동으로 건드리지 마세요.
+1. **DATABASE_URL** ⭐ (필수)
+   - **Key**: `DATABASE_URL`
+   - **Value**: Supabase에서 가져온 연결 문자열
+     ```
+     postgresql://postgres:YOUR_PASSWORD@db.xxxxx.supabase.co:5432/postgres?sslmode=require
+     ```
+   - **Environment**: Production, Preview, Development 모두 선택
+   - ⚠️ **주의**: 비밀번호를 실제 비밀번호로 교체하세요!
 
-2. **NEXTAUTH_SECRET**
-   - 값: 강력한 비밀 키 (예: `openssl rand -base64 32` 명령어로 생성)
+2. **NEXTAUTH_SECRET** ⭐ (필수)
+   - **Key**: `NEXTAUTH_SECRET`
+   - **Value**: 강력한 비밀 키
+     - 로컬에서 생성: `openssl rand -base64 32` 명령어 실행
+     - 또는 온라인 생성기 사용: [randomkeygen.com](https://randomkeygen.com/)
+   - **Environment**: Production, Preview, Development 모두 선택
    - 예시: `abc123xyz789...` (32자 이상의 랜덤 문자열)
 
-3. **NEXTAUTH_URL**
-   - 값: `https://[프로젝트명].vercel.app` (배포 후 실제 도메인)
-   - 초기 설정: Vercel이 제안하는 기본 도메인 (예: `https://paju-on.vercel.app`)
-   - 배포 후 실제 도메인으로 업데이트 가능
+3. **NEXTAUTH_URL** ⭐ (필수)
+   - **Key**: `NEXTAUTH_URL`
+   - **Value**: 배포 후 실제 도메인
+     - 초기: `https://[프로젝트명].vercel.app` (예: `https://paju-on.vercel.app`)
+     - 배포 후 실제 도메인으로 업데이트 가능
+   - **Environment**: Production, Preview, Development 모두 선택
+
+4. **NEXT_PUBLIC_SUPABASE_URL** (선택사항 - Supabase 클라이언트 사용 시)
+   - **Key**: `NEXT_PUBLIC_SUPABASE_URL`
+   - **Value**: Supabase Project URL (예: `https://xxxxx.supabase.co`)
+   - **Environment**: Production, Preview, Development 모두 선택
+
+5. **NEXT_PUBLIC_SUPABASE_ANON_KEY** (선택사항 - Supabase 클라이언트 사용 시)
+   - **Key**: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **Value**: Supabase anon public key
+   - **Environment**: Production, Preview, Development 모두 선택
+
+**환경 변수 추가 방법:**
+1. Vercel 프로젝트 → **"Settings"** → **"Environment Variables"**
+2. 각 환경 변수를 하나씩 추가:
+   - **Name**: 위의 Key 값 입력
+   - **Value**: 위의 Value 값 입력
+   - **Environment**: 체크박스로 선택 (Production, Preview, Development)
+3. **"Save"** 버튼 클릭
+4. 모든 환경 변수 추가 후 **"Redeploy"** 버튼을 클릭하여 재배포
 
 ### 2.3 배포 실행
 
@@ -125,8 +204,10 @@ git push
 - Prisma 스키마 확인 (PostgreSQL provider 설정)
 
 #### 데이터베이스 연결 오류
-- `DATABASE_URL` 환경 변수 확인
-- Vercel Postgres 연결 상태 확인
+- `DATABASE_URL` 환경 변수 확인 (Supabase 연결 문자열이 올바른지 확인)
+- Supabase 프로젝트 상태 확인 (대시보드에서 확인)
+- 데이터베이스 비밀번호가 올바르게 설정되었는지 확인
+- Supabase 방화벽 설정 확인 (필요 시 IP 화이트리스트 추가)
 
 #### 인증 오류
 - `NEXTAUTH_SECRET` 환경 변수 확인
@@ -157,10 +238,23 @@ git push
 
 ### 데이터베이스 관리
 ```bash
-# Vercel Postgres 연결 (로컬에서)
+# 환경 변수 가져오기 (로컬에서)
 vercel env pull .env.local
+
+# Prisma Studio 실행 (데이터베이스 GUI)
 npx prisma studio
+
+# 마이그레이션 실행
+npx prisma migrate dev
+
+# 데이터베이스 상태 확인
+npx prisma db pull
 ```
+
+**Supabase 대시보드에서 데이터베이스 관리:**
+- Supabase 대시보드 → **"Table Editor"**: 테이블 데이터 직접 확인/수정
+- Supabase 대시보드 → **"SQL Editor"**: SQL 쿼리 실행
+- Supabase 대시보드 → **"Database"**: 연결 정보, 백업 등 관리
 
 ### 로그 확인
 - Vercel 대시보드 → 프로젝트 → "Logs" 탭

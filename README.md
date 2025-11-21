@@ -11,7 +11,7 @@
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: SQLite (Prisma ORM)
+- **Database**: PostgreSQL (Prisma ORM)
 - **Authentication**: Next-Auth.js
 - **UI Components**: Heroicons
 
@@ -22,8 +22,8 @@
 `.env` 파일을 생성하고 다음 내용을 추가하세요:
 
 ```env
-# Database
-DATABASE_URL="file:./dev.db"
+# Database (Supabase PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:port/database?sslmode=require"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"

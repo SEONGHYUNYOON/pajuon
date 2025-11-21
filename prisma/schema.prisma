@@ -7,25 +7,41 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_POSTGRES_PRISMA_URL")
+  url      = env("DATABASE_URL")
+}
+
+// 회원 등급 Enum
+enum UserRank {
+  NEWBIE    // 파주새댁 (기본값)
+  JANG      // 이장
+  DONG      // 동장
+  MAYOR     // 시장
+  HONOR     // 명예 시민
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  password     String?
-  nickname     String    @unique
-  points       Int       @default(0)
-  myDongne     String?   // 동네별 소모임용
-  school       String?   // 아이러브스쿨용
-  profileImage String?
-  lastLoginAt  DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id              String      @id @default(cuid())
+  email           String      @unique
+  password        String?
+  nickname        String      @unique
+  points          Int         @default(0) @map("points") // 기존 호환성을 위해 유지
+  activityPoints  Int         @default(0) @map("activity_points") // 활동 점수
+  rank            UserRank    @default(NEWBIE) // 회원 등급
+  schoolOrigin    String[]    @default([]) @map("school_origin") // 출신 학교 배열 (초, 중, 고)
+  myDongne        String?     @map("my_dongne") // 동네별 소모임용
+  school          String?      // 아이러브스쿨용 (기존 호환성)
+  profileImage    String?     @map("profile_image")
+  lastLoginAt     DateTime?   @map("last_login_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
   
   // Relations
-  posts        Post[]
-  comments     Comment[]
+  posts           Post[]
+  comments        Comment[]
+  createdEvents   Event[]     @relation("EventCreator")
+  eventParticipants EventParticipant[]
+  createdGroups   Group[]     @relation("GroupCreator")
+  groupMembers    GroupMember[]
   
   @@map("users")
 }
@@ -34,13 +50,13 @@ model Post {
   id        String    @id @default(cuid())
   title     String
   content   String    @default("")
-  category  String    // 예: "market", "jobs", "local-unjeong", "pet-walk"
-  viewCount Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  category  String    // 예: "market", "jobs", "local-unjeong", "pet-walk", "hiking", "riding", "goji-soccer", "general"
+  viewCount Int       @default(0) @map("view_count")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   
   // Relations
-  authorId  String
+  authorId  String    @map("author_id")
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments  Comment[]
   marketItem MarketItem?
@@ -51,12 +67,12 @@ model Post {
 model Comment {
   id        String   @id @default(cuid())
   content   String
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
   
   // Relations
-  authorId  String
+  authorId  String   @map("author_id")
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  postId    String
+  postId    String   @map("post_id")
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   
   @@map("comments")
@@ -64,7 +80,7 @@ model Comment {
 
 model MarketItem {
   id        String   @id @default(cuid())
-  postId    String   @unique
+  postId    String   @unique @map("post_id")
   price     Int      @default(0)
   status    String   @default("FOR_SALE") // "FOR_SALE", "RESERVED", "SOLD_OUT"
   location  String?  // 거래 희망 장소
@@ -74,4 +90,143 @@ model MarketItem {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   
   @@map("market_items")
+}
+
+// 파주 관내 학교 목록
+model School {
+  id          String   @id @default(cuid())
+  name        String   // 학교명
+  type        String   // "초등학교", "중학교", "고등학교"
+  address     String?  // 주소
+  district    String?  // 지역 (예: "운정", "금촌", "문산" 등)
+  description String?  @db.Text // 학교 설명
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@map("schools")
+}
+
+// 이벤트 (캠핑, 미팅 등)
+enum EventType {
+  CAMPING      // 함께 캠핑하기
+  MATCHMAKING  // 선남선녀 미팅
+  OTHER        // 기타
+}
+
+enum EventStatus {
+  UPCOMING     // 예정
+  ONGOING      // 진행중
+  COMPLETED    // 완료
+  CANCELLED    // 취소
+}
+
+model Event {
+  id            String      @id @default(cuid())
+  title         String      // 이벤트 제목
+  description   String      @db.Text // 이벤트 설명
+  type          EventType   // 이벤트 유형
+  status        EventStatus @default(UPCOMING) // 이벤트 상태
+  location      String?     // 장소
+  address       String?     // 상세 주소
+  maxParticipants Int?      @map("max_participants") // 최대 참가 인원
+  startDate     DateTime    @map("start_date") // 시작 일시
+  endDate       DateTime?   @map("end_date") // 종료 일시
+  registrationDeadline DateTime? @map("registration_deadline") // 신청 마감일
+  images        String?     // JSON 문자열로 이미지 URL 배열 저장
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  creatorId     String      @map("creator_id")
+  creator       User        @relation("EventCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  participants  EventParticipant[]
+  
+  @@map("events")
+}
+
+// 이벤트 참가자
+model EventParticipant {
+  id        String   @id @default(cuid())
+  eventId   String   @map("event_id")
+  userId    String   @map("user_id")
+  status    String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED", "CANCELLED"
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, userId])
+  @@map("event_participants")
+}
+
+// 장소 정보 (카페, 맛집, 관광지)
+enum PlaceType {
+  RESTAURANT   // 맛집
+  CAFE         // 카페
+  TOURISM      // 관광지
+  HOTSPOT      // 핫플레이스
+}
+
+model Place {
+  id          String      @id @default(cuid())
+  name        String      // 장소명
+  type        PlaceType   // 장소 유형
+  description String?     @db.Text // 설명
+  address     String      // 주소
+  district    String?     // 지역 (예: "헤이리", "출판단지", "운정" 등)
+  latitude    Float?      // 위도
+  longitude   Float?      // 경도
+  phone       String?     // 전화번호
+  website     String?     // 웹사이트
+  images      String?     // JSON 문자열로 이미지 URL 배열 저장
+  rating      Float?      @default(0) // 평점 (0-5)
+  viewCount   Int         @default(0) @map("view_count") // 조회수
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  
+  @@map("places")
+}
+
+// 모임 및 동호회
+enum GroupType {
+  HIKING      // 등산
+  RIDING      // 라이딩
+  SOCCER      // 고지 축구
+  CAMPING     // 캠핑
+  OTHER       // 기타
+}
+
+model Group {
+  id          String      @id @default(cuid())
+  name        String      // 모임명
+  description String      @db.Text // 모임 설명
+  type        GroupType   // 모임 유형
+  coverImage  String?     @map("cover_image") // 커버 이미지 URL
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  creatorId   String      @map("creator_id")
+  creator     User        @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  members     GroupMember[]
+  posts       Post[]      // 모임 게시글 (category로 구분)
+  
+  @@map("groups")
+}
+
+// 모임 멤버
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String   @map("group_id")
+  userId    String   @map("user_id")
+  role      String   @default("MEMBER") // "ADMIN", "MEMBER"
+  joinedAt  DateTime @default(now()) @map("joined_at")
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, userId])
+  @@map("group_members")
 }

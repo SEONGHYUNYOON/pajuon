@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { EnvelopeIcon, LockClosedIcon, UserIcon, MapPinIcon, AcademicCapIcon } from "@heroicons/react/24/outline";
+import { AcademicCapIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Input, Textarea } from "@/components/ui/Input";
+import Badge from "@/components/ui/Badge";
+import { createClient } from "@/utils/supabase/client";
 
 const areas = ["운정동", "교하동", "금촌동", "문산읍", "탄현면", "기타"];
 const schoolTypes = ["초등학교", "중학교", "고등학교"];
@@ -23,6 +28,7 @@ export default function SignupPage() {
   });
   const [nicknameCheck, setNicknameCheck] = useState<"unchecked" | "available" | "unavailable">("unchecked");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNicknameCheck = async () => {
     if (!formData.nickname) {
@@ -37,17 +43,23 @@ export default function SignupPage() {
     }
 
     try {
-      const response = await fetch(`/api/auth/check-nickname?nickname=${encodeURIComponent(formData.nickname)}`);
-      const data = await response.json();
-      
-      if (data.available) {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("nickname")
+        .eq("nickname", formData.nickname)
+        .single();
+
+      if (error && error.code === "PGRST116") {
+        // No rows returned = available
         setNicknameCheck("available");
         setErrors({ ...errors, nickname: "" });
-      } else {
+      } else if (data) {
         setNicknameCheck("unavailable");
         setErrors({ ...errors, nickname: "이미 사용 중인 닉네임입니다." });
       }
     } catch (error) {
+      console.error("Nickname check error:", error);
       setNicknameCheck("unavailable");
       setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
     }
@@ -58,6 +70,8 @@ export default function SignupPage() {
 
     if (!formData.email) {
       newErrors.email = "이메일을 입력해주세요.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "올바른 이메일 형식이 아닙니다.";
     }
     if (!formData.password) {
       newErrors.password = "비밀번호를 입력해주세요.";
@@ -90,225 +104,229 @@ export default function SignupPage() {
       return;
     }
 
+    setIsLoading(true);
+    setErrors({});
+
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const supabase = createClient();
+
+      // 1. Supabase Auth로 회원가입
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            nickname: formData.nickname,
+            area: formData.area || null,
+            school_type: formData.schoolType || null,
+            school_name: formData.schoolName || null,
+          },
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          nickname: formData.nickname,
-          area: formData.area || null,
-          schoolType: formData.schoolType || null,
-          schoolName: formData.schoolName || null,
-        }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrors({ ...errors, submit: data.error || "회원가입 중 오류가 발생했습니다." });
+      if (authError) {
+        setErrors({ submit: authError.message || "회원가입 중 오류가 발생했습니다." });
+        setIsLoading(false);
         return;
       }
 
-      // 회원가입 성공 후 자동 로그인
-      const { signIn } = await import("next-auth/react");
-      const result = await signIn("credentials", {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
+      if (!authData.user) {
+        setErrors({ submit: "회원가입에 실패했습니다." });
+        setIsLoading(false);
+        return;
+      }
 
-      if (result?.ok) {
+      // 2. 프로필 정보 업데이트
+      // 트리거로 자동 생성되지만, 추가 정보(닉네임, 학교 정보 등)를 업데이트
+      const profileUpdateData: {
+        nickname: string;
+        my_dongne?: string | null;
+        school_elementary?: string | null;
+        school_middle?: string | null;
+        school_high?: string | null;
+      } = {
+        nickname: formData.nickname,
+        my_dongne: formData.area || null,
+      };
+
+      // 학교 정보 추가
+      if (formData.schoolType && formData.schoolName) {
+        if (formData.schoolType === "초등학교") {
+          profileUpdateData.school_elementary = formData.schoolName;
+        } else if (formData.schoolType === "중학교") {
+          profileUpdateData.school_middle = formData.schoolName;
+        } else if (formData.schoolType === "고등학교") {
+          profileUpdateData.school_high = formData.schoolName;
+        }
+      }
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update(profileUpdateData)
+        .eq("id", authData.user.id);
+
+      if (profileError) {
+        console.error("Profile update error:", profileError);
+        // 프로필 업데이트 실패해도 계정은 생성되었으므로 계속 진행
+        // 나중에 사용자가 프로필 설정에서 수정할 수 있음
+      }
+
+      // 3. 이메일 확인 필요 안내
+      if (!authData.session) {
+        // 이메일 확인이 필요한 경우
+        router.push("/auth/verify-email?email=" + encodeURIComponent(formData.email));
+      } else {
+        // 자동 로그인된 경우
         router.push("/");
         router.refresh();
-      } else {
-        router.push("/auth/login");
       }
     } catch (error) {
       console.error("Signup error:", error);
-      setErrors({ ...errors, submit: "회원가입 중 오류가 발생했습니다." });
+      setErrors({ submit: "회원가입 중 오류가 발생했습니다." });
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">ON</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+              <span className="text-white font-bold text-3xl">ON</span>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">회원가입</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">회원가입</h2>
+          <p className="text-lg text-gray-600">
             파주온에 함께 해주세요
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            파주 시민을 위한, 파주 시민에 의한 커뮤니티
           </p>
         </div>
 
         {/* 회원가입 폼 */}
-        <div className="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+        <Card padding="lg">
           {errors.submit && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {errors.submit}
             </div>
           )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 이메일 */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                이메일 *
-              </label>
-              <div className="relative">
-                <EnvelopeIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.email ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="이메일을 입력하세요"
-                  value={formData.email}
-                  onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value });
-                    setErrors({ ...errors, email: "" });
-                  }}
-                />
-              </div>
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-            </div>
+            <Input
+              label="이메일"
+              type="email"
+              required
+              placeholder="이메일을 입력하세요"
+              value={formData.email}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                setErrors({ ...errors, email: "" });
+              }}
+              error={errors.email}
+            />
 
             {/* 비밀번호 */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                비밀번호 *
-              </label>
-              <div className="relative">
-                <LockClosedIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.password ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="8자 이상의 비밀번호를 입력하세요"
-                  value={formData.password}
-                  onChange={(e) => {
-                    setFormData({ ...formData, password: e.target.value });
-                    setErrors({ ...errors, password: "" });
-                  }}
-                />
-              </div>
-              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-            </div>
+            <Input
+              label="비밀번호"
+              type="password"
+              required
+              placeholder="8자 이상의 비밀번호를 입력하세요"
+              value={formData.password}
+              onChange={(e) => {
+                setFormData({ ...formData, password: e.target.value });
+                setErrors({ ...errors, password: "" });
+              }}
+              error={errors.password}
+              helperText="영문, 숫자, 특수문자를 포함하여 8자 이상 입력해주세요"
+            />
 
             {/* 비밀번호 확인 */}
-            <div>
-              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-gray-700 mb-2">
-                비밀번호 확인 *
-              </label>
-              <div className="relative">
-                <LockClosedIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="passwordConfirm"
-                  name="passwordConfirm"
-                  type="password"
-                  required
-                  className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.passwordConfirm ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="비밀번호를 다시 입력하세요"
-                  value={formData.passwordConfirm}
-                  onChange={(e) => {
-                    setFormData({ ...formData, passwordConfirm: e.target.value });
-                    setErrors({ ...errors, passwordConfirm: "" });
-                  }}
-                />
-              </div>
-              {errors.passwordConfirm && <p className="mt-1 text-sm text-red-600">{errors.passwordConfirm}</p>}
-            </div>
+            <Input
+              label="비밀번호 확인"
+              type="password"
+              required
+              placeholder="비밀번호를 다시 입력하세요"
+              value={formData.passwordConfirm}
+              onChange={(e) => {
+                setFormData({ ...formData, passwordConfirm: e.target.value });
+                setErrors({ ...errors, passwordConfirm: "" });
+              }}
+              error={errors.passwordConfirm}
+            />
 
             {/* 닉네임 */}
             <div>
-              <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
-                닉네임 * (동네별 소모임, 아이러브스쿨용)
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                닉네임 <span className="text-red-500">*</span>
+                <Badge variant="info" size="sm" className="ml-2">
+                  동네별 소모임, 아이러브스쿨용
+                </Badge>
               </label>
               <div className="flex space-x-2">
-                <div className="relative flex-1">
-                  <UserIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    id="nickname"
-                    name="nickname"
-                    type="text"
-                    required
-                    className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.nickname ? "border-red-300" : "border-gray-300"
-                    } ${nicknameCheck === "available" ? "border-green-500" : ""}`}
-                    placeholder="닉네임을 입력하세요"
-                    value={formData.nickname}
-                    onChange={(e) => {
-                      setFormData({ ...formData, nickname: e.target.value });
-                      setNicknameCheck("unchecked");
-                      setErrors({ ...errors, nickname: "" });
-                    }}
-                  />
-                </div>
-                <button
+                <Input
+                  type="text"
+                  required
+                  placeholder="닉네임을 입력하세요"
+                  value={formData.nickname}
+                  onChange={(e) => {
+                    setFormData({ ...formData, nickname: e.target.value });
+                    setNicknameCheck("unchecked");
+                    setErrors({ ...errors, nickname: "" });
+                  }}
+                  error={errors.nickname}
+                  className={nicknameCheck === "available" ? "border-green-500" : ""}
+                />
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={handleNicknameCheck}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium whitespace-nowrap"
+                  className="whitespace-nowrap"
                 >
                   중복 확인
-                </button>
+                </Button>
               </div>
               {nicknameCheck === "available" && (
-                <p className="mt-1 text-sm text-green-600">사용 가능한 닉네임입니다.</p>
+                <p className="mt-1 text-sm text-green-600">✓ 사용 가능한 닉네임입니다.</p>
               )}
-              {errors.nickname && <p className="mt-1 text-sm text-red-600">{errors.nickname}</p>}
             </div>
 
             {/* 내 동네 설정 */}
-            <div>
-              <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-2">
-                내 동네 설정 (동네별 소모임용)
+            <div className="relative">
+              <MapPinIcon className="absolute left-4 top-10 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                내 동네 설정
+                <span className="text-gray-500 text-xs ml-2">(선택사항, 동네별 소모임용)</span>
               </label>
-              <div className="relative">
-                <MapPinIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <select
-                  id="area"
-                  name="area"
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
-                  value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                >
-                  <option value="">선택해주세요 (선택사항)</option>
-                  {areas.map((area) => (
-                    <option key={area} value={area}>
-                      {area}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
+                value={formData.area}
+                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+              >
+                <option value="">선택해주세요</option>
+                {areas.map((area) => (
+                  <option key={area} value={area}>
+                    {area}
+                  </option>
+                ))}
+              </select>
               <p className="mt-1 text-xs text-gray-500">동네별 소모임에서 주로 활동하는 지역을 선택해주세요</p>
             </div>
 
             {/* 출신 학교 인증 */}
             <div className="border-t border-gray-200 pt-6">
               <label className="block text-sm font-medium text-gray-700 mb-4">
-                출신 학교 인증 (아이러브스쿨용, 선택사항)
+                <AcademicCapIcon className="w-5 h-5 inline mr-2 text-orange-500" />
+                출신 학교 인증
+                <span className="text-gray-500 text-xs ml-2">(선택사항, 아이러브스쿨용)</span>
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="relative">
-                  <AcademicCapIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <select
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
                     value={formData.schoolType}
                     onChange={(e) => setFormData({ ...formData, schoolType: e.target.value })}
                   >
@@ -320,9 +338,8 @@ export default function SignupPage() {
                     ))}
                   </select>
                 </div>
-                <input
+                <Input
                   type="text"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="학교명을 입력하세요"
                   value={formData.schoolName}
                   onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
@@ -353,7 +370,7 @@ export default function SignupPage() {
                   <Link href="/support/terms" className="text-green-600 hover:text-green-700 underline">
                     이용약관
                   </Link>
-                  에 동의합니다 (필수)
+                  에 동의합니다 <span className="text-red-500">*</span>
                 </label>
               </div>
               {errors.agreeTerms && <p className="text-sm text-red-600 ml-8">{errors.agreeTerms}</p>}
@@ -375,19 +392,22 @@ export default function SignupPage() {
                   <Link href="/support/privacy" className="text-green-600 hover:text-green-700 underline">
                     개인정보 처리방침
                   </Link>
-                  에 동의합니다 (필수)
+                  에 동의합니다 <span className="text-red-500">*</span>
                 </label>
               </div>
               {errors.agreePrivacy && <p className="text-sm text-red-600 ml-8">{errors.agreePrivacy}</p>}
             </div>
 
             {/* 회원가입 버튼 */}
-            <button
+            <Button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              variant="primary"
+              size="lg"
+              fullWidth
+              disabled={isLoading}
             >
-              회원가입
-            </button>
+              {isLoading ? "회원가입 중..." : "회원가입"}
+            </Button>
           </form>
 
           {/* 로그인 링크 */}
@@ -399,7 +419,7 @@ export default function SignupPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

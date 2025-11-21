@@ -1,6 +1,7 @@
 "use client";
 
-import { getCurrentRank, getNextRank, defaultRank, rankConfigs, type UserRank } from "@/lib/rankConfig";
+import { getCurrentRank, getNextRank, rankConfigs } from "@/lib/rankConfig";
+import { UserRank } from "@prisma/client";
 
 interface RankProgressProps {
   points: number;
@@ -10,7 +11,7 @@ export default function RankProgress({ points }: RankProgressProps) {
   const { rank, config: currentConfig } = getCurrentRank(points);
   const { nextRank, nextConfig, remainingPoints } = getNextRank(points);
 
-  const effectiveConfig = rank === "default" ? defaultRank : rankConfigs[rank as UserRank];
+  const effectiveConfig = rankConfigs[rank];
 
   const progressPercentage = nextConfig
     ? ((points - effectiveConfig.requiredPoints) /

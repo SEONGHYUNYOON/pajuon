@@ -8,6 +8,7 @@ import {
   FireIcon,
   StarIcon,
   PlusIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
 
 const currentChallenge = {

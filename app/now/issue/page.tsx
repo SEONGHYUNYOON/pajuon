@@ -6,7 +6,7 @@ import {
   FireIcon,
   NewspaperIcon,
   BellIcon,
-  CarIcon,
+  TruckIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
 
@@ -38,7 +38,7 @@ const hotIssues = [
     source: "교통정보센터",
     date: "2024-12-10",
     views: 2341,
-    icon: CarIcon,
+    icon: TruckIcon,
     color: "bg-green-500",
   },
 ];
@@ -164,7 +164,7 @@ export default function IssuePage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <CarIcon className="w-6 h-6 text-blue-500 mr-2" />
+                <TruckIcon className="w-6 h-6 text-blue-500 mr-2" />
                 실시간 교통정보
               </h2>
               <div className="space-y-3">

@@ -1,6 +1,8 @@
 "use client";
 
-export type UserRank = "newbie" | "jang" | "dong" | "mayor" | "honor";
+import { UserRank } from "@prisma/client";
+
+export type { UserRank };
 
 interface UserRankBadgeProps {
   rank: UserRank;
@@ -8,28 +10,28 @@ interface UserRankBadgeProps {
 }
 
 const rankConfig: Record<UserRank, { name: string; color: string; icon: string }> = {
-  newbie: {
+  NEWBIE: {
     name: "파주새댁",
     color: "text-gray-600 bg-gray-100",
     icon: "🌱",
   },
-  jang: {
+  JANG: {
     name: "이장",
     color: "text-green-700 bg-green-100",
     icon: "🏡",
   },
-  dong: {
+  DONG: {
     name: "동장",
     color: "text-blue-700 bg-blue-100",
     icon: "🏘️",
   },
-  mayor: {
+  MAYOR: {
     name: "시장",
     color: "text-orange-700 bg-orange-100",
     icon: "🏛️",
   },
-  honor: {
-    name: "명예시민",
+  HONOR: {
+    name: "명예 시민",
     color: "text-purple-700 bg-purple-100",
     icon: "⭐",
   },

@@ -49,7 +49,6 @@ export default function MyPage() {
   }
 
   const { rank } = getCurrentRank(userInfo.points);
-  const effectiveRank = rank === "default" ? "newbie" : rank;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -63,7 +62,7 @@ export default function MyPage() {
             <div className="flex-1">
               <div className="flex items-center space-x-3 mb-2">
                 <h1 className="text-3xl font-bold text-gray-900">{userInfo.nickname}</h1>
-                <UserRankBadge rank={effectiveRank as UserRank} />
+                <UserRankBadge rank={rank} />
               </div>
               <div className="text-gray-600 mb-1">{userInfo.email}</div>
               {userInfo.area && (
