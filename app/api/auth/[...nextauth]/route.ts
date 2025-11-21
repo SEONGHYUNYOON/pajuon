@@ -1,12 +1,10 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 import bcrypt from "bcryptjs";
 import { grantPoints, PointAction } from "@/lib/pointManager";
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,11 +20,14 @@ export const authOptions = {
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const supabase = await createClient();
+        const { data: user, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("email", email)
+          .single();
 
-        if (!user || !user.password) {
+        if (error || !user || !user.password) {
           return null;
         }
 
@@ -38,21 +39,21 @@ export const authOptions = {
 
         // 일일 로그인 포인트 지급 확인
         const now = new Date();
-        const lastLogin = user.lastLoginAt;
+        const lastLogin = user.last_login_at ? new Date(user.last_login_at) : null;
         
         if (!lastLogin || (now.getTime() - lastLogin.getTime()) >= 24 * 60 * 60 * 1000) {
           await grantPoints(user.id, PointAction.DAILY_LOGIN);
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { lastLoginAt: now },
-          });
+          await supabase
+            .from("profiles")
+            .update({ last_login_at: now.toISOString() })
+            .eq("id", user.id);
         }
 
         return {
           id: user.id,
           email: user.email,
           name: user.nickname,
-          image: user.profileImage,
+          image: user.profile_image,
         };
       },
     }),

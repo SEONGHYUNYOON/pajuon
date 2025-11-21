@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,9 +13,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { nickname },
-    });
+    const supabase = await createClient();
+    const { data: existingUser, error } = await supabase
+      .from("profiles")
+      .select("nickname")
+      .eq("nickname", nickname)
+      .single();
 
     return NextResponse.json({
       available: !existingUser,

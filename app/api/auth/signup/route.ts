@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
@@ -15,10 +15,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabase = await createClient();
+
     // 이메일 중복 확인
-    const existingUserByEmail = await prisma.user.findUnique({
-      where: { email },
-    });
+    const { data: existingUserByEmail } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("email", email)
+      .single();
 
     if (existingUserByEmail) {
       return NextResponse.json(
@@ -28,9 +32,11 @@ export async function POST(request: NextRequest) {
     }
 
     // 닉네임 중복 확인
-    const existingUserByNickname = await prisma.user.findUnique({
-      where: { nickname },
-    });
+    const { data: existingUserByNickname } = await supabase
+      .from("profiles")
+      .select("nickname")
+      .eq("nickname", nickname)
+      .single();
 
     if (existingUserByNickname) {
       return NextResponse.json(
@@ -43,16 +49,26 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 사용자 생성
-    const user = await prisma.user.create({
-      data: {
+    const { data: user, error } = await supabase
+      .from("profiles")
+      .insert({
         email,
         password: hashedPassword,
         nickname,
-        myDongne: area || null,
+        my_dongne: area || null,
         school: schoolType && schoolName ? `${schoolType} ${schoolName}` : null,
         points: 0,
-      },
-    });
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return NextResponse.json(
+        { error: "회원가입 중 오류가 발생했습니다." },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
