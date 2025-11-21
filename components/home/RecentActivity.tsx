@@ -86,26 +86,26 @@ export default function RecentActivity() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* 파주 뉴스 */}
-      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <NewspaperIcon className="w-6 h-6 text-blue-500" />
+            <NewspaperIcon className="w-6 h-6 text-paju-blue" />
             <h3 className="text-lg font-bold text-gray-900">파주 뉴스</h3>
           </div>
           <Link
             href="/news"
-            className="text-sm text-green-600 hover:text-green-700 font-medium"
+            className="text-sm text-paju-blue hover:text-paju-blue-dark font-medium"
           >
             더보기 →
           </Link>
         </div>
-        <div className="space-y-4">
+        <div className="divide-y divide-gray-100">
           {activityData.news.length > 0 ? (
             activityData.news.map((post) => (
               <Link
                 key={post.id}
                 href={`/news/${post.id}`}
-                className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+                className="block p-3 hover:bg-gray-50 transition-colors"
               >
                 <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">
                   {post.title}
@@ -137,28 +137,28 @@ export default function RecentActivity() {
       </div>
 
       {/* 등산 모임 */}
-      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-6 h-6 text-paju-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
             <h3 className="text-lg font-bold text-gray-900">등산 모임</h3>
           </div>
           <Link
             href="/community/hiking"
-            className="text-sm text-green-600 hover:text-green-700 font-medium"
+            className="text-sm text-paju-blue hover:text-paju-blue-dark font-medium"
           >
             더보기 →
           </Link>
         </div>
-        <div className="space-y-4">
+        <div className="divide-y divide-gray-100">
           {activityData.hiking.length > 0 ? (
             activityData.hiking.map((post) => (
               <Link
                 key={post.id}
                 href={`/community/hiking/${post.id}`}
-                className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+                className="block p-3 hover:bg-gray-50 transition-colors"
               >
                 <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">
                   {post.title}
@@ -190,26 +190,26 @@ export default function RecentActivity() {
       </div>
 
       {/* 활발한 동창회 */}
-      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <AcademicCapIcon className="w-6 h-6 text-orange-500" />
+            <AcademicCapIcon className="w-6 h-6 text-paju-warm" />
             <h3 className="text-lg font-bold text-gray-900">활발한 동창회</h3>
           </div>
           <Link
             href="/school"
-            className="text-sm text-green-600 hover:text-green-700 font-medium"
+            className="text-sm text-paju-blue hover:text-paju-blue-dark font-medium"
           >
             더보기 →
           </Link>
         </div>
-        <div className="space-y-4">
+        <div className="divide-y divide-gray-100">
           {activityData.alumni.length > 0 ? (
             activityData.alumni.map((post) => (
               <Link
                 key={post.id}
                 href={`/community/school-alumni/${post.id}`}
-                className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+                className="block p-3 hover:bg-gray-50 transition-colors"
               >
                 <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">
                   {post.title}

@@ -1,17 +1,31 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
+  /* 배경색 - 깨끗한 배경 */
+  --background: #f8f9fa;
+  --background-darker: #e9ecef;
+  --foreground: #333333;
   
-  /* PAJU ON 브랜딩 컬러 - 활기(Vibrant), 따뜻함(Warm), 연결(Connected) */
-  --paju-green: #4CAF50;
-  --paju-green-light: #81C784;
-  --paju-green-dark: #388E3C;
+  /* 파주 테마 색상 팔레트 */
+  /* 파주 블루 - 평화, 임진각 상징 */
+  --paju-blue: #005f99;
+  --paju-blue-light: #338cb8;
+  --paju-blue-dark: #003f66;
+  
+  /* 파주 그린 - 자연, DMZ 상징 */
+  --paju-green: #419e66;
+  --paju-green-light: #6bb889;
+  --paju-green-dark: #2d7a4a;
+  
+  /* 파주 웜 - 커뮤니티의 따뜻함 */
+  --paju-warm: #f5a623;
+  --paju-warm-light: #ffc46b;
+  
+  /* 기존 브랜딩 컬러 (호환성 유지) */
   --paju-orange: #FF9800;
   --paju-orange-light: #FFB74D;
   --paju-orange-dark: #F57C00;
-  --paju-warm: #FFF8E1;
   --paju-gray: #F5F5F5;
   --paju-text: #333333;
   --paju-text-light: #666666;
@@ -25,21 +39,59 @@
 }
 
 @theme inline {
+  /* 배경색 */
   --color-background: var(--background);
+  --color-background-darker: var(--background-darker);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  
+  /* 파주 테마 색상 */
+  --color-paju-blue: var(--paju-blue);
+  --color-paju-blue-light: var(--paju-blue-light);
+  --color-paju-blue-dark: var(--paju-blue-dark);
+  --color-paju-green: var(--paju-green);
+  --color-paju-green-light: var(--paju-green-light);
+  --color-paju-green-dark: var(--paju-green-dark);
+  --color-paju-warm: var(--paju-warm);
+  --color-paju-warm-light: var(--paju-warm-light);
+  
+  /* 폰트 - Pretendard, Noto Sans KR, 시스템 폰트 순 */
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
+  
+  /* 그림자 효과 */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+/* 버튼과 카드에 부드러운 그림자 효과 기본 적용 */
+button,
+.btn,
+.card {
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+button:hover,
+.btn:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
 }

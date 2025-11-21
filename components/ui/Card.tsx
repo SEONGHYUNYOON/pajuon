@@ -27,8 +27,8 @@ export default function Card({
   hover = true,
   padding = "md",
 }: CardProps) {
-  const baseStyles = "bg-white rounded-xl shadow-md border border-gray-100";
-  const hoverStyle = hover ? "hover:shadow-lg transition-shadow" : "";
+  const baseStyles = "bg-white rounded-xl shadow-sm border border-gray-100";
+  const hoverStyle = hover ? "hover:shadow-md hover:-translate-y-1 transition-all duration-300" : "";
   const paddingStyle = paddingStyles[padding];
   
   const combinedClassName = `${baseStyles} ${hoverStyle} ${paddingStyle} ${className}`;

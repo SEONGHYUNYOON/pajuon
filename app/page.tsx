@@ -65,39 +65,33 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-green-50/30">
+    <div className="min-h-screen bg-background">
       {/* 히어로 섹션 */}
-      <section className="relative bg-gradient-to-r from-green-600 via-green-500 to-orange-500 text-white py-24 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-paju-blue-dark to-paju-blue py-20 md:py-24 overflow-hidden">
         {/* 배경 장식 */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-5">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
-              🎉 파주 시민을 위한, 파주 시민에 의한 커뮤니티
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              파주가 켜진다
-            </h1>
-            <p className="text-xl md:text-3xl mb-4 text-white/95 font-medium">
+            <p className="text-sm md:text-base text-white/90 mb-4 font-medium">
               파주 시민을 위한, 파주 시민에 의한
             </p>
-            <p className="text-lg md:text-xl mb-10 text-white/90">
-              참여형 로컬 커뮤니티 플랫폼
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
+              참여형 로컬 커뮤니티 플랫폼, 파주온
+            </h1>
+            <div className="flex flex-wrap justify-center gap-4 mt-10">
               <Link
                 href="/groups"
-                className="px-8 py-4 bg-white text-green-600 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
+                className="px-8 py-4 bg-white text-paju-blue rounded-lg font-semibold text-base md:text-lg hover:bg-gray-50 transition-all shadow-md hover:shadow-lg"
               >
                 모임 찾기
               </Link>
               <Link
                 href="/news"
-                className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold text-lg hover:bg-white/30 transition-all border-2 border-white shadow-lg"
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-lg font-semibold text-base md:text-lg hover:bg-white/20 transition-all shadow-md hover:shadow-lg"
               >
                 파주 소식 보기
               </Link>
@@ -106,95 +100,88 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* 유저 대시보드 위젯 */}
-        <section className="mb-12">
-          <UserDashboardWidget />
-        </section>
+      <div className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* 유저 대시보드 위젯 */}
+          <section className="mb-16">
+            <UserDashboardWidget />
+          </section>
 
-        {/* 최근 활동 */}
+          {/* 최근 활동 */}
+          <section className="mb-16">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">최근 활동</h2>
+            <RecentActivity />
+          </section>
+          
+          {/* 신규 개설 모임 */}
+          <section className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">신규 개설 모임</h2>
+              <Link
+                href="/groups"
+                className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
+              >
+                전체 보기
+                <ArrowRightIcon className="w-5 h-5 ml-1" />
+              </Link>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+              {newGroups.map((group, index) => (
+                <Link
+                  key={group.id}
+                  href={`/groups/${group.id}`}
+                  className="block p-6 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <span className="px-3 py-1 bg-paju-green/10 text-paju-green rounded-full text-xs font-medium">
+                          {group.category}
+                        </span>
+                        <span className="text-xs text-gray-500">{group.created}</span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{group.name}</h3>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <span>👥 {group.members}명 참여</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+        {/* 우리동네 핫플 베스트 후기 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <SparklesIcon className="w-8 h-8 text-orange-500" />
-              <h2 className="text-3xl font-bold text-gray-900">최근 활동</h2>
-            </div>
-          </div>
-          <RecentActivity />
-        </section>
-        {/* 신규 개설 모임 */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <SparklesIcon className="w-8 h-8 text-orange-500" />
-              <h2 className="text-3xl font-bold text-gray-900">신규 개설 모임</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">우리동네 핫플 베스트 후기</h2>
             <Link
-              href="/groups"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              href="/news/hotplaces"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newGroups.map((group) => (
-              <Link
-                key={group.id}
-                href={`/groups/${group.id}`}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                    {group.category}
-                  </span>
-                  <span className="text-xs text-gray-500">{group.created}</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{group.name}</h3>
-                <div className="flex items-center text-sm text-gray-600">
-                  <span>👥 {group.members}명 참여</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* 우리동네 핫플 베스트 후기 */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <MapPinIcon className="w-8 h-8 text-green-500" />
-              <h2 className="text-3xl font-bold text-gray-900">우리동네 핫플 베스트 후기</h2>
-            </div>
-            <Link
-              href="/news/hotplaces"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
-            >
-              전체 보기
-              <ArrowRightIcon className="w-5 h-5 ml-1" />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {hotPlaces.map((place) => (
               <Link
                 key={place.id}
                 href={`/news/hotplaces/${place.id}`}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100"
               >
-                <div className="h-48 bg-gradient-to-r from-green-400 to-orange-400 relative">
+                <div className="h-48 bg-gray-200 rounded-t-xl relative">
                   <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-gray-900">
                     📸 {place.images}장
                   </div>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900">{place.title}</h3>
-                  </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-lg mb-1 text-gray-900">{place.title}</h3>
                   <div className="flex items-center text-sm text-gray-600 mb-3">
                     <MapPinIcon className="w-4 h-4 mr-1" />
                     {place.place}
                   </div>
-                  <div className="flex items-center text-sm text-orange-600">
+                  <div className="flex items-center text-sm text-paju-warm">
                     <span>❤️ {place.likes}개 좋아요</span>
                   </div>
                 </div>
@@ -206,13 +193,10 @@ export default function Home() {
         {/* ON-이벤트 공지 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <CalendarIcon className="w-8 h-8 text-orange-500" />
-              <h2 className="text-3xl font-bold text-gray-900">ON-이벤트 공지</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">ON-이벤트 공지</h2>
             <Link
               href="/events"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -250,13 +234,10 @@ export default function Home() {
         {/* 파주장터 최신 매물 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <ShoppingBagIcon className="w-8 h-8 text-green-500" />
-              <h2 className="text-3xl font-bold text-gray-900">파주장터 최신 매물</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">파주장터 최신 매물</h2>
             <Link
               href="/life/market"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -297,13 +278,10 @@ export default function Home() {
         {/* 파주 일자리 최신 공고 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <BriefcaseIcon className="w-8 h-8 text-blue-500" />
-              <h2 className="text-3xl font-bold text-gray-900">파주 일자리 최신 공고</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">파주 일자리 최신 공고</h2>
             <Link
               href="/life/jobs"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -342,13 +320,10 @@ export default function Home() {
         {/* 동네별 소모임 인기글 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <ChatBubbleLeftRightIcon className="w-8 h-8 text-purple-500" />
-              <h2 className="text-3xl font-bold text-gray-900">동네별 소모임 인기글</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">동네별 소모임 인기글</h2>
             <Link
               href="/community/local"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -383,13 +358,10 @@ export default function Home() {
         {/* 파주ON TV 인기 영상 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <VideoCameraIcon className="w-8 h-8 text-red-500" />
-              <h2 className="text-3xl font-bold text-gray-900">파주ON TV 인기 영상</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">파주ON TV 인기 영상</h2>
             <Link
               href="/play/tv"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -425,13 +397,10 @@ export default function Home() {
         {/* 오늘의 파주 핫이슈 */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <FireIcon className="w-8 h-8 text-orange-500" />
-              <h2 className="text-3xl font-bold text-gray-900">오늘의 파주 핫이슈</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">오늘의 파주 핫이슈</h2>
             <Link
               href="/now/issue"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
+              className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
             >
               전체 보기
               <ArrowRightIcon className="w-5 h-5 ml-1" />
@@ -507,6 +476,7 @@ export default function Home() {
             <p className="text-gray-600">문의사항이 있으신가요?</p>
           </Link>
         </section>
+        </div>
       </div>
     </div>
   );

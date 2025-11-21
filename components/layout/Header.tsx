@@ -82,17 +82,17 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-orange-50 to-green-50 shadow-md border-b-2 border-orange-200">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* 로고 */}
           <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center space-x-2">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-paju-blue rounded-xl flex items-center justify-center shadow-sm transform hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-xl md:text-2xl">ON</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl md:text-2xl font-bold text-gray-900">PAJU ON</span>
+                <span className="text-xl md:text-2xl font-bold text-paju-blue">PAJU ON</span>
                 <span className="text-xs md:text-sm text-gray-600 -mt-1 font-medium">파주온</span>
               </div>
             </div>
@@ -112,8 +112,8 @@ export default function Header() {
                     href={item.path}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActivePath(item.path)
-                        ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
-                        : "text-gray-700 hover:bg-white/80 hover:text-green-700 hover:shadow-sm"
+                        ? "bg-paju-blue text-white shadow-sm"
+                        : "text-gray-600 hover:text-paju-blue hover:bg-gray-50"
                     }`}
                   >
                     {item.name}
@@ -122,8 +122,8 @@ export default function Header() {
                   <button
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
                       isMenuActive(item)
-                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
-                        : "text-gray-700 hover:bg-white/80 hover:text-orange-700 hover:shadow-sm"
+                        ? "bg-paju-blue text-white shadow-sm"
+                        : "text-gray-600 hover:text-paju-blue hover:bg-gray-50"
                     }`}
                   >
                     <span>{item.name}</span>
@@ -133,15 +133,15 @@ export default function Header() {
 
                 {/* 드롭다운 메뉴 */}
                 {item.children && hoveredMenu === item.name && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 py-2 overflow-hidden">
                     {item.children.map((child) => (
                       <Link
                         key={child.path}
                         href={child.path}
                         className={`block px-4 py-3 text-sm transition-all duration-200 ${
                           isActivePath(child.path)
-                            ? "bg-gradient-to-r from-green-50 to-orange-50 text-green-700 font-semibold border-l-4 border-green-500"
-                            : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700 hover:font-medium"
+                            ? "bg-paju-blue/10 text-paju-blue font-semibold border-l-4 border-paju-blue"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-paju-blue"
                         }`}
                       >
                         {child.name}
@@ -175,13 +175,13 @@ export default function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                  className="px-3 py-2 md:px-4 md:py-2 bg-paju-blue text-white rounded-lg text-sm font-semibold hover:bg-paju-blue-dark transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   로그인
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="hidden sm:block px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                  className="hidden sm:block px-3 py-2 md:px-4 md:py-2 bg-white text-paju-blue border border-paju-blue rounded-lg text-sm font-semibold hover:bg-paju-blue/5 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   회원가입
                 </Link>
@@ -215,7 +215,7 @@ export default function Header() {
 
         {/* 모바일 네비게이션 */}
         {isMenuOpen && (
-          <nav className="lg:hidden pb-4 border-t-2 border-orange-200 mt-2 pt-4 bg-white/95 backdrop-blur-sm rounded-b-xl">
+          <nav className="lg:hidden pb-4 border-t border-gray-100 mt-2 pt-4 bg-white/95 backdrop-blur-sm rounded-b-lg">
             <div className="flex flex-col space-y-1">
               {menuItems.map((item) => (
                 <div key={item.name}>
@@ -224,8 +224,8 @@ export default function Header() {
                       href={item.path}
                       className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                         isActivePath(item.path)
-                          ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
-                          : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700"
+                          ? "bg-paju-blue text-white shadow-sm"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-paju-blue"
                       }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -233,7 +233,7 @@ export default function Header() {
                     </Link>
                   ) : (
                     <div>
-                      <div className="px-4 py-3 text-sm font-semibold text-gray-800 bg-gradient-to-r from-orange-100 to-green-100 rounded-lg">
+                      <div className="px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 rounded-lg">
                         {item.name}
                       </div>
                       {item.children && (
@@ -244,8 +244,8 @@ export default function Header() {
                               href={child.path}
                               className={`block px-4 py-2.5 rounded-lg text-sm transition-all duration-200 ${
                                 isActivePath(child.path)
-                                  ? "bg-gradient-to-r from-green-100 to-orange-100 text-green-700 font-semibold border-l-4 border-green-500"
-                                  : "text-gray-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:text-orange-700"
+                                  ? "bg-paju-blue/10 text-paju-blue font-semibold border-l-4 border-paju-blue"
+                                  : "text-gray-600 hover:bg-gray-50 hover:text-paju-blue"
                               }`}
                               onClick={() => setIsMenuOpen(false)}
                             >
@@ -262,7 +262,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/my-page"
-                    className="mt-4 px-4 py-3 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 shadow-sm flex items-center justify-center border-2 border-orange-200"
+                    className="mt-4 px-4 py-3 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 hover:text-paju-blue transition-all duration-200 shadow-sm flex items-center justify-center border border-gray-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <UserCircleIcon className="w-5 h-5 mr-2" />
@@ -282,14 +282,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/auth/login"
-                    className="mt-4 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md"
+                    className="mt-4 px-4 py-3 bg-paju-blue text-white rounded-lg text-sm font-semibold hover:bg-paju-blue-dark transition-all duration-200 shadow-sm"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     로그인
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="mt-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
+                    className="mt-2 px-4 py-3 bg-white text-paju-blue border border-paju-blue rounded-lg text-sm font-semibold hover:bg-paju-blue/5 transition-all duration-200 shadow-sm"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     회원가입
