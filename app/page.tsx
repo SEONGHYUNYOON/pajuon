@@ -14,6 +14,9 @@ import {
 } from "@heroicons/react/24/outline";
 import UserDashboardWidget from "@/components/dashboard/UserDashboardWidget";
 import RecentActivity from "@/components/home/RecentActivity";
+import BoardListWidget from "@/components/home/BoardListWidget";
+import LoginWidget from "@/components/home/LoginWidget";
+import Card from "@/components/ui/Card";
 
 export default function Home() {
   // 더미 데이터 (실제로는 API에서 가져올 데이터)
@@ -102,54 +105,151 @@ export default function Home() {
 
       <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* 유저 대시보드 위젯 */}
-          <section className="mb-16">
-            <UserDashboardWidget />
-          </section>
+          {/* 2단 컬럼 레이아웃 */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {/* 좌측/중앙: 메인 콘텐츠 영역 (70%) */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* 파주 핫이슈 */}
+              <BoardListWidget
+                title="파주 핫이슈"
+                href="/now/issue"
+                posts={[
+                  {
+                    id: 1,
+                    title: "파주시, 2024년 지역경제 활성화 사업 추진",
+                    category: "뉴스",
+                    commentCount: 23,
+                    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 2,
+                    title: "운정호수공원 문화행사 개최 안내",
+                    category: "공지",
+                    commentCount: 15,
+                    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 3,
+                    title: "파주시 주요 도로 교통 정보 (실시간)",
+                    category: "교통",
+                    commentCount: 8,
+                    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 4,
+                    title: "파주시청 신청사 건립 공사 진행 상황",
+                    category: "뉴스",
+                    commentCount: 31,
+                    createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+                  },
+                ]}
+              />
 
-          {/* 최근 활동 */}
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">최근 활동</h2>
-            <RecentActivity />
-          </section>
-          
-          {/* 신규 개설 모임 */}
-          <section className="mb-16">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">신규 개설 모임</h2>
-              <Link
-                href="/groups"
-                className="flex items-center text-paju-blue hover:text-paju-blue-dark font-medium"
-              >
-                전체 보기
-                <ArrowRightIcon className="w-5 h-5 ml-1" />
-              </Link>
+              {/* 자유게시판 베스트 */}
+              <BoardListWidget
+                title="자유게시판 베스트"
+                href="/community/general"
+                posts={[
+                  {
+                    id: 1,
+                    title: "파주 맛집 추천합니다! 헤이리 카페거리 정말 좋아요",
+                    category: "맛집",
+                    commentCount: 45,
+                    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 2,
+                    title: "운정동 주민 모임 가입하세요",
+                    category: "모임",
+                    commentCount: 28,
+                    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 3,
+                    title: "파주 장터 물품 팝니다 - 아이폰 14 프로",
+                    category: "장터",
+                    commentCount: 12,
+                    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 4,
+                    title: "DMZ 땅굴 관람 후기 - 정말 인상적이었어요",
+                    category: "관광",
+                    commentCount: 19,
+                    createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+                  },
+                ]}
+              />
+
+              {/* 등산 모임 현황 */}
+              <BoardListWidget
+                title="등산 모임 현황"
+                href="/community/hiking"
+                posts={[
+                  {
+                    id: 1,
+                    title: "이번 주말 등산 모임 참여하실 분 구합니다",
+                    category: "모집",
+                    commentCount: 7,
+                    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 2,
+                    title: "파주 인근 등산 코스 추천해주세요",
+                    category: "질문",
+                    commentCount: 14,
+                    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+                  },
+                  {
+                    id: 3,
+                    title: "등산 모임 정기 모임 공지사항",
+                    category: "공지",
+                    commentCount: 5,
+                    createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+                  },
+                ]}
+              />
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
-              {newGroups.map((group, index) => (
-                <Link
-                  key={group.id}
-                  href={`/groups/${group.id}`}
-                  className="block p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <span className="px-3 py-1 bg-paju-green/10 text-paju-green rounded-full text-xs font-medium">
-                          {group.category}
+
+            {/* 우측: 사이드바 영역 (30%) */}
+            <div className="space-y-6">
+              {/* 로그인 위젯 */}
+              <LoginWidget />
+
+              {/* 실시간 인기 검색어 */}
+              <Card className="p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">실시간 인기 검색어</h3>
+                <div className="space-y-2">
+                  {[
+                    "파주 맛집",
+                    "운정동",
+                    "헤이리",
+                    "파주 장터",
+                    "등산 모임",
+                    "파주 일자리",
+                    "DMZ 관광",
+                    "파주 뉴스",
+                  ].map((keyword, index) => (
+                    <Link
+                      key={index}
+                      href={`/search?q=${encodeURIComponent(keyword)}`}
+                      className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <span className="text-sm text-gray-700">
+                        <span className="text-paju-blue font-semibold mr-2">
+                          {index + 1}
                         </span>
-                        <span className="text-xs text-gray-500">{group.created}</span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{group.name}</h3>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <span>👥 {group.members}명 참여</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                        {keyword}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {index < 3 ? "🔥" : ""}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </Card>
             </div>
-          </section>
+          </div>
 
         {/* 우리동네 핫플 베스트 후기 */}
         <section className="mb-16">
