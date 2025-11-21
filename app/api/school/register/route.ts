@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session?.user?.id) {
+    if (!user || authError) {
       return NextResponse.json(
         { error: "로그인이 필요합니다." },
         { status: 401 }
@@ -24,58 +23,70 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 학교가 DB에 있는지 확인 (없으면 생성)
-    let school = await prisma.school.findFirst({
-      where: {
-        name: schoolName,
-        type: schoolType,
-      },
-    });
+    // 현재 프로필 조회
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("school_elementary, school_middle, school_high")
+      .eq("id", user.id)
+      .single();
 
-    if (!school) {
-      school = await prisma.school.create({
-        data: {
-          name: schoolName,
-          type: schoolType,
-        },
-      });
+    if (profileError) {
+      return NextResponse.json(
+        { error: "프로필을 찾을 수 없습니다." },
+        { status: 404 }
+      );
     }
 
-    // 사용자의 schoolOrigin 배열에 추가
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { schoolOrigin: true },
-    });
-
-    const schoolKey = `${schoolType} ${schoolName}`;
-    const updatedSchoolOrigin = user?.schoolOrigin || [];
-    
     // 이미 등록된 학교인지 확인
-    if (updatedSchoolOrigin.includes(schoolKey)) {
+    if (schoolType === "초등학교" && profile.school_elementary === schoolName) {
+      return NextResponse.json(
+        { error: "이미 등록된 학교입니다." },
+        { status: 400 }
+      );
+    }
+    if (schoolType === "중학교" && profile.school_middle === schoolName) {
+      return NextResponse.json(
+        { error: "이미 등록된 학교입니다." },
+        { status: 400 }
+      );
+    }
+    if (schoolType === "고등학교" && profile.school_high === schoolName) {
       return NextResponse.json(
         { error: "이미 등록된 학교입니다." },
         { status: 400 }
       );
     }
 
-    // schoolOrigin 배열에 추가
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        schoolOrigin: {
-          set: [...updatedSchoolOrigin, schoolKey],
-        },
-        school: schoolKey, // 기존 호환성을 위해
-      },
-    });
+    // 학교 정보 업데이트
+    const updateData: {
+      school_elementary?: string;
+      school_middle?: string;
+      school_high?: string;
+    } = {};
+
+    if (schoolType === "초등학교") {
+      updateData.school_elementary = schoolName;
+    } else if (schoolType === "중학교") {
+      updateData.school_middle = schoolName;
+    } else if (schoolType === "고등학교") {
+      updateData.school_high = schoolName;
+    }
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update(updateData)
+      .eq("id", user.id);
+
+    if (updateError) {
+      throw updateError;
+    }
 
     return NextResponse.json(
       {
         message: "학교 등록이 완료되었습니다.",
         school: {
-          id: school.id,
-          name: school.name,
-          type: school.type,
+          name: schoolName,
+          type: schoolType,
         },
       },
       { status: 200 }
@@ -88,4 +99,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

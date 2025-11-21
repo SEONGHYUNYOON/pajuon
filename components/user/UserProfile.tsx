@@ -1,6 +1,7 @@
 "use client";
 
-import UserRankBadge, { UserRank } from "./UserRankBadge";
+import UserRankBadge from "./UserRankBadge";
+import { UserRank } from "@/lib/rankConfig";
 
 interface UserProfileProps {
   nickname: string;
@@ -10,11 +11,11 @@ interface UserProfileProps {
 }
 
 const rankThresholds: Record<UserRank, number> = {
-  newbie: 0,
-  jang: 100,
-  dong: 500,
-  mayor: 2000,
-  honor: 5000,
+  NEWBIE: 0,
+  JANG: 100,
+  DONG: 500,
+  MAYOR: 2000,
+  HONOR: 5000,
 };
 
 export default function UserProfile({

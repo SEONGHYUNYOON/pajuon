@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRank } from "@prisma/client";
+import { UserRank } from "@/lib/rankConfig";
 
 export type { UserRank };
 

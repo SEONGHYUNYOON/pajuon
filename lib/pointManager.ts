@@ -1,6 +1,4 @@
-import { prisma } from "./prisma";
-import { getCurrentRank } from "./rankConfig";
-import { UserRank } from "@prisma/client";
+import { getCurrentRank, UserRank } from "./rankConfig";
 
 export enum PointAction {
   CREATE_POST = 10,
@@ -26,31 +24,27 @@ function calculateRank(points: number): UserRank {
 export async function grantPoints(userId: string, action: PointAction): Promise<void> {
   const points = action;
 
-  // 활동 점수 업데이트
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      points: {
-        increment: points,
-      },
-      activityPoints: {
-        increment: points,
-      },
-    },
-  });
-
-  // 새로운 등급 계산
-  const newRank = calculateRank(updatedUser.activityPoints);
-
-  // 등급이 변경된 경우에만 업데이트
-  if (updatedUser.rank !== newRank) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        rank: newRank,
-      },
-    });
-  }
+  // Supabase를 사용하여 활동 점수 업데이트
+  // TODO: Supabase 클라이언트를 사용하여 구현
+  // const supabase = await createClient();
+  // const { data: profile } = await supabase
+  //   .from("profiles")
+  //   .select("activity_points, citizen_rank")
+  //   .eq("id", userId)
+  //   .single();
+  //
+  // if (profile) {
+  //   const newPoints = (profile.activity_points || 0) + points;
+  //   const newRank = calculateRank(newPoints);
+  //
+  //   await supabase
+  //     .from("profiles")
+  //     .update({
+  //       activity_points: newPoints,
+  //       citizen_rank: newRank,
+  //     })
+  //     .eq("id", userId);
+  // }
 }
 
 /**
@@ -61,13 +55,16 @@ export async function grantPoints(userId: string, action: PointAction): Promise<
 export async function setActivityPoints(userId: string, points: number): Promise<void> {
   const newRank = calculateRank(points);
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      activityPoints: points,
-      rank: newRank,
-    },
-  });
+  // Supabase를 사용하여 활동 점수 설정
+  // TODO: Supabase 클라이언트를 사용하여 구현
+  // const supabase = await createClient();
+  // await supabase
+  //   .from("profiles")
+  //   .update({
+  //     activity_points: points,
+  //     citizen_rank: newRank,
+  //   })
+  //   .eq("id", userId);
 }
 
 /**
@@ -76,23 +73,25 @@ export async function setActivityPoints(userId: string, points: number): Promise
  * @param points 증가시킬 점수
  */
 export async function incrementActivityPoints(userId: string, points: number): Promise<void> {
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      activityPoints: {
-        increment: points,
-      },
-    },
-  });
-
-  const newRank = calculateRank(updatedUser.activityPoints);
-
-  if (updatedUser.rank !== newRank) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        rank: newRank,
-      },
-    });
-  }
+  // Supabase를 사용하여 활동 점수 증가
+  // TODO: Supabase 클라이언트를 사용하여 구현
+  // const supabase = await createClient();
+  // const { data: profile } = await supabase
+  //   .from("profiles")
+  //   .select("activity_points, citizen_rank")
+  //   .eq("id", userId)
+  //   .single();
+  //
+  // if (profile) {
+  //   const newPoints = (profile.activity_points || 0) + points;
+  //   const newRank = calculateRank(newPoints);
+  //
+  //   await supabase
+  //     .from("profiles")
+  //     .update({
+  //       activity_points: newPoints,
+  //       citizen_rank: newRank,
+  //     })
+  //     .eq("id", userId);
+  // }
 }

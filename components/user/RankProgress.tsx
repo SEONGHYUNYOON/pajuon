@@ -1,7 +1,6 @@
 "use client";
 
 import { getCurrentRank, getNextRank, rankConfigs } from "@/lib/rankConfig";
-import { UserRank } from "@prisma/client";
 
 interface RankProgressProps {
   points: number;

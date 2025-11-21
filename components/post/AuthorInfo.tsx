@@ -30,7 +30,7 @@ export default function AuthorInfo({
         </div>
       )}
       <span className="font-medium text-gray-900">{nickname}</span>
-      <UserRankBadge rank={rank} />
+      <UserRankBadge rank={rank === "newbie" ? "NEWBIE" : rank} />
     </div>
   );
 }

@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
 
 // 실제 프로덕션에서는 AWS S3, Cloudinary 등 사용
 // 여기서는 간단하게 로컬 파일 시스템 또는 외부 스토리지 연동 예시
 export async function POST(request: NextRequest) {
   try {
     // 인증 확인
-    const session = await getServerSession(authOptions);
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (!session || !session.user?.id) {
+    if (!user || authError) {
       return NextResponse.json(
         { error: "로그인이 필요합니다." },
         { status: 401 }
@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
     // 1. AWS S3: @aws-sdk/client-s3 사용
     // 2. Cloudinary: cloudinary SDK 사용
     // 3. Vercel Blob: @vercel/blob 사용
+    // 4. Supabase Storage: supabase.storage 사용
     
     // 여기서는 임시로 Base64 인코딩하여 반환 (실제로는 S3 등에 업로드)
     const bytes = await file.arrayBuffer();

@@ -128,7 +128,7 @@ export default function SchoolPage() {
           </p>
         </div>
 
-        {!isAuthenticated ? (
+        {status !== "authenticated" || !session?.user ? (
           <div className="bg-white rounded-xl shadow-md p-8">
             <div className="text-center mb-8">
               <LockClosedIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -416,76 +416,6 @@ function SchoolAlumniBoard() {
           <p className="text-gray-500">위에서 학교를 선택하여 동문 게시판을 확인하세요.</p>
         </div>
       )}
-
-            {/* 통계 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <UserGroupIcon className="w-8 h-8 text-orange-500 mb-3" />
-                <div className="text-3xl font-bold text-gray-900 mb-1">156</div>
-                <div className="text-sm text-gray-600">등록된 동문</div>
-              </div>
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="text-3xl mb-3">📝</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">89</div>
-                <div className="text-sm text-gray-600">게시글</div>
-              </div>
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="text-3xl mb-3">💬</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">234</div>
-                <div className="text-sm text-gray-600">댓글</div>
-              </div>
-            </div>
-
-            {/* 동문 게시판 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">동문 게시판</h2>
-                <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium">
-                  글쓰기
-                </button>
-              </div>
-              <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((post) => (
-                  <div
-                    key={post}
-                    className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      동문 모임 일정 공지
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      이번 달 동문 모임이 12월 20일로 예정되어 있습니다...
-                    </p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <span>작성자: 김파주</span>
-                      <span className="mx-2">•</span>
-                      <span>2024-12-10</span>
-                      <span className="mx-2">•</span>
-                      <span>댓글 12개</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 동문 목록 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">동문 목록</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((member) => (
-                  <div key={member} className="text-center p-4 border border-gray-200 rounded-lg">
-                    <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-green-400 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-medium text-lg">
-                      {member}
-                    </div>
-                    <div className="font-medium text-gray-900">동문 {member}</div>
-                    <div className="text-xs text-gray-500">파주새댁</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

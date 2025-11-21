@@ -1,79 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 
 // 모임 상세 정보 조회
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const groupId = params.id;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const { id: groupId } = await params;
 
-    const group = await prisma.group.findUnique({
-      where: { id: groupId },
-      include: {
-        creator: {
-          select: {
-            id: true,
-            nickname: true,
-            profileImage: true,
-            rank: true,
-          },
-        },
-        members: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                nickname: true,
-                profileImage: true,
-                rank: true,
-                activityPoints: true,
-              },
-            },
-          },
-          orderBy: {
-            joinedAt: "desc",
-          },
-        },
-        posts: {
-          where: {
-            category: {
-              in: ["hiking", "riding", "goji-soccer"],
-            },
-          },
-          include: {
-            author: {
-              select: {
-                id: true,
-                nickname: true,
-                profileImage: true,
-              },
-            },
-            comments: {
-              select: {
-                id: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: 10, // 최근 10개만
-        },
-        _count: {
-          select: {
-            members: true,
-            posts: true,
-          },
-        },
-      },
-    });
+    // groups 테이블이 아직 Supabase에 없을 수 있으므로 임시로 에러 반환
+    // TODO: Supabase에 groups 테이블 생성 후 구현
+    return NextResponse.json(
+      { error: "모임 기능은 준비 중입니다." },
+      { status: 503 }
+    );
 
-    if (!group) {
+    // 아래는 groups 테이블이 생성된 후 사용할 코드
+    /*
+    const { data: group, error } = await supabase
+      .from("groups")
+      .select(`
+        id,
+        name,
+        description,
+        type,
+        cover_image,
+        created_at,
+        creator:profiles!groups_creator_id_fkey(id, nickname, profile_image, citizen_rank),
+        group_members(
+          id,
+          role,
+          joined_at,
+          user:profiles!group_members_user_id_fkey(id, nickname, profile_image, citizen_rank, activity_points)
+        ),
+        posts(
+          id,
+          title,
+          content,
+          category,
+          view_count,
+          created_at,
+          author:profiles!posts_author_id_fkey(id, nickname, profile_image),
+          comments(count)
+        )
+      `)
+      .eq("id", groupId)
+      .single();
+
+    if (error || !group) {
       return NextResponse.json(
         { error: "모임을 찾을 수 없습니다." },
         { status: 404 }
@@ -83,8 +60,8 @@ export async function GET(
     // 현재 사용자가 가입한 모임인지 확인
     let isMember = false;
     let userRole = null;
-    if (session?.user?.id) {
-      const member = group.members.find((m) => m.userId === session.user.id);
+    if (user) {
+      const member = group.group_members?.find((m: any) => m.user?.id === user.id);
       isMember = !!member;
       userRole = member?.role || null;
     }
@@ -96,6 +73,7 @@ export async function GET(
         userRole,
       },
     }, { status: 200 });
+    */
   } catch (error) {
     console.error("Group detail error:", error);
     return NextResponse.json(
@@ -104,4 +82,3 @@ export async function GET(
     );
   }
 }
-

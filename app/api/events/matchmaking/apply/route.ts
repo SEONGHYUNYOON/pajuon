@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
 
 // 선남선녀 미팅 신청
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session?.user?.id) {
+    if (!user || authError) {
       return NextResponse.json(
         { error: "로그인이 필요합니다." },
         { status: 401 }
@@ -25,27 +24,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 이벤트 확인
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-    });
+    // events 테이블이 아직 Supabase에 없을 수 있으므로 임시로 에러 반환
+    // TODO: Supabase에 events 테이블 생성 후 구현
+    return NextResponse.json(
+      { error: "이벤트 기능은 준비 중입니다." },
+      { status: 503 }
+    );
 
-    if (!event || event.type !== "MATCHMAKING") {
+    // 아래는 events 테이블이 생성된 후 사용할 코드
+    /*
+    // 이벤트 확인
+    const { data: event, error: eventError } = await supabase
+      .from("events")
+      .select("id, type")
+      .eq("id", eventId)
+      .single();
+
+    if (eventError || !event) {
       return NextResponse.json(
-        { error: "미팅 이벤트를 찾을 수 없습니다." },
+        { error: "이벤트를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
 
+    if (event.type !== "MATCHMAKING") {
+      return NextResponse.json(
+        { error: "미팅 이벤트가 아닙니다." },
+        { status: 400 }
+      );
+    }
+
     // 이미 신청했는지 확인
-    const existingParticipant = await prisma.eventParticipant.findUnique({
-      where: {
-        eventId_userId: {
-          eventId,
-          userId: session.user.id,
-        },
-      },
-    });
+    const { data: existingParticipant } = await supabase
+      .from("event_participants")
+      .select("id")
+      .eq("event_id", eventId)
+      .eq("user_id", user.id)
+      .single();
 
     if (existingParticipant) {
       return NextResponse.json(
@@ -54,15 +69,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 사용자 정보 업데이트 (선택적 - 추가 정보 저장용)
-    // 실제로는 별도 테이블에 저장하는 것이 좋습니다
-    const participant = await prisma.eventParticipant.create({
-      data: {
-        eventId,
-        userId: session.user.id,
+    // 이벤트 참가자 생성
+    const { data: participant, error: participantError } = await supabase
+      .from("event_participants")
+      .insert({
+        event_id: eventId,
+        user_id: user.id,
         status: "PENDING",
-      },
-    });
+        // 추가 정보는 별도 테이블에 저장하는 것이 좋습니다
+        // matchmaking_applications 테이블 생성 권장
+      })
+      .select()
+      .single();
+
+    if (participantError) {
+      throw participantError;
+    }
 
     return NextResponse.json(
       {
@@ -71,6 +93,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     );
+    */
   } catch (error) {
     console.error("Matchmaking apply error:", error);
     return NextResponse.json(
@@ -79,4 +102,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

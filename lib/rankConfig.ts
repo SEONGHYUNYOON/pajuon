@@ -1,7 +1,5 @@
-import { UserRank } from "@prisma/client";
-
-// Prisma Enum과 호환되는 타입
-export type UserRankType = UserRank;
+// 등급 타입 정의 (Prisma Enum 대신 직접 정의)
+export type UserRank = "NEWBIE" | "JANG" | "DONG" | "MAYOR" | "HONOR";
 
 export interface RankConfig {
   level: number;
@@ -11,7 +9,7 @@ export interface RankConfig {
   color: string;
 }
 
-// Prisma Enum 값과 매핑
+// 등급 설정
 export const rankConfigs: Record<UserRank, RankConfig> = {
   NEWBIE: {
     level: 1,
