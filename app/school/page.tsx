@@ -4,7 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { AcademicCapIcon, LockClosedIcon, UserGroupIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  AcademicCapIcon,
+  LockClosedIcon,
+  UserGroupIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
 
 const schoolTypes = ["초등학교", "중학교", "고등학교"];
 
@@ -120,16 +127,14 @@ export default function SchoolPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="text-center mb-12">
-          <AcademicCapIcon className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">아이러브스쿨</h1>
-          <p className="text-lg text-gray-600">
-            파주 내 출신 학교를 인증하고 동문들과 만나보세요
-          </p>
-        </div>
+        <PageHeader
+          title="아이러브스쿨"
+          description="파주 내 출신 학교를 인증하고 동문들과 만나보세요"
+          icon={<AcademicCapIcon className="w-8 h-8" />}
+        />
 
         {status !== "authenticated" || !session?.user ? (
-          <div className="bg-white rounded-xl shadow-md p-8">
+          <Card>
             <div className="text-center mb-8">
               <LockClosedIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -231,7 +236,7 @@ export default function SchoolPage() {
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         ) : (
           <SchoolAlumniBoard />
         )}
@@ -306,56 +311,81 @@ function SchoolAlumniBoard() {
 
   return (
     <div className="space-y-6">
-      {/* 학교 선택 필터 */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">동창 게시판</h2>
-        <div className="flex flex-wrap gap-2">
-          {userSchools.map((school) => (
-            <button
-              key={school}
-              onClick={() => setSelectedSchool(school)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedSchool === school
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {school} 출신 회원 보기
-            </button>
-          ))}
+      {/* 학교 검색창 - 대시보드형 */}
+      <Card>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">우리 학교 찾기</h2>
+        <div className="relative mb-6">
+          <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
+          <input
+            type="text"
+            placeholder="학교명으로 검색하세요..."
+            className="w-full pl-14 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-paju-blue focus:border-transparent text-lg"
+          />
         </div>
-      </div>
+
+        {/* 학교 선택 필터 */}
+        {userSchools.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">내 학교 게시판</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {userSchools.map((school) => (
+                <button
+                  key={school}
+                  onClick={() => setSelectedSchool(school)}
+                  className={`p-4 border-2 rounded-xl text-left transition-all ${
+                    selectedSchool === school
+                      ? "border-paju-blue bg-paju-blue/5"
+                      : "border-gray-200 hover:border-paju-blue/50 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-gray-900">{school}</div>
+                      <div className="text-sm text-gray-500 mt-1">동문 게시판 보기</div>
+                    </div>
+                    <AcademicCapIcon
+                      className={`w-6 h-6 ${
+                        selectedSchool === school ? "text-paju-blue" : "text-gray-400"
+                      }`}
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
 
       {selectedSchool && (
         <>
           {/* 통계 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <UserGroupIcon className="w-8 h-8 text-orange-500 mb-3" />
+            <Card>
+              <UserGroupIcon className="w-8 h-8 text-paju-blue mb-3" />
               <div className="text-3xl font-bold text-gray-900 mb-1">{alumni.length}</div>
               <div className="text-sm text-gray-600">등록된 동문</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            </Card>
+            <Card>
               <div className="text-3xl mb-3">📝</div>
               <div className="text-3xl font-bold text-gray-900 mb-1">{posts.length}</div>
               <div className="text-sm text-gray-600">게시글</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            </Card>
+            <Card>
               <div className="text-3xl mb-3">💬</div>
               <div className="text-3xl font-bold text-gray-900 mb-1">
                 {posts.reduce((sum, post) => sum + (post.comments?.length || 0), 0)}
               </div>
               <div className="text-sm text-gray-600">댓글</div>
-            </div>
+            </Card>
           </div>
 
           {/* 동문 게시판 */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <Card>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">{selectedSchool} 동문 게시판</h2>
               <Link
                 href={`/community/school-alumni/write?school=${encodeURIComponent(selectedSchool)}`}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors text-sm font-medium"
               >
                 글쓰기
               </Link>
@@ -387,10 +417,10 @@ function SchoolAlumniBoard() {
                 아직 게시글이 없습니다. 첫 번째 글을 작성해보세요!
               </div>
             )}
-          </div>
+          </Card>
 
           {/* 동문 목록 */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <Card>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">동문 목록</h2>
             {alumni.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -407,14 +437,14 @@ function SchoolAlumniBoard() {
             ) : (
               <div className="text-center py-8 text-gray-500">등록된 동문이 없습니다.</div>
             )}
-          </div>
+          </Card>
         </>
       )}
 
       {!selectedSchool && (
-        <div className="bg-white rounded-xl shadow-sm p-6 text-center py-12">
+        <Card className="text-center py-12">
           <p className="text-gray-500">위에서 학교를 선택하여 동문 게시판을 확인하세요.</p>
-        </div>
+        </Card>
       )}
     </div>
   );

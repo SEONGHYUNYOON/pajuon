@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { NewspaperIcon, MapPinIcon, FireIcon } from "@heroicons/react/24/outline";
+import { NewspaperIcon, MapPinIcon, FireIcon, StarIcon } from "@heroicons/react/24/outline";
+import PageHeader from "@/components/ui/PageHeader";
+import TabButton from "@/components/ui/TabButton";
+import Card from "@/components/ui/Card";
 
 const tabs = [
   { id: "official", name: "파주 공식 뉴스", icon: NewspaperIcon },
@@ -83,112 +86,102 @@ export default function NewsPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">파주ON 소식</h1>
-          <p className="text-lg text-gray-600">
-            파주의 최신 소식과 핫플레이스를 만나보세요
-          </p>
-        </div>
+        <PageHeader
+          title="파주ON 소식"
+          description="파주의 최신 소식과 핫플레이스를 만나보세요"
+          icon={<NewspaperIcon className="w-8 h-8" />}
+        />
 
         {/* 탭 */}
-        <div className="bg-white rounded-xl shadow-sm p-2 mb-8 flex space-x-2">
+        <div className="flex space-x-2 mb-8">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
-              <button
+              <TabButton
                 key={tab.id}
+                id={tab.id}
+                label={tab.name}
+                icon={<Icon className="w-5 h-5" />}
+                isActive={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 px-6 py-3 rounded-lg font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? "bg-green-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{tab.name}</span>
-              </button>
+              />
             );
           })}
         </div>
 
         {/* 콘텐츠 */}
         {activeTab === "official" ? (
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">파주 공식 뉴스</h2>
-                <p className="text-sm text-gray-600">
-                  파주시청 보도자료 및 공식 발표 자료
-                </p>
-              </div>
-              <div className="text-sm text-gray-500 mb-6">
-                * API 연동 또는 크롤링을 통해 최신 뉴스를 제공합니다
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {officialNews.map((news) => (
-                <Link
-                  key={news.id}
-                  href={`/news/official/${news.id}`}
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100"
-                >
-                  <div className="flex items-center text-xs text-green-600 mb-3">
-                    <NewspaperIcon className="w-4 h-4 mr-1" />
-                    {news.source}
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {news.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{news.summary}</p>
-                  <div className="text-xs text-gray-500">{news.date}</div>
-                </Link>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {officialNews.map((news) => (
+              <Card key={news.id} href={`/news/official/${news.id}`}>
+                <div className="flex items-center text-xs text-paju-blue mb-3">
+                  <NewspaperIcon className="w-4 h-4 mr-1" />
+                  {news.source}
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  {news.title}
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{news.summary}</p>
+                <div className="text-xs text-gray-500">{news.date}</div>
+              </Card>
+            ))}
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">우리동네 핫플</h2>
-                <Link
-                  href="/news/hotplaces/create"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                >
-                  후기 작성하기
-                </Link>
-              </div>
+          <div>
+            <div className="flex items-center justify-between mb-6">
               <p className="text-sm text-gray-600">
                 파주의 맛집, 카페, 명소를 시민 여러분이 직접 소개해주세요
               </p>
+              <Link
+                href="/news/hotplaces/create"
+                className="px-4 py-2 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors text-sm font-medium"
+              >
+                후기 작성하기
+              </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* 매거진 레이아웃 - 3열 그리드 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hotPlaces.map((place) => (
-                <Link
+                <Card
                   key={place.id}
                   href={`/news/hotplaces/${place.id}`}
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100"
+                  padding="none"
+                  className="overflow-hidden"
                 >
-                  <div className="h-48 bg-gradient-to-r from-green-400 to-orange-400 relative">
+                  {/* 이미지 */}
+                  <div className="h-64 bg-gradient-to-br from-paju-green to-paju-warm relative overflow-hidden">
                     <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-gray-900">
                       📸 {place.images}장
                     </div>
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-orange-600 text-white rounded-full text-sm font-medium">
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-paju-warm text-white rounded-full text-sm font-medium">
                       ❤️ {place.likes}
                     </div>
                   </div>
-                  <div className="p-6">
+                  {/* 카드 내용 */}
+                  <div className="p-4">
                     <div className="flex items-center text-sm text-gray-600 mb-2">
-                      <MapPinIcon className="w-4 h-4 mr-1" />
+                      <MapPinIcon className="w-4 h-4 mr-1 text-paju-blue" />
                       {place.place}
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{place.title}</h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{place.description}</p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>작성자: {place.author}</span>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
+                      {place.title}
+                    </h3>
+                    {/* 별점 (더미) */}
+                    <div className="flex items-center mb-2">
+                      <div className="flex text-yellow-400">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <StarIcon key={i} className="w-4 h-4 fill-current" />
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500 ml-2">4.5</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{place.description}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{place.author}</span>
                       <span>{place.date}</span>
                     </div>
                   </div>
-                </Link>
+                </Card>
               ))}
             </div>
           </div>

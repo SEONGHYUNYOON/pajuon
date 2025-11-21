@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CalendarIcon, MapPinIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import {
+  CalendarIcon,
+  MapPinIcon,
+  UserGroupIcon,
+  ClockIcon,
+  TicketIcon,
+} from "@heroicons/react/24/outline";
 import EventCalendar from "@/components/events/EventCalendar";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
 
 const events = [
   {
@@ -66,13 +74,11 @@ export default function EventsPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="text-center mb-12">
-          <CalendarIcon className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">ON-이벤트</h1>
-          <p className="text-lg text-gray-600">
-            PAJU ON에서 주최하는 공식 이벤트에 참여해보세요
-          </p>
-        </div>
+        <PageHeader
+          title="ON-이벤트"
+          description="PAJU ON에서 주최하는 공식 이벤트에 참여해보세요"
+          icon={<CalendarIcon className="w-8 h-8" />}
+        />
 
         {/* 이벤트 캘린더 */}
         <div className="mb-12">
@@ -83,51 +89,74 @@ export default function EventsPage() {
           />
         </div>
 
-        {/* 이벤트 목록 */}
+        {/* 이벤트 목록 - 티켓 예매 사이트 스타일 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <Link
+            <Card
               key={event.id}
               href={`/events/${event.id}`}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100"
+              padding="none"
+              className="overflow-hidden"
             >
-              <div className="h-48 bg-gradient-to-r from-orange-500 to-green-500 relative">
+              {/* 티켓 스타일 헤더 */}
+              <div className="h-48 bg-gradient-to-br from-paju-blue to-paju-green relative overflow-hidden">
                 <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-900">
                   {event.type}
                 </div>
-                <div className="absolute top-4 right-4 px-3 py-1 bg-green-600 text-white rounded-full text-xs font-medium">
+                <div className="absolute top-4 right-4 px-3 py-1 bg-paju-warm text-white rounded-full text-xs font-medium">
                   {event.status}
                 </div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <TicketIcon className="w-12 h-12 text-white/30" />
+                </div>
               </div>
+
+              {/* 티켓 내용 */}
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{event.title}</h3>
-                <div className="space-y-2 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center">
-                    <CalendarIcon className="w-4 h-4 mr-2 text-orange-500" />
-                    {event.date} {event.time}
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{event.title}</h3>
+                <div className="space-y-3 text-sm mb-4">
+                  <div className="flex items-center text-gray-700">
+                    <CalendarIcon className="w-5 h-5 mr-2 text-paju-blue" />
+                    <span className="font-medium">{event.date}</span>
                   </div>
-                  <div className="flex items-center">
-                    <MapPinIcon className="w-4 h-4 mr-2 text-green-500" />
-                    {event.location}
+                  <div className="flex items-center text-gray-700">
+                    <ClockIcon className="w-5 h-5 mr-2 text-paju-blue" />
+                    <span>{event.time}</span>
                   </div>
-                  <div className="flex items-center">
-                    <UserGroupIcon className="w-4 h-4 mr-2 text-blue-500" />
-                    {event.participants}/{event.maxParticipants}명
+                  <div className="flex items-center text-gray-700">
+                    <MapPinIcon className="w-5 h-5 mr-2 text-paju-blue" />
+                    <span className="line-clamp-1">{event.location}</span>
+                  </div>
+                  <div className="flex items-center text-gray-700">
+                    <UserGroupIcon className="w-5 h-5 mr-2 text-paju-blue" />
+                    <span>
+                      {event.participants}/{event.maxParticipants}명 참여
+                    </span>
                   </div>
                 </div>
+
+                {/* 참여 진행률 */}
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
                   <div
-                    className="bg-green-600 h-2 rounded-full"
+                    className="bg-paju-blue h-2 rounded-full transition-all"
                     style={{
                       width: `${(event.participants / event.maxParticipants) * 100}%`,
                     }}
-                  ></div>
+                  />
                 </div>
-                <button className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                  참가 신청하기
+
+                {/* 참여 신청 버튼 */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `/events/${event.id}`;
+                  }}
+                  className="w-full px-4 py-3 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors font-semibold"
+                >
+                  참여 신청하기
                 </button>
               </div>
-            </Link>
+            </Card>
           ))}
         </div>
       </div>
