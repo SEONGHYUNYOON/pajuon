@@ -124,16 +124,16 @@ export default function JobsPage() {
     : jobs.filter(job => job.type === selectedType);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-2xl mx-auto px-4">
+    <main className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-8">
+      <div className="w-full max-w-xl px-4 space-y-6">
         {/* 헤더 */}
-        <div className="text-center mb-8">
+        <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">👔 파주인</h1>
           <p className="text-gray-600">파주 지역 구인구직 정보</p>
         </div>
 
         {/* 필터 */}
-        <div className="mb-8 flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-2 justify-center">
           {jobTypes.map((type) => (
             <button
               key={type.id}
@@ -150,7 +150,7 @@ export default function JobsPage() {
         </div>
 
         {/* 구인구직 카드 리스트 */}
-        <div className="space-y-4">
+        <div className="space-y-4 mb-24">
           {filteredJobs.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-sm">
               <p className="text-gray-500 text-lg">등록된 구인구직이 없습니다.</p>
@@ -209,7 +209,7 @@ export default function JobsPage() {
       {/* 플로팅 공고 등록 버튼 */}
       <Link
         href="/jobs/new"
-        className="fixed bottom-24 right-6 md:right-[calc(50%-300px)] bg-[#0D4FFF] text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2 z-50"
+        className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#0D4FFF] text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2 z-50 max-w-xl mx-auto"
         onClick={(e) => {
           e.preventDefault();
           alert("준비 중입니다");
@@ -218,7 +218,7 @@ export default function JobsPage() {
         <Plus className="w-5 h-5" />
         <span className="font-medium">공고 등록</span>
       </Link>
-    </div>
+    </main>
   );
 }
 
