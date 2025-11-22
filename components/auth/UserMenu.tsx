@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { UserIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/utils/supabase/client";
 
 export default function UserMenu() {
@@ -95,39 +94,20 @@ export default function UserMenu() {
     );
   }
 
+  // 로그인하지 않은 경우: 로그인 | 회원가입 표시
   if (!user) {
     return (
-      <div 
-        className="flex items-center gap-4 relative" 
-        style={{ 
-          zIndex: 9999, 
-          position: 'relative',
-          border: '5px solid green', // 🐛 임시 디버깅용 초록 테두리
-          pointerEvents: 'auto'
-        }}
-      >
+      <div className="flex items-center gap-3">
         <Link
           href="/auth/login"
-          className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors cursor-pointer relative z-10"
-          style={{ 
-            zIndex: 9999, 
-            position: 'relative',
-            pointerEvents: 'auto',
-            border: '2px solid orange' // 🐛 임시 디버깅용 주황 테두리
-          }}
+          className="text-sm text-gray-600 hover:text-[#0D4FFF] transition-colors font-medium"
         >
           로그인
         </Link>
-        <span className="text-gray-300 relative z-10">|</span>
+        <span className="text-gray-300">|</span>
         <Link
           href="/auth/signup"
-          className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors cursor-pointer relative z-10"
-          style={{ 
-            zIndex: 9999, 
-            position: 'relative',
-            pointerEvents: 'auto',
-            border: '2px solid orange' // 🐛 임시 디버깅용 주황 테두리
-          }}
+          className="text-sm text-gray-600 hover:text-[#0D4FFF] transition-colors font-medium"
         >
           회원가입
         </Link>
@@ -135,11 +115,12 @@ export default function UserMenu() {
     );
   }
 
+  // 로그인한 경우: 프로필 드롭다운
   return (
     <div className="relative">
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors rounded-lg hover:bg-gray-50"
+        className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0D4FFF] transition-colors rounded-lg hover:bg-gray-50"
       >
         {user.profileImage ? (
           <img
@@ -195,4 +176,3 @@ export default function UserMenu() {
     </div>
   );
 }
-
