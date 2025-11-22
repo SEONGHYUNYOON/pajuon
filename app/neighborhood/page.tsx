@@ -61,7 +61,7 @@ export default function NeighborhoodPage() {
 
   return (
     <div className="min-h-screen bg-white py-8">
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 - 컬러풀한 타이틀 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 tracking-tighter mb-2">
