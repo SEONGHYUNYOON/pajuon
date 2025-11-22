@@ -1,15 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import { PhotoIcon, XMarkIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 
 export default function MarketWritePage() {
   const router = useRouter();
-  // const { data: session, status } = useSession(); // Removed: Using Supabase auth instead
-  const session = null; // Temporary: will be replaced with Supabase auth
-  const status = "unauthenticated"; // Temporary: will be replaced with Supabase auth
+  const [session, setSession] = useState<any>(null);
+  const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const checkSession = async () => {
+    try {
+      const supabase = createClient();
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setSession(currentSession);
+      setStatus(currentSession ? "authenticated" : "unauthenticated");
+    } catch (error) {
+      setStatus("unauthenticated");
+    }
+  };
   const [formData, setFormData] = useState({
     type: "팝니다",
     title: "",

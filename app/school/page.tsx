@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 import {
   AcademicCapIcon,
   LockClosedIcon,
@@ -28,9 +28,8 @@ interface UserSchool {
 
 export default function SchoolPage() {
   const router = useRouter();
-  // const { data: session, status } = useSession(); // Removed: Using Supabase auth instead
-  const session = null; // Temporary: will be replaced with Supabase auth
-  const status = "unauthenticated"; // Temporary: will be replaced with Supabase auth
+  const [session, setSession] = useState<any>(null);
+  const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [schools, setSchools] = useState<School[]>([]);
@@ -39,15 +38,27 @@ export default function SchoolPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-      return;
-    }
+    checkSession();
+  }, []);
 
-    if (session?.user) {
+  const checkSession = async () => {
+    try {
+      const supabase = createClient();
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setSession(currentSession);
+      setStatus(currentSession ? "authenticated" : "unauthenticated");
+      
+      if (!currentSession) {
+        router.push("/auth/login");
+        return;
+      }
+      
       loadUserSchools();
+    } catch (error) {
+      setStatus("unauthenticated");
+      router.push("/auth/login");
     }
-  }, [session, status, router]);
+  };
 
   useEffect(() => {
     if (selectedType) {
@@ -249,12 +260,21 @@ export default function SchoolPage() {
 
 // 동창 게시판 컴포넌트
 function SchoolAlumniBoard() {
-  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
-  const session = null; // Temporary: will be replaced with Supabase auth
+  const [session, setSession] = useState<any>(null);
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [alumni, setAlumni] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const checkSession = async () => {
+    const supabase = createClient();
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    setSession(currentSession);
+  };
 
   useEffect(() => {
     if (session?.user && selectedSchool) {

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarIcon, MapPinIcon, UserGroupIcon, ClockIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
   // 실제로는 params.id로 API 호출하여 데이터를 가져와야 함
@@ -37,9 +37,17 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     ],
   };
   const router = useRouter();
-  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
-  const session = null; // Temporary: will be replaced with Supabase auth
+  const [session, setSession] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const supabase = createClient();
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setSession(currentSession);
+    };
+    checkSession();
+  }, []);
 
   const [formData, setFormData] = useState({
     age: "",

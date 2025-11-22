@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import { useRouter } from "next/navigation";
 import {
   CalendarIcon,
@@ -12,6 +11,7 @@ import {
   PlusIcon,
   CameraIcon,
 } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 
 interface CampingPost {
   id: string;
@@ -32,14 +32,20 @@ interface CampingPost {
 
 export default function CampingPage() {
   const router = useRouter();
-  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
-  const session = null; // Temporary: will be replaced with Supabase auth
+  const [session, setSession] = useState<any>(null);
   const [posts, setPosts] = useState<CampingPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    checkSession();
     loadCampingPosts();
   }, []);
+
+  const checkSession = async () => {
+    const supabase = createClient();
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    setSession(currentSession);
+  };
 
   const loadCampingPosts = async () => {
     setIsLoading(true);

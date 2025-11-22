@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Newspaper, BuildingOffice2Icon, BusIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { NewspaperIcon, BuildingOffice2Icon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { Bus } from "lucide-react";
 
 const tabs = [
-  { id: "news", label: "파주 News", icon: Newspaper },
+  { id: "news", label: "파주 News", icon: NewspaperIcon },
   { id: "hospital", label: "병원/약국", icon: BuildingOffice2Icon },
-  { id: "transport", label: "교통/버스", icon: BusIcon },
+  { id: "transport", label: "교통/버스", icon: Bus },
   { id: "meal", label: "오늘의 급식", icon: BookOpenIcon },
 ];
 
