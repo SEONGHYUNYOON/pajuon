@@ -61,18 +61,18 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* 메인 프로모션 배너 */}
-      <section className="relative h-64 md:h-80 lg:h-96 mb-6 rounded-2xl overflow-hidden shadow-lg mx-4 md:mx-6 lg:mx-8 mt-4">
+      <section className="relative h-64 mb-6 rounded-2xl overflow-hidden shadow-lg mx-4 md:mx-6 lg:mx-8 mt-4">
         <img
-          src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80&sig=main"
+          src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80&random=${Math.random()}`}
           alt="파주 프로모션"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-6 md:px-10">
           <div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
               파주에서 만나요
             </h1>
-            <p className="text-lg md:text-xl text-white/90">
+            <p className="text-base md:text-lg text-white/90">
               함께 만들어가는 파주 커뮤니티
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80&sig=${index}`}
+                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80&random=${Math.random()}`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -186,7 +186,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80&sig=${index}`}
+                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80&random=${Math.random()}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -238,7 +238,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&q=80&sig=${index}`}
+                      src={`https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&q=80&random=${Math.random()}`}
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
@@ -286,7 +286,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&sig=${index}`}
+                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&random=${Math.random()}`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -327,7 +327,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`${group.image}&sig=${index}`}
+                      src={`${group.image}&random=${Math.random()}`}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />

@@ -12,29 +12,21 @@ const tabs = [
   { id: "hotplaces", name: "우리동네 핫플", icon: FireIcon },
 ];
 
-const officialNews = [
-  {
-    id: 1,
-    title: "파주시, 2024년 지역경제 활성화 사업 추진",
-    date: "2024-12-10",
-    source: "파주시청 보도자료",
-    summary: "파주시가 내년 지역경제 활성화를 위한 다양한 사업을 추진한다고 발표했습니다...",
-  },
-  {
-    id: 2,
-    title: "운정호수공원 문화행사 개최 안내",
-    date: "2024-12-09",
-    source: "파주시청 보도자료",
-    summary: "운정호수공원에서 다채로운 문화행사가 개최됩니다...",
-  },
-  {
-    id: 3,
-    title: "파주시 공공시설 이용 안내",
-    date: "2024-12-08",
-    source: "파주시청 보도자료",
-    summary: "파주시 주요 공공시설 이용 시간 및 방법 안내입니다...",
-  },
+const baseOfficialNews = [
+  { id: 1, title: "파주시, 2024년 지역경제 활성화 사업 추진", date: "2024-12-10", source: "파주시청 보도자료", summary: "파주시가 내년 지역경제 활성화를 위한 다양한 사업을 추진한다고 발표했습니다...", },
+  { id: 2, title: "운정호수공원 문화행사 개최 안내", date: "2024-12-09", source: "파주시청 보도자료", summary: "운정호수공원에서 다채로운 문화행사가 개최됩니다...", },
+  { id: 3, title: "파주시 공공시설 이용 안내", date: "2024-12-08", source: "파주시청 보도자료", summary: "파주시 주요 공공시설 이용 시간 및 방법 안내입니다...", },
 ];
+
+const officialNews = Array.from({ length: 24 }, (_, i) => {
+  const base = baseOfficialNews[i % baseOfficialNews.length];
+  return {
+    ...base,
+    id: i + 1,
+    title: `${base.title} ${i >= baseOfficialNews.length ? `(${Math.floor(i / baseOfficialNews.length) + 1})` : ""}`,
+    date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  };
+});
 
 const hotPlaces = [
   {
@@ -113,7 +105,7 @@ export default function NewsPage() {
         {activeTab === "official" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {officialNews.map((news) => (
-              <Card key={news.id} href={`/news/official/${news.id}`}>
+              <Card key={news.id} href={`/news/${news.id}`}>
                 <div className="flex items-center text-xs text-paju-blue mb-3">
                   <NewspaperIcon className="w-4 h-4 mr-1" />
                   {news.source}

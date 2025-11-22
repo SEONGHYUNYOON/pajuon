@@ -2,91 +2,84 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   ArrowLeftIcon,
   HeartIcon,
   ShareIcon,
   ChatBubbleLeftRightIcon,
   MapPinIcon,
-  ClockIcon,
+  CalendarIcon,
 } from "@heroicons/react/24/outline";
 import {
   HeartIcon as HeartIconSolid,
 } from "@heroicons/react/24/solid";
 
 // 더미 데이터
-const marketDetails: Record<string, any> = {
+const newsDetails: Record<string, any> = {
   "1": {
     id: "1",
-    title: "아이폰 14 프로 팝니다",
-    price: 800000,
-    location: "운정동",
-    time: "2시간 전",
-    description: `아이폰 14 프로 128GB 딥퍼플 색상 판매합니다.
+    title: "파주시, 2024년 지역경제 활성화 사업 추진",
+    date: "2024-12-10",
+    source: "파주시청 보도자료",
+    content: `파주시가 내년 지역경제 활성화를 위한 다양한 사업을 추진한다고 발표했습니다.
 
-사용 기간: 약 1년 3개월
-상태: 매우 깨끗함, 생활 보호 필름 부착되어 있음
-박스, 충전기 포함입니다.
+주요 내용:
+- 소상공인 지원 사업 확대
+- 지역 상권 활성화 프로그램 운영
+- 청년 창업 지원 강화
 
-직거래 선호하며, 파주 운정동 근처에서 만나볼 수 있습니다.
-
-상태가 정말 좋아서 새제품과 비슷합니다. 직거래 원하시는 분만 연락 부탁드립니다!`,
-    images: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"],
-    seller: {
-      nickname: "파주시민",
+파주시 관계자는 "지역경제의 지속가능한 성장을 위해 다양한 정책을 마련했다"고 밝혔습니다.`,
+    author: {
+      nickname: "파주시청",
       profileImage: null,
     },
     comments: [
       {
         id: "1",
-        author: "구매자",
-        content: "가격 협상 가능한가요?",
+        author: "파주시민",
+        content: "좋은 정책이네요! 많은 도움이 될 것 같습니다.",
         createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "2",
-        author: "관심있다",
-        content: "직거래 가능한 시간 알려주세요!",
+        author: "소상공인",
+        content: "실질적인 지원이 필요합니다.",
         createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
       },
     ],
   },
 };
 
-const generateMarketDetail = (id: string, title: string, price: number) => ({
+const generateNewsDetail = (id: string, title: string) => ({
   id,
   title,
-  price,
-  location: "파주시",
-  time: "1일 전",
-  description: `${title}에 대한 상세 설명입니다.
+  date: new Date().toISOString().split("T")[0],
+  source: "파주시청",
+  content: `${title}에 대한 상세 내용입니다.
 
-상품 상태가 매우 양호하며, 깔끔하게 사용했습니다.
-직거래 가능하며, 파주 지역에서 만나볼 수 있습니다.
+파주시의 다양한 소식과 정보를 전달드립니다.
 
-궁금한 점이 있으시면 댓글로 문의해주세요!`,
-  images: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"],
-  seller: {
-    nickname: "판매자",
+시민 여러분의 많은 관심과 참여 부탁드립니다.`,
+  author: {
+    nickname: "파주시청",
     profileImage: null,
   },
   comments: [
     {
       id: "1",
-      author: "구매자1",
-      content: "관심있습니다!",
+      author: "시민",
+      content: "좋은 정보 감사합니다!",
       createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     },
   ],
 });
 
-export default function MarketDetailPage({ params }: { params: { id: string } }) {
+export default function NewsDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
   const [commentText, setCommentText] = useState("");
 
-  const item = marketDetails[params.id] || generateMarketDetail(params.id, "중고 물품", 100000);
+  const news = newsDetails[params.id] || generateNewsDetail(params.id, "파주시 뉴스");
 
   const handleComment = () => {
     if (!commentText.trim()) return;
@@ -104,61 +97,48 @@ export default function MarketDetailPage({ params }: { params: { id: string } })
         >
           <ArrowLeftIcon className="w-6 h-6 text-gray-900" />
         </button>
-        <h1 className="text-lg font-bold text-gray-900 line-clamp-1">중고거래</h1>
+        <h1 className="text-lg font-bold text-gray-900 line-clamp-1">파주 소식</h1>
       </div>
 
-      {/* 이미지 */}
+      {/* 본문 이미지 */}
       <div className="relative bg-gray-100">
         <img
-          src={`${item.images[0]}&random=${Math.random()}`}
-          alt={item.title}
-          className="w-full h-96 object-cover"
+          src={`https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=1200&q=80&random=${Math.random()}`}
+          alt={news.title}
+          className="w-full h-64 object-cover"
         />
       </div>
 
-      {/* 판매자 정보 */}
+      {/* 작성자 정보 */}
       <div className="px-4 py-4 border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
-            {item.seller.nickname.charAt(0)}
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            {news.author.nickname.charAt(0)}
           </div>
           <div className="flex-1">
-            <div className="font-semibold text-gray-900">{item.seller.nickname}</div>
-            <div className="text-sm text-gray-500">{item.location}</div>
+            <div className="font-semibold text-gray-900">{news.author.nickname}</div>
+            <div className="text-sm text-gray-500">{news.date}</div>
           </div>
         </div>
       </div>
 
-      {/* 상품 정보 */}
+      {/* 본문 내용 */}
       <div className="px-4 py-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{item.title}</h2>
-        <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
-          <div className="flex items-center space-x-1">
-            <MapPinIcon className="w-4 h-4" />
-            <span>{item.location}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <ClockIcon className="w-4 h-4" />
-            <span>{item.time}</span>
-          </div>
-        </div>
-        <div className="text-3xl font-bold text-gray-900 mb-6">
-          {item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}
-        </div>
-        <div className="prose max-w-none">
-          <p className="text-gray-700 whitespace-pre-line leading-relaxed">{item.description}</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">{news.title}</h2>
+        <div className="prose max-w-none mb-6">
+          <p className="text-gray-700 whitespace-pre-line leading-relaxed">{news.content}</p>
         </div>
       </div>
 
       {/* 댓글 섹션 */}
       <div className="px-4 py-6 border-t border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          댓글 {item.comments.length}개
+          댓글 {news.comments.length}개
         </h3>
         <div className="space-y-4 mb-6">
-          {item.comments.map((comment: any) => (
+          {news.comments.map((comment: any) => (
             <div key={comment.id} className="flex space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {comment.author.charAt(0)}
               </div>
               <div className="flex-1">
@@ -180,12 +160,12 @@ export default function MarketDetailPage({ params }: { params: { id: string } })
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="댓글을 입력하세요..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               rows={3}
             />
             <button
               onClick={handleComment}
-              className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
             >
               댓글 작성
             </button>
@@ -206,22 +186,16 @@ export default function MarketDetailPage({ params }: { params: { id: string } })
           ) : (
             <HeartIcon className="w-5 h-5" />
           )}
-          <span className="text-sm font-medium">관심</span>
+          <span className="text-sm font-medium">좋아요</span>
         </button>
         <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
           <ShareIcon className="w-5 h-5" />
           <span className="text-sm font-medium">공유</span>
         </button>
-        <Link
-          href={`/life/market/${params.id}/chat`}
-          className="flex items-center space-x-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-        >
-          <ChatBubbleLeftRightIcon className="w-5 h-5" />
-          <span className="text-sm font-medium">채팅하기</span>
-        </Link>
       </div>
 
       <div className="h-24"></div>
     </div>
   );
 }
+

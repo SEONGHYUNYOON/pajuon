@@ -1,359 +1,265 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
+  ArrowLeftIcon,
+  HeartIcon,
+  ShareIcon,
   ChatBubbleLeftRightIcon,
   UserGroupIcon,
-  DocumentTextIcon,
-  PhotoIcon,
   CalendarIcon,
-  UserPlusIcon,
-  XMarkIcon,
   MapPinIcon,
 } from "@heroicons/react/24/outline";
-import PageHeader from "@/components/ui/PageHeader";
-import TabButton from "@/components/ui/TabButton";
-import Card from "@/components/ui/Card";
+import {
+  HeartIcon as HeartIconSolid,
+  ShareIcon as ShareIconSolid,
+} from "@heroicons/react/24/solid";
 
-const groupTypeLabels: Record<string, string> = {
-  HIKING: "등산",
-  RIDING: "라이딩",
-  SOCCER: "고지 축구",
-  CAMPING: "캠핑",
-  OTHER: "기타",
+// 더미 데이터 - 상세 정보
+const groupDetails: Record<string, any> = {
+  "1": {
+    id: "1",
+    name: "파주 주말 등산회",
+    description: "매 주말 함께 등산하며 건강한 삶을 추구하는 모임입니다. 초보자 환영!",
+    type: "HIKING",
+    coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=80",
+    creator: {
+      id: "1",
+      nickname: "등산러버",
+      profileImage: null,
+    },
+    memberCount: 45,
+    postCount: 23,
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    content: `안녕하세요! 파주 주말 등산회 모임장입니다.
+
+이번 주말 등산 일정을 공유드립니다.
+
+📅 일정: 매주 토요일 오전 7시
+📍 집결 장소: 파주시청 앞
+🏔️ 코스: 매주 다른 코스로 다양하게 즐기고 있어요
+
+초보자분들도 환영합니다! 체력 걱정 없으시고, 천천히 즐기면서 함께 올라갑니다.
+
+등산 후에는 시원한 국밥으로 한끼 식사도 함께하고 있어요. 정말 좋은 친구들 많이 만나셨으면 좋겠습니다.
+
+참여하고 싶으신 분들은 댓글로 참여 의사 밝혀주세요!`,
+    comments: [
+      {
+        id: "1",
+        author: "산악인",
+        content: "다음주에도 참여할게요! 정말 좋은 모임이에요.",
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "2",
+        author: "등산초보",
+        content: "초보인데도 너무 잘 따라가게 도와주셔서 감사해요!",
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "3",
+        author: "파주시민",
+        content: "다음 주 토요일 참여 가능한가요?",
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
 };
+
+// 기본 더미 데이터 생성
+const generateGroupDetail = (id: string, baseName: string) => ({
+  id,
+  name: baseName,
+  description: `${baseName}에 대한 자세한 소개입니다. 많은 관심 부탁드려요!`,
+  type: "OTHER",
+  coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=80",
+  creator: {
+    id: "1",
+    nickname: "모임장",
+    profileImage: null,
+  },
+  memberCount: 30 + Math.floor(Math.random() * 50),
+  postCount: 10 + Math.floor(Math.random() * 20),
+  createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+  content: `${baseName}에 오신 것을 환영합니다!
+
+이 모임은 파주 지역 주민들이 함께 즐기며 소통하는 공간입니다.
+
+📌 주요 활동
+- 정기적인 모임 활동
+- 다양한 이벤트와 행사
+- 친목 도모를 위한 교류 활동
+
+많은 관심과 참여 부탁드립니다. 함께 만들어가는 모임이 되었으면 좋겠습니다.
+
+궁금한 점이 있으시면 언제든지 댓글로 문의해주세요!`,
+  comments: [
+    {
+      id: "1",
+      author: "회원1",
+      content: "정말 좋은 모임이에요! 추천합니다.",
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "2",
+      author: "회원2",
+      content: "언제 모임 하나요?",
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "3",
+      author: "회원3",
+      content: "참여하고 싶습니다!",
+      createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    },
+  ],
+});
 
 export default function GroupDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [group, setGroup] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isJoining, setIsJoining] = useState(false);
-  const [activeTab, setActiveTab] = useState<"posts" | "gallery" | "schedule">("posts");
+  const [isLiked, setIsLiked] = useState(false);
+  const [commentText, setCommentText] = useState("");
 
-  useEffect(() => {
-    loadGroup();
-  }, [params.id]);
+  const group = groupDetails[params.id] || generateGroupDetail(params.id, `모임 ${params.id}`);
 
-  const loadGroup = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/groups/${params.id}`);
-      const data = await response.json();
-      if (data.group) {
-        setGroup(data.group);
-      }
-    } catch (error) {
-      console.error("Failed to load group:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleComment = () => {
+    if (!commentText.trim()) return;
+    // 댓글 추가 로직 (실제로는 API 호출)
+    setCommentText("");
+    alert("댓글이 작성되었습니다!");
   };
-
-  const handleJoin = async () => {
-    if (!session?.user) {
-      router.push("/auth/login");
-      return;
-    }
-
-    setIsJoining(true);
-    try {
-      const response = await fetch(`/api/groups/${params.id}/join`, {
-        method: "POST",
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("모임 가입이 완료되었습니다!");
-        loadGroup();
-      } else {
-        alert(data.error || "모임 가입에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("Join error:", error);
-      alert("모임 가입 중 오류가 발생했습니다.");
-    } finally {
-      setIsJoining(false);
-    }
-  };
-
-  const handleLeave = async () => {
-    if (!confirm("정말 모임을 탈퇴하시겠습니까?")) return;
-
-    try {
-      const response = await fetch(`/api/groups/${params.id}/join`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        alert("모임 탈퇴가 완료되었습니다.");
-        loadGroup();
-      }
-    } catch (error) {
-      console.error("Leave error:", error);
-      alert("모임 탈퇴 중 오류가 발생했습니다.");
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">로딩 중...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!group) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">모임을 찾을 수 없습니다.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 모임 헤더 */}
-        <Card className="mb-6 overflow-hidden p-0">
-          {group.coverImage && (
-            <div className="w-full h-64 bg-gradient-to-br from-paju-blue to-paju-green overflow-hidden">
-              <img
-                src={group.coverImage}
-                alt={group.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-          <div className="p-8">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center space-x-3 mb-3">
-                  <span className="px-4 py-1 bg-paju-green/10 text-paju-green rounded-full text-sm font-medium">
-                    {groupTypeLabels[group.type] || group.type}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    개설일: {new Date(group.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">{group.name}</h1>
-                <p className="text-lg text-gray-600 mb-6 whitespace-pre-line">{group.description}</p>
-              </div>
-              <div className="ml-6">
-                {group.isMember ? (
-                  <button
-                    onClick={handleLeave}
-                    className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                  >
-                    <XMarkIcon className="w-5 h-5 inline mr-2" />
-                    탈퇴하기
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleJoin}
-                    disabled={isJoining}
-                    className="px-6 py-3 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors font-medium disabled:opacity-50"
-                  >
-                    <UserPlusIcon className="w-5 h-5 inline mr-2" />
-                    {isJoining ? "가입 중..." : "가입하기"}
-                  </button>
-                )}
-              </div>
-            </div>
+    <div className="min-h-screen bg-white">
+      {/* 헤더 - 뒤로가기 + 제목 */}
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-100 flex items-center h-16 px-4">
+        <button
+          onClick={() => router.back()}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+        >
+          <ArrowLeftIcon className="w-6 h-6 text-gray-900" />
+        </button>
+        <h1 className="text-lg font-bold text-gray-900 line-clamp-1">{group.name}</h1>
+      </div>
 
-            <div className="flex items-center space-x-6 pt-6 border-t border-gray-200">
-              <div className="flex items-center text-gray-600">
-                <UserGroupIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                <span className="font-medium">{group._count?.members || group.members?.length || 0}명 참여</span>
-              </div>
-              <div className="flex items-center text-gray-600">
-                <DocumentTextIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                <span className="font-medium">{group._count?.posts || group.posts?.length || 0}개 글</span>
-              </div>
-              <Link
-                href={`/groups/${group.id}/chat`}
-                className="flex items-center text-paju-blue hover:text-paju-blue-dark"
-              >
-                <ChatBubbleLeftRightIcon className="w-5 h-5 mr-2" />
-                <span className="font-medium">채팅방 가기</span>
-              </Link>
+      {/* 커버 이미지 */}
+      <div className="relative h-64 bg-gray-100">
+        <img
+          src={`${group.coverImage}&random=${Math.random()}`}
+          alt={group.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* 작성자 정보 */}
+      <div className="px-4 py-6 border-b border-gray-100">
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            {group.creator.nickname.charAt(0)}
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-gray-900">{group.creator.nickname}</div>
+            <div className="text-sm text-gray-500">
+              {new Date(group.createdAt).toLocaleDateString("ko-KR")}
             </div>
           </div>
-        </Card>
-
-        {/* 탭 메뉴 */}
-        <div className="flex space-x-2 mb-6">
-          <TabButton
-            id="posts"
-            label="공지사항"
-            icon={<DocumentTextIcon className="w-5 h-5" />}
-            isActive={activeTab === "posts"}
-            onClick={() => setActiveTab("posts")}
-          />
-          <TabButton
-            id="gallery"
-            label="사진첩"
-            icon={<PhotoIcon className="w-5 h-5" />}
-            isActive={activeTab === "gallery"}
-            onClick={() => setActiveTab("gallery")}
-          />
-          <TabButton
-            id="schedule"
-            label="일정"
-            icon={<CalendarIcon className="w-5 h-5" />}
-            isActive={activeTab === "schedule"}
-            onClick={() => setActiveTab("schedule")}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 메인 컨텐츠 */}
-          <div className="lg:col-span-2">
-            {activeTab === "posts" && (
-              <Card>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">공지사항</h2>
-                  {group.isMember && (
-                    <Link
-                      href={`/community/${group.type.toLowerCase()}/write?group=${group.id}`}
-                      className="px-4 py-2 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors text-sm font-medium"
-                    >
-                      글쓰기
-                    </Link>
-                  )}
-                </div>
-                {group.posts && group.posts.length > 0 ? (
-                  <div className="divide-y divide-gray-100">
-                    {group.posts.map((post: any) => (
-                      <Link
-                        key={post.id}
-                        href={`/community/${post.category}/${post.id}`}
-                        className="block p-4 hover:bg-gray-50 transition-colors"
-                      >
-                        <h3 className="font-semibold text-gray-900 mb-1">{post.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{post.content}</p>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <span>{post.author.nickname}</span>
-                          <span className="mx-2">•</span>
-                          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                          <span className="mx-2">•</span>
-                          <span>댓글 {post.comments?.length || 0}개</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    아직 게시글이 없습니다.
-                  </div>
-                )}
-              </Card>
-            )}
-
-            {activeTab === "gallery" && (
-              <Card>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">사진첩</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center"
-                    >
-                      <PhotoIcon className="w-12 h-12 text-gray-400" />
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {activeTab === "schedule" && (
-              <Card>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">일정</h2>
-                <div className="space-y-4">
-                  {[
-                    { date: "2024-12-20", title: "정기 모임", location: "운정호수공원" },
-                    { date: "2024-12-27", title: "연말 모임", location: "파주시민회관" },
-                  ].map((event, i) => (
-                    <div key={i} className="p-4 border border-gray-200 rounded-lg">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <CalendarIcon className="w-5 h-5 text-paju-blue" />
-                        <span className="font-semibold text-gray-900">{event.date}</span>
-                      </div>
-                      <h3 className="font-medium text-gray-900 mb-1">{event.title}</h3>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPinIcon className="w-4 h-4 mr-1" />
-                        {event.location}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-          </div>
-
-          {/* 사이드바 */}
-          <div className="space-y-6">
-            {/* 모임 정보 */}
-            <Card>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">모임 정보</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">카테고리:</span>
-                  <span className="font-medium">{groupTypeLabels[group.type] || group.type}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">멤버 수:</span>
-                  <span className="font-medium">{group._count?.members || group.members?.length || 0}명</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">게시글 수:</span>
-                  <span className="font-medium">{group._count?.posts || group.posts?.length || 0}개</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">개설자:</span>
-                  <span className="font-medium">{group.creator.nickname}</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* 참여 멤버 미리보기 */}
-            {group.members && group.members.length > 0 && (
-              <Card>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  참여 멤버 ({group.members.length}명)
-                </h3>
-                <div className="space-y-3">
-                  {group.members.slice(0, 5).map((member: any) => (
-                    <div key={member.id} className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-paju-blue to-paju-green rounded-full flex items-center justify-center text-white font-medium">
-                        {member.user.nickname?.charAt(0) || "U"}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">{member.user.nickname}</div>
-                        {member.role === "ADMIN" && (
-                          <div className="text-xs text-paju-blue">관리자</div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <div className="flex items-center space-x-1">
+              <UserGroupIcon className="w-5 h-5" />
+              <span>{group.memberCount}명</span>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* 본문 내용 */}
+      <div className="px-4 py-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">{group.name}</h2>
+        <div className="prose max-w-none mb-6">
+          <p className="text-gray-700 whitespace-pre-line leading-relaxed">{group.content}</p>
+        </div>
+      </div>
+
+      {/* 댓글 섹션 */}
+      <div className="px-4 py-6 border-t border-gray-100">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
+          댓글 {group.comments.length}개
+        </h3>
+
+        {/* 댓글 목록 */}
+        <div className="space-y-4 mb-6">
+          {group.comments.map((comment: any) => (
+            <div key={comment.id} className="flex space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-400 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {comment.author.charAt(0)}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <span className="font-semibold text-gray-900 text-sm">{comment.author}</span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(comment.createdAt).toLocaleDateString("ko-KR")}
+                  </span>
+                </div>
+                <p className="text-gray-700 text-sm">{comment.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 댓글 작성 */}
+        <div className="flex space-x-3">
+          <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0"></div>
+          <div className="flex-1">
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="댓글을 입력하세요..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              rows={3}
+            />
+            <button
+              onClick={handleComment}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+            >
+              댓글 작성
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 하단 고정 바 */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 flex items-center justify-center space-x-4">
+        <button
+          onClick={() => setIsLiked(!isLiked)}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+            isLiked ? "bg-red-100 text-red-600" : "bg-gray-100 text-gray-600"
+          }`}
+        >
+          {isLiked ? (
+            <HeartIconSolid className="w-5 h-5" />
+          ) : (
+            <HeartIcon className="w-5 h-5" />
+          )}
+          <span className="text-sm font-medium">좋아요</span>
+        </button>
+        <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+          <ShareIcon className="w-5 h-5" />
+          <span className="text-sm font-medium">공유하기</span>
+        </button>
+        <Link
+          href={`/groups/${params.id}/chat`}
+          className="flex items-center space-x-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          <ChatBubbleLeftRightIcon className="w-5 h-5" />
+          <span className="text-sm font-medium">채팅하기</span>
+        </Link>
+      </div>
+
+      {/* 하단 여백 (고정 바 때문) */}
+      <div className="h-24"></div>
     </div>
   );
 }
