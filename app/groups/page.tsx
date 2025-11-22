@@ -246,6 +246,7 @@ export default function GroupsPage() {
                   type="text"
                   placeholder="모임 이름이나 설명으로 검색..."
                   className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                  style={{ paddingLeft: '3rem' }}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -278,11 +279,11 @@ export default function GroupsPage() {
           </div>
         ) : (
           <>
-            <div className="max-w-[500px] mx-auto space-y-6">
+            <div className="flex flex-col items-center w-full space-y-6">
               {filteredGroups.map((group, index) => (
                 <div
                   key={group.id}
-                  className="bg-neutral-900 rounded-lg overflow-hidden"
+                  className="w-full max-w-[470px] bg-neutral-900 rounded-lg overflow-hidden"
                 >
                   {/* 헤더: 프로필 + 닉네임 + 더보기 */}
                   <div className="flex items-center justify-between p-3 border-b border-neutral-800">

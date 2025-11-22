@@ -97,16 +97,17 @@ export default function UserMenu() {
 
   if (!user) {
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-4">
         <Link
           href="/auth/login"
           className="px-4 py-2 text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
         >
           로그인
         </Link>
+        <span className="text-gray-300">|</span>
         <Link
           href="/auth/signup"
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium transition-colors"
+          className="px-4 py-2 text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
         >
           회원가입
         </Link>
@@ -118,7 +119,7 @@ export default function UserMenu() {
     <div className="relative">
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="relative p-2 text-gray-600 hover:text-primary transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors rounded-lg hover:bg-gray-50"
       >
         {user.profileImage ? (
           <img
@@ -131,6 +132,7 @@ export default function UserMenu() {
             {user.nickname.charAt(0)}
           </div>
         )}
+        <span className="text-sm font-medium text-gray-900">내 정보</span>
       </button>
 
       {/* 드롭다운 메뉴 */}
