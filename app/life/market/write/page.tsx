@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import { PhotoIcon, XMarkIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
 export default function MarketWritePage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession(); // Removed: Using Supabase auth instead
+  const session = null; // Temporary: will be replaced with Supabase auth
+  const status = "unauthenticated"; // Temporary: will be replaced with Supabase auth
   const [formData, setFormData] = useState({
     type: "팝니다",
     title: "",

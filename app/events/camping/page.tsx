@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import { useRouter } from "next/navigation";
 import {
   CalendarIcon,
@@ -32,7 +32,8 @@ interface CampingPost {
 
 export default function CampingPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
+  const session = null; // Temporary: will be replaced with Supabase auth
   const [posts, setPosts] = useState<CampingPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

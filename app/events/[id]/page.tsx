@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import { useRouter } from "next/navigation";
 import { CalendarIcon, MapPinIcon, UserGroupIcon, ClockIcon, HeartIcon } from "@heroicons/react/24/outline";
 
@@ -37,7 +37,8 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     ],
   };
   const router = useRouter();
-  const { data: session } = useSession();
+  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
+  const session = null; // Temporary: will be replaced with Supabase auth
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({

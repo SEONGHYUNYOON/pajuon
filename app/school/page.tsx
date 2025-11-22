@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react"; // Removed: Using Supabase auth instead
 import Link from "next/link";
 import {
   AcademicCapIcon,
@@ -28,7 +28,9 @@ interface UserSchool {
 
 export default function SchoolPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession(); // Removed: Using Supabase auth instead
+  const session = null; // Temporary: will be replaced with Supabase auth
+  const status = "unauthenticated"; // Temporary: will be replaced with Supabase auth
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [schools, setSchools] = useState<School[]>([]);
@@ -247,7 +249,8 @@ export default function SchoolPage() {
 
 // 동창 게시판 컴포넌트
 function SchoolAlumniBoard() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession(); // Removed: Using Supabase auth instead
+  const session = null; // Temporary: will be replaced with Supabase auth
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [alumni, setAlumni] = useState<any[]>([]);
