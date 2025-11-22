@@ -27,17 +27,23 @@ export default function SignupPage() {
     agreePrivacy: false,
   });
   const [nicknameCheck, setNicknameCheck] = useState<"unchecked" | "available" | "unavailable">("unchecked");
+  const [nicknameMessage, setNicknameMessage] = useState<string>("");
+  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNicknameCheck = async () => {
     if (!formData.nickname) {
       setErrors({ ...errors, nickname: "닉네임을 입력해주세요." });
+      setNicknameMessage("닉네임을 입력해주세요.");
+      setIsNicknameValid(false);
       return;
     }
     
     if (formData.nickname.length < 2) {
       setNicknameCheck("unavailable");
+      setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+      setIsNicknameValid(false);
       setErrors({ ...errors, nickname: "닉네임은 2자 이상이어야 합니다." });
       return;
     }
@@ -53,14 +59,20 @@ export default function SignupPage() {
       if (error && error.code === "PGRST116") {
         // No rows returned = available
         setNicknameCheck("available");
+        setNicknameMessage("사용 가능한 닉네임입니다.");
+        setIsNicknameValid(true);
         setErrors({ ...errors, nickname: "" });
       } else if (data) {
         setNicknameCheck("unavailable");
+        setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+        setIsNicknameValid(false);
         setErrors({ ...errors, nickname: "이미 사용 중인 닉네임입니다." });
       }
     } catch (error) {
       console.error("Nickname check error:", error);
       setNicknameCheck("unavailable");
+      setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+      setIsNicknameValid(false);
       setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
     }
   };
@@ -83,7 +95,7 @@ export default function SignupPage() {
     }
     if (!formData.nickname) {
       newErrors.nickname = "닉네임을 입력해주세요.";
-    } else if (nicknameCheck !== "available") {
+    } else if (!isNicknameValid) {
       newErrors.nickname = "닉네임 중복 확인을 해주세요.";
     }
     if (!formData.birthDate) {
@@ -268,6 +280,8 @@ export default function SignupPage() {
                   onChange={(e) => {
                     setFormData({ ...formData, nickname: e.target.value });
                     setNicknameCheck("unchecked");
+                    setNicknameMessage("");
+                    setIsNicknameValid(false);
                     setErrors({ ...errors, nickname: "" });
                   }}
                   error={errors.nickname}
@@ -282,8 +296,12 @@ export default function SignupPage() {
                   중복 확인
                 </Button>
               </div>
-              {nicknameCheck === "available" && (
-                <p className="mt-1 text-sm text-green-600">✓ 사용 가능한 닉네임입니다.</p>
+              {nicknameMessage && (
+                <p className={`mt-1 text-sm ${
+                  isNicknameValid ? "text-green-500" : "text-red-500"
+                }`}>
+                  {isNicknameValid ? "✓ " : "✗ "}{nicknameMessage}
+                </p>
               )}
             </div>
 
@@ -369,7 +387,7 @@ export default function SignupPage() {
               variant="primary"
               size="lg"
               fullWidth
-              disabled={isLoading}
+              disabled={isLoading || !isNicknameValid}
             >
               {isLoading ? "회원가입 중..." : "회원가입"}
             </Button>

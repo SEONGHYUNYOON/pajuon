@@ -57,29 +57,75 @@ export default function NoticeBanner() {
         .order("created_at", { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Failed to fetch banner messages:", error);
+        throw error;
+      }
 
       if (data && data.length > 0) {
         setMessages(data as BannerMessage[]);
         setCurrentMessageIndex(0);
       } else {
-        // 기본 환영 메시지
-        setMessages([{
-          id: "default",
-          content: "파주온에 오신 것을 환영합니다!",
-          created_at: new Date().toISOString(),
-          user_id: null,
-        }]);
+        // Fallback: 하드코딩된 가상 데이터
+        const fallbackMessages: BannerMessage[] = [
+          {
+            id: "fallback1",
+            content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
+            created_at: new Date().toISOString(),
+            user_id: "user1",
+            author: { nickname: "운정주민1" },
+          },
+          {
+            id: "fallback2",
+            content: "자유로 교통 정체 제보 - 심각함",
+            created_at: new Date(Date.now() - 3600000).toISOString(),
+            user_id: "user2",
+            author: { nickname: "파주시민2" },
+          },
+          {
+            id: "fallback3",
+            content: "분실물 찾습니다 - 갈색 지갑",
+            created_at: new Date(Date.now() - 7200000).toISOString(),
+            user_id: "user3",
+            author: { nickname: "금촌주민3" },
+          },
+          {
+            id: "fallback4",
+            content: "파주온에 오신 것을 환영합니다!",
+            created_at: new Date().toISOString(),
+            user_id: null,
+          },
+        ];
+        setMessages(fallbackMessages);
+        setCurrentMessageIndex(0);
       }
     } catch (error) {
       console.error("Failed to load banner messages:", error);
-      // 에러 시 기본 메시지 표시
-      setMessages([{
-        id: "default",
-        content: "파주온에 오신 것을 환영합니다!",
-        created_at: new Date().toISOString(),
-        user_id: null,
-      }]);
+      // 에러 시 하드코딩된 가상 데이터 표시
+      const fallbackMessages: BannerMessage[] = [
+        {
+          id: "fallback1",
+          content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
+          created_at: new Date().toISOString(),
+          user_id: "user1",
+          author: { nickname: "운정주민1" },
+        },
+        {
+          id: "fallback2",
+          content: "자유로 교통 정체 제보 - 심각함",
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+          user_id: "user2",
+          author: { nickname: "파주시민2" },
+        },
+        {
+          id: "fallback3",
+          content: "파주온에 오신 것을 환영합니다!",
+          created_at: new Date().toISOString(),
+          user_id: null,
+        },
+      ];
+      setMessages(fallbackMessages);
+      setCurrentMessageIndex(0);
     }
   };
 
@@ -135,7 +181,7 @@ export default function NoticeBanner() {
 
   return (
     <>
-      <section className="py-2 px-8 md:px-10 lg:px-12 bg-gradient-to-r from-blue-500 to-blue-600 text-white relative overflow-hidden">
+      <section className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden">
         <div className="flex items-center justify-between">
           {/* 메시지 표시 */}
           <div className="flex-1 overflow-hidden relative h-8">
