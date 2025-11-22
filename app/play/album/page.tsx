@@ -96,11 +96,11 @@ export default function AlbumPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="flex items-center space-x-3 mb-2">
+              <div className="flex items-center justify-center space-x-3 mb-2">
                 <PhotoIcon className="w-10 h-10 text-purple-500" />
-                <h1 className="text-4xl font-bold text-gray-900">파주 추억앨범</h1>
+                <h1 className="text-4xl font-bold text-gray-900 text-center">파주 추억앨범</h1>
               </div>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 text-center">
                 90년대 파주, 옛날 학교 사진 등 추억의 사진을 올리고 소통하는 공간입니다
               </p>
             </div>

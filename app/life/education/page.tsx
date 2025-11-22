@@ -75,11 +75,11 @@ export default function EducationPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="flex items-center space-x-3 mb-2">
+              <div className="flex items-center justify-center space-x-3 mb-2">
                 <AcademicCapIcon className="w-10 h-10 text-orange-500" />
-                <h1 className="text-4xl font-bold text-gray-900">파주 육아/교육</h1>
+                <h1 className="text-4xl font-bold text-gray-900 text-center">파주 육아/교육</h1>
               </div>
-              <p className="text-lg text-gray-600">육아와 교육 정보를 공유하는 공간입니다</p>
+              <p className="text-lg text-gray-600 text-center">육아와 교육 정보를 공유하는 공간입니다</p>
             </div>
             <Link
               href="/life/education/write"

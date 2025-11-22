@@ -93,11 +93,11 @@ export default function ReportPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="flex items-center space-x-3 mb-2">
+              <div className="flex items-center justify-center space-x-3 mb-2">
                 <ExclamationTriangleIcon className="w-10 h-10 text-orange-500" />
-                <h1 className="text-4xl font-bold text-gray-900">파주 신고센터</h1>
+                <h1 className="text-4xl font-bold text-gray-900 text-center">파주 신고센터</h1>
               </div>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 text-center">
                 도로 파손, 가로등 고장 등 불편 사항을 신고해주세요
               </p>
             </div>

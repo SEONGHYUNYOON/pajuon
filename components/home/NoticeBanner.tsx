@@ -65,23 +65,30 @@ export default function NoticeBanner() {
         const fallbackMessages: BannerMessage[] = [
           {
             id: "fallback1",
-            content: "🐶 잃어버린 강아지를 찾아요 ㅠㅠ 말티즈, 흰색, 운정에서 도망감 ㅠㅠ (사례금 있음)",
+            content: "강아지 찾습니다! 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
             created_at: new Date().toISOString(),
             user_id: "user1",
             author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback2",
-            content: "⚽ 조기축구회 신입 모집! 개발 환영, 공만 차도 좋아함",
+            content: "조기축구 신입 회원 모집! 개발 환영, 끝나고 해장국 쏨!",
             created_at: new Date(Date.now() - 3600000).toISOString(),
             user_id: "user2",
             author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback3",
-            content: "🚗 금촌역 사거리 접촉사고 목격자 찾습니다 (블박 영상 구함)",
+            content: "파주맘 알뜰장터 이번 주 토요일 금촌 로터리에서 열려요~",
             created_at: new Date(Date.now() - 7200000).toISOString(),
             user_id: "user3",
+            author: { nickname: "파주 이웃" },
+          },
+          {
+            id: "fallback4",
+            content: "헤이리 '책향기' 카페, 파주 시민 10% 할인 이벤트 중!",
+            created_at: new Date(Date.now() - 10800000).toISOString(),
+            user_id: "user4",
             author: { nickname: "파주 이웃" },
           },
         ];
@@ -93,23 +100,30 @@ export default function NoticeBanner() {
       const fallbackMessages: BannerMessage[] = [
         {
           id: "fallback1",
-          content: "🐶 잃어버린 강아지를 찾아요 ㅠㅠ 말티즈, 흰색, 운정에서 도망감 ㅠㅠ (사례금 있음)",
+          content: "강아지 찾습니다! 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
           created_at: new Date().toISOString(),
           user_id: "user1",
           author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback2",
-          content: "⚽ 조기축구회 신입 모집! 개발 환영, 공만 차도 좋아함",
+          content: "조기축구 신입 회원 모집! 개발 환영, 끝나고 해장국 쏨!",
           created_at: new Date(Date.now() - 3600000).toISOString(),
           user_id: "user2",
           author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback3",
-          content: "🚗 금촌역 사거리 접촉사고 목격자 찾습니다 (블박 영상 구함)",
+          content: "파주맘 알뜰장터 이번 주 토요일 금촌 로터리에서 열려요~",
           created_at: new Date(Date.now() - 7200000).toISOString(),
           user_id: "user3",
+          author: { nickname: "파주 이웃" },
+        },
+        {
+          id: "fallback4",
+          content: "헤이리 '책향기' 카페, 파주 시민 10% 할인 이벤트 중!",
+          created_at: new Date(Date.now() - 10800000).toISOString(),
+          user_id: "user4",
           author: { nickname: "파주 이웃" },
         },
       ];
@@ -183,8 +197,8 @@ export default function NoticeBanner() {
       <section 
         className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden" 
         style={{ 
-          zIndex: 1,
-          position: 'relative' // 헤더 위에 겹치지 않도록 relative 유지
+          zIndex: 0,
+          position: 'relative',
         }}
       >
         <div className="flex items-center justify-between gap-4">

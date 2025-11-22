@@ -94,7 +94,7 @@ export default function HotPlacePage() {
         {/* 헤더 */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div>
+            <div className="text-center">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">파주 맛집/카페</h1>
               <p className="text-lg text-gray-600">파주의 맛집과 카페를 발견하세요</p>
             </div>

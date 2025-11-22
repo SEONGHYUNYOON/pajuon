@@ -9,7 +9,18 @@ import { createClient } from "@/utils/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { supabase, supabaseResponse } = createClient(request);
 
-  // 세션 갱신
+  // 인증 페이지는 세션 체크 전에 먼저 확인 (리다이렉트 완전 차단)
+  const authPaths = ["/auth/login", "/auth/signup", "/auth/verify-email", "/auth/forgot-password"];
+  const isAuthPath = authPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  // 인증 페이지는 어떤 상황에서도 접근 허용 (세션 체크 전에 처리)
+  if (isAuthPath) {
+    return supabaseResponse;
+  }
+
+  // 세션 갱신 (인증 페이지가 아닐 때만 실행)
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -25,11 +36,6 @@ export async function middleware(request: NextRequest) {
     const redirectUrl = new URL("/auth/login", request.url);
     redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
-  }
-
-  // 로그인/회원가입 페이지에 이미 로그인한 사용자 접근 시 리다이렉트
-  if (user && (request.nextUrl.pathname.startsWith("/auth/login") || request.nextUrl.pathname.startsWith("/auth/signup"))) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return supabaseResponse;

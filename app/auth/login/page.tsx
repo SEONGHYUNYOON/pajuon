@@ -34,7 +34,10 @@ function LoginContent() {
       });
 
       if (signInError) {
-        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+        console.error("Login error:", signInError);
+        const errorMessage = signInError.message || "이메일 또는 비밀번호가 올바르지 않습니다.";
+        setError(errorMessage);
+        alert(errorMessage);
         setIsLoading(false);
         return;
       }
@@ -42,12 +45,16 @@ function LoginContent() {
       if (data.user) {
         // 로그인 성공
         const callbackUrl = searchParams.get("callbackUrl") || "/";
-        router.push(callbackUrl);
+        // 서버 컴포넌트(헤더) 데이터 새로고침 (필수!)
         router.refresh();
+        // 그 다음 홈으로 이동
+        router.push(callbackUrl);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err);
-      setError("로그인 중 오류가 발생했습니다.");
+      const errorMessage = err?.message || "로그인 중 오류가 발생했습니다.";
+      setError(errorMessage);
+      alert(errorMessage);
       setIsLoading(false);
     }
   };

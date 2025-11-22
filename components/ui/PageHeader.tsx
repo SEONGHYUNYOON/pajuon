@@ -18,9 +18,9 @@ export default function PageHeader({
   return (
     <div className="bg-gray-50 rounded-xl p-8 mb-8 border border-gray-100">
       <div className="flex items-start justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 flex-1 justify-center">
           {icon && <div className="text-paju-blue">{icon}</div>}
-          <div>
+          <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
             {description && <p className="text-lg text-gray-600">{description}</p>}
           </div>

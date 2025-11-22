@@ -33,13 +33,17 @@ export default function UserMenu() {
   const checkUser = async () => {
     try {
       const supabase = createClient();
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      // getSession으로 빠르게 세션 확인 (이중 체크)
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (currentUser) {
-        await loadUserProfile(currentUser.id);
+      if (session?.user) {
+        await loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error("Failed to check user:", error);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -98,19 +102,27 @@ export default function UserMenu() {
   if (!user) {
     return (
       <div className="flex items-center gap-3">
-        <Link
-          href="/auth/login"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = '/auth/login';
+          }}
           className="text-sm text-gray-600 hover:text-[#0D4FFF] transition-colors font-medium"
         >
           로그인
-        </Link>
+        </button>
         <span className="text-gray-300">|</span>
-        <Link
-          href="/auth/signup"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = '/auth/signup';
+          }}
           className="text-sm text-gray-600 hover:text-[#0D4FFF] transition-colors font-medium"
         >
           회원가입
-        </Link>
+        </button>
       </div>
     );
   }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { NewspaperIcon, MapPinIcon, FireIcon, StarIcon } from "@heroicons/react/24/outline";
+import { NewspaperIcon, MapPinIcon, FireIcon, StarIcon, PhotoIcon, HeartIcon } from "@heroicons/react/24/outline";
 import PageHeader from "@/components/ui/PageHeader";
 import TabButton from "@/components/ui/TabButton";
 import Card from "@/components/ui/Card";
@@ -142,11 +142,13 @@ export default function NewsPage() {
                 >
                   {/* 이미지 */}
                   <div className="h-64 bg-gradient-to-br from-paju-green to-paju-warm relative overflow-hidden">
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-gray-900">
-                      📸 {place.images}장
+                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-gray-900 flex items-center gap-1.5">
+                      <PhotoIcon className="w-4 h-4" />
+                      {place.images}장
                     </div>
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-paju-warm text-white rounded-full text-sm font-medium">
-                      ❤️ {place.likes}
+                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-paju-warm text-white rounded-full text-sm font-medium flex items-center gap-1.5">
+                      <HeartIcon className="w-4 h-4 fill-current" />
+                      {place.likes}
                     </div>
                   </div>
                   {/* 카드 내용 */}
