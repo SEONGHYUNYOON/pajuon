@@ -1,8 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/utils/supabase/client";
+
+// ChatDrawer 열기/닫기를 위한 Context
+export const ChatDrawerContext = createContext<{
+  openChatDrawer: () => void;
+  closeChatDrawer: () => void;
+}>({
+  openChatDrawer: () => {},
+  closeChatDrawer: () => {},
+});
+
+export const useChatDrawer = () => useContext(ChatDrawerContext);
 
 interface Message {
   id: string;
@@ -38,6 +49,7 @@ export default function ChatDrawer() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
     checkUser();
@@ -51,10 +63,14 @@ export default function ChatDrawer() {
   }, [user, isOpen]);
 
   useEffect(() => {
-    if (selectedChat && user) {
-      loadMessages(selectedChat);
-      subscribeToMessages(selectedChat);
-    }
+    if (!selectedChat || !user) return;
+
+    loadMessages(selectedChat);
+    const cleanup = subscribeToMessages(selectedChat);
+
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, [selectedChat, user]);
 
   useEffect(() => {
@@ -221,7 +237,13 @@ export default function ChatDrawer() {
   };
 
   const subscribeToMessages = (otherUserId: string) => {
-    if (!user) return;
+    if (!user) return () => {};
+
+    // 기존 채널 정리
+    if (channelRef.current) {
+      const supabase = createClient();
+      supabase.removeChannel(channelRef.current);
+    }
 
     const supabase = createClient();
     const channel = supabase
@@ -236,7 +258,13 @@ export default function ChatDrawer() {
         },
         (payload) => {
           const newMessage = payload.new as Message;
-          setMessages((prev) => [...prev, newMessage]);
+          setMessages((prev) => {
+            // 중복 방지
+            if (prev.some((m) => m.id === newMessage.id)) {
+              return prev;
+            }
+            return [...prev, newMessage];
+          });
           
           // 읽음 처리
           if (newMessage.receiver_id === user.id) {
@@ -249,8 +277,14 @@ export default function ChatDrawer() {
       )
       .subscribe();
 
+    channelRef.current = channel;
+
     return () => {
-      supabase.removeChannel(channel);
+      const supabase = createClient();
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   };
 
@@ -287,19 +321,33 @@ export default function ChatDrawer() {
 
   const selectedConversation = conversations.find((c) => c.userId === selectedChat);
 
+  // 전역 이벤트로 ChatDrawer 열기/닫기 지원
+  useEffect(() => {
+    const handleOpenChat = () => {
+      if (user) {
+        setIsOpen(true);
+      }
+    };
+
+    const handleCloseChat = () => {
+      setIsOpen(false);
+    };
+
+    window.addEventListener("openChatDrawer", handleOpenChat);
+    window.addEventListener("closeChatDrawer", handleCloseChat);
+
+    return () => {
+      window.removeEventListener("openChatDrawer", handleOpenChat);
+      window.removeEventListener("closeChatDrawer", handleCloseChat);
+    };
+  }, [user]);
+
   if (!user) {
     return null; // 로그인하지 않으면 채팅 숨김
   }
 
   return (
     <>
-      {/* 트리거 버튼 (숨김) */}
-      <button
-        id="chat-drawer-trigger"
-        className="hidden"
-        onClick={() => setIsOpen(true)}
-      />
-
       {/* 오버레이 */}
       {isOpen && (
         <div

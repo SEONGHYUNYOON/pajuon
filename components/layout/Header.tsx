@@ -33,8 +33,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={() => {
-                  const chatDrawer = document.getElementById("chat-drawer-trigger");
-                  if (chatDrawer) (chatDrawer as any).click();
+                  window.dispatchEvent(new CustomEvent("openChatDrawer"));
                 }}
                 className="p-2 text-gray-600 hover:text-primary transition-colors relative"
               >
