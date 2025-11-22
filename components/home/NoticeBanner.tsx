@@ -164,47 +164,45 @@ export default function NoticeBanner() {
     }));
   };
 
-  // 무한 스크롤을 위한 메시지 리스트 3번 반복 (끊김 방지)
-  const displayMessages = messages.length > 0 ? [...messages, ...messages, ...messages] : [];
+  // Seamless 무한 스크롤을 위한 메시지 묶음 생성
+  // 모든 메시지를 하나의 긴 문자열로 합친 후 2번 반복
+  const createMessageString = (msgs: BannerMessage[]) => {
+    return msgs.map((msg) => {
+      const authorText = msg.author?.nickname ? ` (작성자: ${msg.author.nickname})` : "";
+      return `📢 ${msg.content}${authorText}`;
+    }).join("  •  "); // 메시지 간 구분자 (적당한 간격)
+  };
+
+  const messageString = messages.length > 0 ? createMessageString(messages) : "파주온에 오신 것을 환영합니다!";
+  
+  // 텍스트를 2번 복제하여 끊김 없는 루프 구현
+  const duplicatedText = `${messageString}  •  ${messageString}  •  `;
 
   return (
     <>
       <section className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden">
         <div className="flex items-center justify-between gap-4">
-          {/* 메시지 표시 - 무한 스크롤 */}
+          {/* 메시지 표시 - Seamless 무한 스크롤 */}
           <div 
             className="flex-1 overflow-hidden relative h-8"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {displayMessages.length > 0 ? (
-              <div className="banner-ticker-container">
-                <div 
-                  className={`banner-ticker-content ${isPaused ? 'banner-ticker-paused' : ''}`}
-                >
-                  {displayMessages.map((msg, index) => (
-                    <button
-                      key={`${msg.id}-${index}`}
-                      onClick={handleMessageClick}
-                      className="banner-ticker-item cursor-pointer hover:opacity-90 transition-opacity text-left"
-                    >
-                      <span className="text-sm font-medium whitespace-nowrap">
-                        📢 {msg.content}
-                        {msg.author?.nickname && (
-                          <span className="ml-2 text-xs opacity-80">
-                            (작성자: {msg.author.nickname})
-                          </span>
-                        )}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+            <div className="banner-ticker-container">
+              <div 
+                className={`banner-ticker-content ${isPaused ? 'banner-ticker-paused' : ''}`}
+                onClick={handleMessageClick}
+              >
+                {/* 첫 번째 텍스트 묶음 */}
+                <span className="banner-ticker-text inline-block whitespace-nowrap">
+                  {duplicatedText}
+                </span>
+                {/* 두 번째 텍스트 묶음 (완전히 동일한 내용) */}
+                <span className="banner-ticker-text inline-block whitespace-nowrap">
+                  {duplicatedText}
+                </span>
               </div>
-            ) : (
-              <div className="flex items-center h-full">
-                <span className="text-sm font-medium">파주온에 오신 것을 환영합니다!</span>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* 확성기 버튼 */}

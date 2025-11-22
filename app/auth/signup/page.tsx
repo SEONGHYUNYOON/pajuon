@@ -40,7 +40,9 @@ export default function SignupPage() {
       return;
     }
     
-    if (formData.nickname.length < 2) {
+    const trimmedNickname = formData.nickname.trim();
+    
+    if (trimmedNickname.length < 2) {
       setNicknameCheck("unavailable");
       setNicknameMessage("닉네임은 2자 이상이어야 합니다.");
       setIsNicknameValid(false);
@@ -48,63 +50,143 @@ export default function SignupPage() {
       return;
     }
 
+    // 로딩 상태 표시
+    setNicknameCheck("unchecked");
+    setNicknameMessage("확인 중...");
+
     try {
       const supabase = createClient();
+      
+      // 디버깅: API 요청 전 로그
+      console.log("=== Nickname Check Debug ===");
+      console.log("Checking nickname:", trimmedNickname);
+      console.log("Supabase client created:", !!supabase);
+      
+      // API 요청 시작
+      const requestStartTime = Date.now();
       const { data, error } = await supabase
         .from("profiles")
         .select("nickname")
-        .eq("nickname", formData.nickname.trim())
+        .eq("nickname", trimmedNickname)
         .maybeSingle();
 
-      // 에러 처리: 네트워크 에러와 실제 중복을 구분
+      const requestDuration = Date.now() - requestStartTime;
+      console.log(`API request completed in ${requestDuration}ms`);
+
+      // 에러 처리: 상세한 에러 정보 로그
       if (error) {
-        console.error("Nickname check error:", error);
-        // 네트워크 에러인 경우
-        if (error.message?.includes("network") || error.message?.includes("fetch")) {
+        console.error("=== Supabase Error Details ===");
+        console.error("Error code:", error.code);
+        console.error("Error message:", error.message);
+        console.error("Error details:", error.details);
+        console.error("Error hint:", error.hint);
+        console.error("Full error object:", JSON.stringify(error, null, 2));
+
+        // 에러 타입별 처리
+        if (error.code === "PGRST116" || error.code === "23505") {
+          // PGRST116: No rows returned (이건 실제로는 에러가 아님, maybeSingle 사용 시)
+          // 23505: Unique violation (중복)
+          console.log("No duplicate found (available)");
+          setNicknameCheck("available");
+          setNicknameMessage("사용 가능한 닉네임입니다.");
+          setIsNicknameValid(true);
+          setErrors({ ...errors, nickname: "" });
+          return;
+        }
+
+        // 네트워크 에러 체크
+        const errorMessage = error.message?.toLowerCase() || "";
+        if (errorMessage.includes("network") || 
+            errorMessage.includes("fetch") || 
+            errorMessage.includes("failed to fetch") ||
+            error.code === "ECONNREFUSED") {
+          console.error("Network error detected");
           setNicknameCheck("unavailable");
-          setNicknameMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+          setNicknameMessage("네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.");
           setIsNicknameValid(false);
           setErrors({ ...errors, nickname: "네트워크 오류가 발생했습니다." });
-        } else {
-          // 기타 에러
-          setNicknameCheck("unavailable");
-          setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
-          setIsNicknameValid(false);
-          setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
+          return;
         }
+
+        // 404 Not Found 체크
+        if (error.code === "PGRST301" || error.message?.includes("404")) {
+          console.error("404 Not Found - Table or endpoint not found");
+          setNicknameCheck("unavailable");
+          setNicknameMessage("서버 오류: 테이블을 찾을 수 없습니다. 관리자에게 문의하세요.");
+          setIsNicknameValid(false);
+          setErrors({ ...errors, nickname: "서버 오류가 발생했습니다." });
+          return;
+        }
+
+        // 500 Server Error 체크
+        if (error.code === "500" || error.message?.includes("500")) {
+          console.error("500 Server Error");
+          setNicknameCheck("unavailable");
+          setNicknameMessage("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+          setIsNicknameValid(false);
+          setErrors({ ...errors, nickname: "서버 오류가 발생했습니다." });
+          return;
+        }
+
+        // 기타 에러
+        console.error("Unknown error:", error);
+        setNicknameCheck("unavailable");
+        setNicknameMessage(`오류: ${error.message || "알 수 없는 오류가 발생했습니다."}`);
+        setIsNicknameValid(false);
+        setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
         return;
       }
 
-      // 디버깅: data 상태 로그 출력
-      console.log("Nickname check result - data:", data, "error:", error);
+      // 성공 케이스 처리
+      console.log("=== API Response ===");
+      console.log("Data:", data);
+      console.log("Data type:", typeof data);
+      console.log("Data is null:", data === null);
+      console.log("Data is undefined:", data === undefined);
 
       // data가 null 또는 undefined이면 사용 가능 (중복 없음)
-      // 명확한 null 체크
-      if (data === null || data === undefined) {
-        console.log("Nickname is available:", formData.nickname);
+      if (data === null || data === undefined || Object.keys(data).length === 0) {
+        console.log("✅ Nickname is AVAILABLE:", trimmedNickname);
         setNicknameCheck("available");
         setNicknameMessage("사용 가능한 닉네임입니다.");
         setIsNicknameValid(true); // 중요: 반드시 true로 설정
         setErrors({ ...errors, nickname: "" });
       } else {
         // data 객체가 존재하면 중복
-        console.log("Nickname is already taken:", formData.nickname);
+        console.log("❌ Nickname is ALREADY TAKEN:", trimmedNickname);
         setNicknameCheck("unavailable");
         setNicknameMessage("이미 사용 중인 닉네임입니다.");
         setIsNicknameValid(false);
         setErrors({ ...errors, nickname: "이미 사용 중인 닉네임입니다." });
       }
     } catch (error: any) {
-      console.error("Nickname check catch error:", error);
-      // catch 블록에서도 네트워크 에러 구분
-      const errorMessage = error?.message || "알 수 없는 오류";
-      if (errorMessage.includes("network") || errorMessage.includes("fetch")) {
-        setNicknameMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+      // 예외 처리: catch 블록
+      console.error("=== Catch Block Error ===");
+      console.error("Error type:", typeof error);
+      console.error("Error name:", error?.name);
+      console.error("Error message:", error?.message);
+      console.error("Error stack:", error?.stack);
+      console.error("Full error:", JSON.stringify(error, null, 2));
+
+      // 네트워크 에러 구분
+      const errorMessage = (error?.message || "").toLowerCase();
+      if (errorMessage.includes("network") || 
+          errorMessage.includes("fetch") || 
+          errorMessage.includes("failed to fetch") ||
+          error?.code === "ECONNREFUSED") {
+        setNicknameMessage("네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.");
         setErrors({ ...errors, nickname: "네트워크 오류가 발생했습니다." });
+      } else if (errorMessage.includes("404") || error?.status === 404) {
+        setNicknameMessage("서버 오류: 엔드포인트를 찾을 수 없습니다.");
+        setErrors({ ...errors, nickname: "서버 오류가 발생했습니다." });
+      } else if (errorMessage.includes("500") || error?.status === 500) {
+        setNicknameMessage("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        setErrors({ ...errors, nickname: "서버 오류가 발생했습니다." });
       } else {
-        setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
+        setNicknameMessage(`오류: ${error?.message || "알 수 없는 오류가 발생했습니다."}`);
         setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
       }
+      
       setNicknameCheck("unavailable");
       setIsNicknameValid(false);
     }

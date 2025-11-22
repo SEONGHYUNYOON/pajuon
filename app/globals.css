@@ -102,7 +102,7 @@ button:hover,
   box-shadow: var(--shadow-md);
 }
 
-/* NoticeBanner 무한 스크롤 애니메이션 */
+/* NoticeBanner Seamless 무한 스크롤 애니메이션 */
 .banner-ticker-container {
   width: 100%;
   overflow: hidden;
@@ -110,26 +110,30 @@ button:hover,
 }
 
 .banner-ticker-content {
-  display: flex;
-  animation: banner-scroll 40s linear infinite;
+  display: inline-flex;
+  white-space: nowrap;
+  animation: banner-scroll 60s linear infinite;
   will-change: transform;
+  cursor: pointer;
 }
 
 .banner-ticker-content.banner-ticker-paused {
   animation-play-state: paused;
 }
 
-.banner-ticker-item {
+.banner-ticker-text {
+  display: inline-block;
+  padding-right: 8rem; /* 텍스트 묶음 간 충분한 간격 (끊김 방지) */
   flex-shrink: 0;
-  padding-right: 4rem; /* 메시지 간 간격 */
-  min-width: max-content; /* 텍스트가 잘리지 않도록 */
 }
 
+/* Seamless Loop: 첫 번째 텍스트가 완전히 사라질 때 두 번째 텍스트가 같은 위치에 도착 */
 @keyframes banner-scroll {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-33.333%); /* 1/3만 이동 (3번 반복했으므로) */
+    /* 정확히 50% 이동: 첫 번째 텍스트 묶음이 사라지면 두 번째가 시작점에 도착 */
+    transform: translateX(-50%);
   }
 }
