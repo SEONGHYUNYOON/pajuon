@@ -1,0 +1,176 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { UserIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
+
+export default function UserMenu() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    checkUser();
+    
+    // 로그인 상태 변경 감지
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const checkUser = async () => {
+    try {
+      const supabase = createClient();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      if (currentUser) {
+        await loadUserProfile(currentUser.id);
+      }
+    } catch (error) {
+      console.error("Failed to check user:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const supabase = createClient();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, nickname, email, profile_image")
+        .eq("id", userId)
+        .single();
+
+      if (profile) {
+        setUser({
+          id: profile.id,
+          nickname: profile.nickname || profile.email?.split("@")[0] || "사용자",
+          email: profile.email,
+          profileImage: profile.profile_image,
+        });
+      }
+
+      // 읽지 않은 메시지 개수 확인
+      const { count } = await supabase
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .eq("receiver_id", userId)
+        .eq("is_read", false);
+
+      setUnreadCount(count || 0);
+    } catch (error) {
+      console.error("Failed to load user profile:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      setUser(null);
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center space-x-2">
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
+        >
+          로그인
+        </Link>
+        <Link
+          href="/auth/signup"
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium transition-colors"
+        >
+          회원가입
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="relative p-2 text-gray-600 hover:text-primary transition-colors"
+      >
+        {user.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt={user.nickname}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            {user.nickname.charAt(0)}
+          </div>
+        )}
+      </button>
+
+      {/* 드롭다운 메뉴 */}
+      {isDropdownOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsDropdownOpen(false)}
+          ></div>
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+            <Link
+              href="/my-page"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              내 프로필
+            </Link>
+            <Link
+              href="/chat"
+              className="relative block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              채팅함
+              {unreadCount > 0 && (
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </Link>
+            <div className="border-t border-gray-200 my-2"></div>
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
