@@ -61,9 +61,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* 메인 프로모션 배너 */}
-      <section className="relative h-64 mb-6 rounded-2xl overflow-hidden shadow-lg mx-4 md:mx-6 lg:mx-8 mt-4">
+      <section className="relative h-64 mb-6 rounded-2xl overflow-hidden shadow-lg mx-6 md:mx-8 lg:mx-10 mt-4">
         <img
-          src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80&random=${Math.random()}`}
+          src={`https://source.unsplash.com/random/1200x600/?city,landscape&sig=${Math.random()}`}
           alt="파주 프로모션"
           className="w-full h-full object-cover"
         />
@@ -80,12 +80,12 @@ export default function Home() {
       </section>
 
       {/* 퀵 메뉴 - 가로 배치 */}
-      <div className="py-4 px-4 md:px-6 lg:px-8">
+      <div className="py-4 px-6 md:px-8 lg:px-10">
         <QuickMenu />
       </div>
 
       {/* 실시간 파주 톡 - 텍스트 리스트 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">🔥 실시간 파주 톡</h2>
@@ -123,7 +123,7 @@ export default function Home() {
       </section>
 
       {/* 실시간 핫이슈 - 가로 스크롤 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-900">실시간 핫이슈</h2>
@@ -132,7 +132,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-4 px-4">
+          <div className="overflow-x-auto -mx-6 px-6">
             <div className="flex space-x-3" style={{ width: "max-content" }}>
               {hotIssues.map((issue, index) => (
                 <Link
@@ -143,7 +143,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80&random=${Math.random()}`}
+                      src={`https://source.unsplash.com/random/600x400/?news,event&sig=${Math.random()}`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -167,7 +167,7 @@ export default function Home() {
       </section>
 
       {/* 중고장터 - 4열 그리드 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">중고거래</h2>
@@ -186,7 +186,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80&random=${Math.random()}`}
+                    src={`https://source.unsplash.com/random/400x400/?product,item&sig=${Math.random()}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -213,7 +213,7 @@ export default function Home() {
       </section>
 
       {/* 파주시 행사 & 강연 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">🏛️ 파주시 행사 & 강연</h2>
@@ -222,7 +222,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-4 px-4">
+          <div className="overflow-x-auto -mx-6 px-6">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {[
                 { id: 1, title: "[강연] 김영하 작가와 함께하는 북토크", location: "지혜의숲", date: "11.25", category: "강연" },
@@ -238,7 +238,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&q=80&random=${Math.random()}`}
+                      src={`https://source.unsplash.com/random/600x400/?event,concert&sig=${Math.random()}`}
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
@@ -267,7 +267,7 @@ export default function Home() {
       </section>
 
       {/* 우리동네 핫플 - 큰 그리드 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">우리동네 핫플</h2>
@@ -286,7 +286,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&random=${Math.random()}`}
+                    src={`https://source.unsplash.com/random/600x400/?cafe,food&sig=${Math.random()}`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -307,7 +307,7 @@ export default function Home() {
       </section>
 
       {/* 오늘의 모임 - 가로 스크롤 */}
-      <section className="py-6 px-4 md:px-6 lg:px-8">
+      <section className="py-6 px-6 md:px-8 lg:px-10">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">오늘의 모임</h2>
@@ -316,7 +316,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-4 px-4">
+          <div className="overflow-x-auto -mx-6 px-6">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {todayGroups.map((group, index) => (
                 <Link
@@ -327,7 +327,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`${group.image}&random=${Math.random()}`}
+                      src={`https://source.unsplash.com/random/600x400/?activity,group&sig=${Math.random()}`}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />
