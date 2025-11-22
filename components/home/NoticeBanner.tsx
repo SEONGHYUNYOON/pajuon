@@ -17,7 +17,6 @@ interface BannerMessage {
 
 export default function NoticeBanner() {
   const [messages, setMessages] = useState<BannerMessage[]>([]);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
@@ -37,16 +36,6 @@ export default function NoticeBanner() {
     }
   };
 
-  // 자동 스크롤 (5초마다)
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [messages.length]);
 
   const loadMessages = async () => {
     try {
@@ -70,40 +59,32 @@ export default function NoticeBanner() {
           author: msg.user_id ? { nickname: "파주 이웃" } : undefined,
         }));
         setMessages(messagesWithAuthor as BannerMessage[]);
-        setCurrentMessageIndex(0);
       } else {
         // Fallback: 하드코딩된 가상 데이터
         const fallbackMessages: BannerMessage[] = [
           {
             id: "fallback1",
-            content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
+            content: "🐶 잃어버린 강아지를 찾아요 ㅠㅠ 말티즈, 흰색, 운정에서 도망감 ㅠㅠ (사례금 있음)",
             created_at: new Date().toISOString(),
             user_id: "user1",
             author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback2",
-            content: "자유로 교통 정체 제보 - 심각함",
+            content: "⚽ 조기축구회 신입 모집! 개발 환영, 공만 차도 좋아함",
             created_at: new Date(Date.now() - 3600000).toISOString(),
             user_id: "user2",
             author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback3",
-            content: "분실물 찾습니다 - 갈색 지갑",
+            content: "🚗 금촌역 사거리 접촉사고 목격자 찾습니다 (블박 영상 구함)",
             created_at: new Date(Date.now() - 7200000).toISOString(),
             user_id: "user3",
             author: { nickname: "파주 이웃" },
           },
-          {
-            id: "fallback4",
-            content: "파주온에 오신 것을 환영합니다!",
-            created_at: new Date().toISOString(),
-            user_id: null,
-          },
         ];
         setMessages(fallbackMessages);
-        setCurrentMessageIndex(0);
       }
     } catch (error) {
       console.error("Failed to load banner messages:", error);
@@ -111,27 +92,27 @@ export default function NoticeBanner() {
       const fallbackMessages: BannerMessage[] = [
         {
           id: "fallback1",
-          content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
+          content: "🐶 잃어버린 강아지를 찾아요 ㅠㅠ 말티즈, 흰색, 운정에서 도망감 ㅠㅠ (사례금 있음)",
           created_at: new Date().toISOString(),
           user_id: "user1",
           author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback2",
-          content: "자유로 교통 정체 제보 - 심각함",
+          content: "⚽ 조기축구회 신입 모집! 개발 환영, 공만 차도 좋아함",
           created_at: new Date(Date.now() - 3600000).toISOString(),
           user_id: "user2",
           author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback3",
-          content: "파주온에 오신 것을 환영합니다!",
-          created_at: new Date().toISOString(),
-          user_id: null,
+          content: "🚗 금촌역 사거리 접촉사고 목격자 찾습니다 (블박 영상 구함)",
+          created_at: new Date(Date.now() - 7200000).toISOString(),
+          user_id: "user3",
+          author: { nickname: "파주 이웃" },
         },
       ];
       setMessages(fallbackMessages);
-      setCurrentMessageIndex(0);
     }
   };
 
@@ -164,84 +145,71 @@ export default function NoticeBanner() {
   };
 
   const handleMessageClick = () => {
-    const currentMsg = messages[currentMessageIndex];
-    if (!currentMsg || !currentMsg.user_id) {
+    // 첫 번째 메시지를 기준으로 클릭 처리 (무한 스크롤이므로)
+    const firstMsg = messages[0];
+    if (!firstMsg || !firstMsg.user_id) {
       alert("쪽지를 보낼 수 없는 대상입니다");
       return;
     }
 
-    if (currentUser && currentMsg.user_id === currentUser.id) {
+    if (currentUser && firstMsg.user_id === currentUser.id) {
       alert("쪽지를 보낼 수 없는 대상입니다");
       return;
     }
 
     // 채팅 Drawer 열기 (해당 작성자와의 채팅)
     window.dispatchEvent(new CustomEvent("openChatDrawer", { 
-      detail: { userId: currentMsg.user_id } 
+      detail: { userId: firstMsg.user_id } 
     }));
   };
 
-  const currentMessage = messages[currentMessageIndex];
-  const messageContent = currentMessage?.content || "파주온에 오신 것을 환영합니다!";
-  const authorNickname = currentMessage?.author?.nickname;
+  // 무한 스크롤을 위한 메시지 리스트 2번 반복
+  const displayMessages = messages.length > 0 ? [...messages, ...messages] : [];
 
   return (
     <>
       <section className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden">
-        <div className="flex items-center justify-between">
-          {/* 메시지 표시 */}
+        <div className="flex items-center justify-between gap-4">
+          {/* 메시지 표시 - 무한 스크롤 */}
           <div className="flex-1 overflow-hidden relative h-8">
-            <button
-              onClick={handleMessageClick}
-              className="absolute inset-0 flex items-center animate-slide-in whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity w-full text-left"
-              key={currentMessageIndex}
-            >
-              <span className="text-sm font-medium">
-                📢 {messageContent}
-                {authorNickname && (
-                  <span className="ml-2 text-xs opacity-80">
-                    (작성자: {authorNickname})
-                  </span>
-                )}
-              </span>
-            </button>
+            {displayMessages.length > 0 ? (
+              <div className="banner-ticker-container">
+                <div className="banner-ticker-content">
+                  {displayMessages.map((msg, index) => (
+                    <button
+                      key={`${msg.id}-${index}`}
+                      onClick={handleMessageClick}
+                      className="banner-ticker-item cursor-pointer hover:opacity-90 transition-opacity text-left"
+                    >
+                      <span className="text-sm font-medium whitespace-nowrap">
+                        📢 {msg.content}
+                        {msg.author?.nickname && (
+                          <span className="ml-2 text-xs opacity-80">
+                            (작성자: {msg.author.nickname})
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center h-full">
+                <span className="text-sm font-medium">파주온에 오신 것을 환영합니다!</span>
+              </div>
+            )}
           </div>
 
           {/* 확성기 버튼 */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="ml-4 bg-white text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm hover:bg-gray-100 transition-colors flex-shrink-0 flex items-center gap-1"
+            className="bg-white text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm hover:bg-gray-100 transition-colors flex-shrink-0 flex items-center gap-1"
             aria-label="메시지 등록"
           >
             <Megaphone className="w-4 h-4" />
             <span>확성기 신청</span>
           </button>
         </div>
-
-        {/* 애니메이션 스타일 */}
-        <style jsx>{`
-          @keyframes slide-in {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-          @keyframes scroll {
-            from {
-              transform: translateX(100%);
-            }
-            to {
-              transform: translateX(-100%);
-            }
-          }
-          .animate-slide-in {
-            animation: slide-in 0.8s ease-out;
-          }
-        `}</style>
       </section>
 
       {/* 모달 */}

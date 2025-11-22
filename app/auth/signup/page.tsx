@@ -42,7 +42,7 @@ export default function SignupPage() {
     
     if (formData.nickname.length < 2) {
       setNicknameCheck("unavailable");
-      setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+      setNicknameMessage("닉네임은 2자 이상이어야 합니다.");
       setIsNicknameValid(false);
       setErrors({ ...errors, nickname: "닉네임은 2자 이상이어야 합니다." });
       return;
@@ -54,24 +54,34 @@ export default function SignupPage() {
         .from("profiles")
         .select("nickname")
         .eq("nickname", formData.nickname)
-        .single();
+        .maybeSingle(); // .single() 대신 .maybeSingle() 사용 (결과가 없어도 에러 안 냄)
 
-      if (error && error.code === "PGRST116") {
-        // No rows returned = available
+      if (error) {
+        console.error("Nickname check error:", error);
+        setNicknameCheck("unavailable");
+        setNicknameMessage("이미 사용 중인 닉네임입니다.");
+        setIsNicknameValid(false);
+        setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
+        return;
+      }
+
+      // data가 null이면 사용 가능 (중복 없음)
+      if (!data) {
         setNicknameCheck("available");
         setNicknameMessage("사용 가능한 닉네임입니다.");
-        setIsNicknameValid(true);
+        setIsNicknameValid(true); // 중요: 반드시 true로 설정
         setErrors({ ...errors, nickname: "" });
-      } else if (data) {
+      } else {
+        // data가 있으면 중복
         setNicknameCheck("unavailable");
-        setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+        setNicknameMessage("이미 사용 중인 닉네임입니다.");
         setIsNicknameValid(false);
         setErrors({ ...errors, nickname: "이미 사용 중인 닉네임입니다." });
       }
     } catch (error) {
       console.error("Nickname check error:", error);
       setNicknameCheck("unavailable");
-      setNicknameMessage("이미 사용 중이거나 사용할 수 없습니다.");
+      setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
       setIsNicknameValid(false);
       setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
     }
@@ -151,7 +161,8 @@ export default function SignupPage() {
       alert("사는 곳을 선택해주세요");
       return;
     }
-    if (!isNicknameValid) {
+    // 닉네임 중복 확인 체크 (닉네임이 입력된 경우에만)
+    if (formData.nickname && !isNicknameValid) {
       alert("닉네임 중복 확인을 해주세요");
       return;
     }
