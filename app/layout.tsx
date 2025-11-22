@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans bg-gray-100 min-h-screen text-gray-900`}>
         <Providers>
           <Header />
-          <main className="w-full max-w-5xl mx-auto bg-white min-h-screen px-4 md:px-6 lg:px-8">
+          <main className="w-full max-w-7xl mx-auto bg-white min-h-screen shadow-xl my-4 rounded-xl overflow-hidden px-4 md:px-6 lg:px-8">
             {children}
           </main>
           <Footer />

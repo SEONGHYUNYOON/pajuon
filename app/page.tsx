@@ -63,7 +63,7 @@ export default function Home() {
       {/* 메인 프로모션 배너 */}
       <section className="relative h-64 md:h-80 lg:h-96 mb-6 rounded-2xl overflow-hidden shadow-lg">
         <img
-          src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80"
+          src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80&sig=main"
           alt="파주 프로모션"
           className="w-full h-full object-cover"
         />
@@ -134,7 +134,7 @@ export default function Home() {
           
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="flex space-x-3" style={{ width: "max-content" }}>
-              {hotIssues.map((issue) => (
+              {hotIssues.map((issue, index) => (
                 <Link
                   key={issue.id}
                   href={`/now/issue/${issue.id}`}
@@ -143,7 +143,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80"
+                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80&sig=${index}`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -177,7 +177,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {marketItems.map((item) => (
+            {marketItems.map((item, index) => (
               <Link
                 key={item.id}
                 href={`/life/market/${item.id}`}
@@ -186,7 +186,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
+                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80&sig=${item.id + index}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -223,7 +223,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {hotPlaces.map((place) => (
+            {hotPlaces.map((place, index) => (
               <Link
                 key={place.id}
                 href={`/life/hot-place/${place.id}`}
@@ -232,7 +232,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
+                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80&sig=${place.id + index}`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -264,7 +264,7 @@ export default function Home() {
           
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
-              {todayGroups.map((group) => (
+              {todayGroups.map((group, index) => (
                 <Link
                   key={group.id}
                   href={`/groups/${group.id}`}
@@ -273,7 +273,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={group.image}
+                      src={`${group.image}&sig=${group.id + index}`}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />
