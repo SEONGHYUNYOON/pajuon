@@ -77,3 +77,13 @@ CREATE POLICY "Enable delete for users based on user_id"
 -- 6. 스키마 캐시 갱신 힌트 (Supabase 대시보드에서 수동으로 해야 함)
 -- 참고: Supabase 대시보드 > Settings > API > "Reload Schema Cache" 버튼 클릭 필요
 
+-- 7. 기존 RLS 정책 업데이트 (닉네임 중복 확인을 위해 모든 사용자가 조회 가능하도록)
+-- 만약 "Users can view own profile" 정책이 있다면 업데이트
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+
+-- 모든 사용자가 프로필을 조회할 수 있음 (닉네임 중복 확인용)
+CREATE POLICY "Users can view own profile"
+  ON public.profiles
+  FOR SELECT
+  USING (true);
+

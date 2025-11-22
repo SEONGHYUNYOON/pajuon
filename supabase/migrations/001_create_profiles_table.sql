@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- RLS (Row Level Security) 정책 설정
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- 모든 사용자가 자신의 프로필을 조회할 수 있음
+-- 모든 사용자(익명 포함)가 프로필을 조회할 수 있음 (닉네임 중복 확인용)
 CREATE POLICY "Users can view own profile"
   ON public.profiles
   FOR SELECT
-  USING (auth.uid() = id);
+  USING (true);
 
 -- 모든 사용자가 자신의 프로필을 수정할 수 있음
 CREATE POLICY "Users can update own profile"
