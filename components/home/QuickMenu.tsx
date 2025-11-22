@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Users, GraduationCap, Heart, Newspaper, Map } from "lucide-react";
+import { Users, GraduationCap, Heart, Newspaper, Map, MessageCircle } from "lucide-react";
 
 const menuItems = [
   {
     id: "community",
-    label: "커뮤니티",
+    label: "참여형 소셜",
     icon: Users,
     href: "/groups",
     color: "text-blue-500",
@@ -44,13 +44,21 @@ const menuItems = [
     color: "text-green-500",
     hoverColor: "hover:text-green-600",
   },
+  {
+    id: "neighborhood",
+    label: "동네별 수다방",
+    icon: MessageCircle,
+    href: "/neighborhood",
+    color: "text-indigo-500",
+    hoverColor: "hover:text-indigo-600",
+  },
 ];
 
 export default function QuickMenu() {
   return (
     <section className="bg-white py-6 px-4 rounded-3xl shadow-lg shadow-gray-200/50">
       <div className="w-full">
-        <div className="flex flex-row justify-between items-center gap-2">
+        <div className="flex flex-row justify-between items-center gap-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (

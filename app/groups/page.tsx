@@ -248,23 +248,35 @@ export default function GroupsPage() {
           </div>
         </Card>
 
-        {/* 모임 목록 - 프로필 카드 형태 */}
+        {/* 모임 목록 - 인스타그램 피드 스타일 */}
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">로딩 중...</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="max-w-2xl mx-auto space-y-6">
               {filteredGroups.map((group) => (
-                <Card
+                <div
                   key={group.id}
-                  href={`/groups/${group.id}`}
-                  padding="none"
-                  className="overflow-hidden"
+                  className="bg-white rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  {/* 커버 이미지 */}
-                  <div className="w-full h-48 bg-gradient-to-br from-paju-blue to-paju-green relative overflow-hidden">
+                  {/* 헤더: 프로필 + 닉네임 + 더보기 */}
+                  <div className="flex items-center justify-between p-3 border-b border-gray-200">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                        {group.creator.nickname.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900 text-sm">{group.creator.nickname}</div>
+                        <div className="text-xs text-gray-500">{new Date(group.createdAt).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                    <button className="text-gray-900 text-xl font-bold">⋯</button>
+                  </div>
+
+                  {/* 이미지: 1:1 비율 */}
+                  <div className="w-full aspect-square bg-gray-100 relative">
                     {group.coverImage ? (
                       <img
                         src={`${group.coverImage}&random=${Math.random()}`}
@@ -273,44 +285,58 @@ export default function GroupsPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <UserGroupIcon className="w-16 h-16 text-white/50" />
+                        <UserGroupIcon className="w-16 h-16 text-gray-300" />
                       </div>
                     )}
-                    {/* 멤버수 뱃지 */}
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-semibold text-paju-blue flex items-center">
-                      <UsersIcon className="w-4 h-4 mr-1" />
-                      {group.memberCount}명
-                    </div>
                   </div>
 
-                  {/* 카드 내용 */}
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <span className="px-3 py-1 bg-paju-green/10 text-paju-green rounded-full text-xs font-medium">
-                        {categories.find((c) => c.value === group.type)?.label || group.type}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(group.createdAt).toLocaleDateString()}
+                  {/* 액션 바: 하트, 댓글, 공유 */}
+                  <div className="p-3 flex items-center space-x-4 border-b border-gray-200">
+                    <button className="text-gray-900 hover:text-red-500 transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </button>
+                    <button className="text-gray-900 hover:text-blue-500 transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </button>
+                    <button className="text-gray-900 hover:text-blue-500 transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* 본문: 아이디 + 본문 */}
+                  <div className="p-3">
+                    <div className="mb-2">
+                      <Link href={`/groups/${group.id}`} className="font-semibold text-gray-900 text-sm hover:underline">
+                        {group.creator.nickname}
+                      </Link>
+                      <span className="text-gray-900 text-sm ml-2">
+                        {group.description.length > 100 ? (
+                          <>
+                            {group.description.substring(0, 100)}...
+                            <button className="text-gray-500 ml-1">더보기</button>
+                          </>
+                        ) : (
+                          group.description
+                        )}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{group.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{group.description}</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <span>📝 {group.postCount}개 글</span>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/groups/${group.id}`;
-                        }}
-                        className="px-4 py-2 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors text-sm font-medium"
-                      >
-                        가입하기
-                      </button>
+
+                    {/* 댓글 미리보기 */}
+                    <button className="text-gray-500 text-sm mb-2 hover:text-gray-700">
+                      댓글 {group.postCount}개 모두 보기
+                    </button>
+
+                    <div className="text-xs text-gray-500 mt-2">
+                      멤버 {group.memberCount}명
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
 

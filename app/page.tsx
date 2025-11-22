@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* 메인 프로모션 배너 */}
-      <section className="relative h-64 mb-6 rounded-2xl overflow-hidden shadow-lg mx-8 md:mx-10 lg:mx-12 mt-4">
+      <section className="relative h-48 mb-6 rounded-2xl overflow-hidden shadow-lg mx-8 md:mx-10 lg:mx-12 mt-4">
         <img
           src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80"
           alt="파주 프로모션"
@@ -132,7 +132,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-8 px-8">
+          <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-3" style={{ width: "max-content" }}>
               {hotIssues.map((issue, index) => (
                 <Link
@@ -222,7 +222,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-8 px-8">
+          <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {[
                 { id: 1, title: "[강연] 김영하 작가와 함께하는 북토크", location: "지혜의숲", date: "11.25", category: "강연" },
@@ -316,7 +316,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="overflow-x-auto -mx-8 px-8">
+          <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {todayGroups.map((group, index) => (
                 <Link

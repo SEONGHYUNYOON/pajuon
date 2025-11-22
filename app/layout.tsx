@@ -32,7 +32,9 @@ export default function RootLayout({
           <div className="w-full max-w-5xl bg-white min-h-screen shadow-2xl">
             <Header />
             <main className="w-full">
-              {children}
+              <div className="px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
             </main>
             <Footer />
           </div>
