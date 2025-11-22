@@ -7,14 +7,13 @@ import WeatherBadge from "@/components/home/WeatherBadge";
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-3xl mx-auto w-full px-4">
+      <div className="max-w-[600px] mx-auto w-full px-4">
         <div className="flex items-center justify-between h-16">
           {/* 로고 */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">ON</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">파주온</span>
+          <Link href="/" className="flex items-end gap-2">
+            <span className="text-2xl font-bold text-gray-900">PAJU</span>
+            <span className="text-2xl font-extrabold text-[#0D4FFF]">ON</span>
+            <span className="text-xs text-gray-500 mb-0.5">파주에 오다</span>
           </Link>
 
           {/* 중앙: 날씨 뱃지 */}

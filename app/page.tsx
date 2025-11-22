@@ -29,22 +29,11 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] px-4">
+    <div className="min-h-screen bg-white px-4">
       {/* 퀵 메뉴 - 가로 배치 */}
       <div className="py-4">
         <QuickMenu />
       </div>
-
-      {/* 배너 - "파주에서 뭐 하고 놀까?" */}
-      <section className="py-8 bg-white rounded-3xl shadow-lg shadow-gray-200/50 mt-4 px-6">
-        <div className="w-full">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-            파주에서
-            <br />
-            뭐 하고 놀까?
-          </h1>
-        </div>
-      </section>
 
       {/* 실시간 핫이슈 - 가로 스크롤 */}
       <section className="py-6">
@@ -67,7 +56,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src={`https://source.unsplash.com/random/400x300/?paju,city,news&sig=${issue.id}`}
+                      src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80"
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -109,7 +98,7 @@ export default function Home() {
               >
                 {/* 썸네일 */}
                 <img
-                  src={`https://source.unsplash.com/random/200x200/?product,secondhand&sig=${item.id}`}
+                  src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
                   alt={item.title}
                   className="w-16 h-16 flex-shrink-0 rounded-xl object-cover"
                 />
@@ -154,7 +143,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src={`https://source.unsplash.com/random/400x300/?cafe,food,restaurant&sig=${place.id}`}
+                    src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />

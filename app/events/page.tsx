@@ -24,7 +24,7 @@ const events = [
     maxParticipants: 50,
     status: "신청중",
     type: "미팅",
-    image: "https://source.unsplash.com/random/800x600/?dating,meeting&sig=1",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
     isMatchmaking: true,
   },
   {
@@ -37,7 +37,7 @@ const events = [
     maxParticipants: 40,
     status: "신청중",
     type: "미팅",
-    image: "https://source.unsplash.com/random/800x600/?party,celebration&sig=2",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
     isMatchmaking: true,
   },
   {
@@ -50,7 +50,7 @@ const events = [
     maxParticipants: 200,
     status: "신청중",
     type: "축제",
-    image: "https://source.unsplash.com/random/800x600/?festival&sig=3",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
     isMatchmaking: false,
   },
   {
@@ -63,7 +63,7 @@ const events = [
     maxParticipants: 100,
     status: "신청중",
     type: "토론",
-    image: "https://source.unsplash.com/random/800x600/?meeting,conference&sig=4",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
     isMatchmaking: false,
   },
   {
@@ -76,7 +76,7 @@ const events = [
     maxParticipants: 50,
     status: "신청중",
     type: "미팅",
-    image: "https://source.unsplash.com/random/800x600/?christmas,romantic&sig=5",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
     isMatchmaking: true,
   },
 ];

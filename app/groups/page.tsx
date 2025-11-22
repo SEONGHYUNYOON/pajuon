@@ -44,7 +44,7 @@ const dummyGroups: Group[] = [
     name: "파주 주말 등산회",
     description: "매 주말 함께 등산하며 건강한 삶을 추구하는 모임입니다. 초보자 환영!",
     type: "HIKING",
-    coverImage: "https://source.unsplash.com/random/800x600/?hiking,mountain&sig=1",
+    coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "1",
       nickname: "등산러버",
@@ -59,7 +59,7 @@ const dummyGroups: Group[] = [
     name: "운정 맛집 탐방대",
     description: "파주 맛집을 발굴하고 함께 먹으러 다니는 맛집 덕후 모임",
     type: "OTHER",
-    coverImage: "https://source.unsplash.com/random/800x600/?food,restaurant&sig=2",
+    coverImage: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "2",
       nickname: "맛집왕",
@@ -74,7 +74,7 @@ const dummyGroups: Group[] = [
     name: "새벽 독서 모임",
     description: "평일 새벽 6시에 만나 함께 독서하고 인사이트를 나누는 모임",
     type: "OTHER",
-    coverImage: "https://source.unsplash.com/random/800x600/?book,reading&sig=3",
+    coverImage: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "3",
       nickname: "책벌레",
@@ -89,7 +89,7 @@ const dummyGroups: Group[] = [
     name: "토요일 풋살",
     description: "토요일 오후 풋살을 즐기는 모임입니다. 체력 단련과 친목 도모!",
     type: "SOCCER",
-    coverImage: "https://source.unsplash.com/random/800x600/?soccer,football&sig=4",
+    coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "4",
       nickname: "축구매니아",
@@ -104,7 +104,7 @@ const dummyGroups: Group[] = [
     name: "파주 자전거 라이딩",
     description: "주말에 함께 자전거 타며 파주 풍경을 즐기는 모임",
     type: "RIDING",
-    coverImage: "https://source.unsplash.com/random/800x600/?bicycle,cycling&sig=5",
+    coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "5",
       nickname: "라이더",
@@ -119,7 +119,7 @@ const dummyGroups: Group[] = [
     name: "캠핑 모임",
     description: "계절마다 함께 캠핑하며 자연을 즐기는 모임입니다",
     type: "CAMPING",
-    coverImage: "https://source.unsplash.com/random/800x600/?camping,tent&sig=6",
+    coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80",
     creator: {
       id: "6",
       nickname: "캠퍼",
