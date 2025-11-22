@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, GraduationCap, Heart, Newspaper, Map, MessageCircle, Camera } from "lucide-react";
+import { Users, GraduationCap, Heart, Newspaper, Map, MessageCircle, Camera, Briefcase, Sun } from "lucide-react";
 
 const menuItems = [
   {
@@ -60,13 +60,29 @@ const menuItems = [
     color: "text-pink-600",
     hoverColor: "hover:text-pink-700",
   },
+  {
+    id: "jobs",
+    label: "파주인",
+    icon: Briefcase,
+    href: "/jobs",
+    color: "text-teal-500",
+    hoverColor: "hover:text-teal-600",
+  },
+  {
+    id: "life",
+    label: "파주 Life",
+    icon: Sun,
+    href: "/life",
+    color: "text-yellow-500",
+    hoverColor: "hover:text-yellow-600",
+  },
 ];
 
 export default function QuickMenu() {
   return (
     <section className="bg-white py-6 px-4 rounded-3xl shadow-lg shadow-gray-200/50">
       <div className="w-full">
-        <div className="flex flex-row justify-between items-center gap-1">
+        <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-9 gap-2 md:gap-4">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (

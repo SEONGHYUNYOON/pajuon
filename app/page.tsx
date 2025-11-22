@@ -104,6 +104,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 실시간 제보 배너 */}
+      <section className="py-2 px-8 md:px-10 lg:px-12 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <div className="overflow-hidden">
+          <div className="flex items-center justify-center animate-marquee whitespace-nowrap">
+            <span className="text-sm font-medium">
+              📢 지금 자유로 막히나요? 실시간 교통 상황 제보하기 &gt;
+            </span>
+          </div>
+        </div>
+        <style jsx>{`
+          @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+          }
+          .animate-marquee {
+            animation: marquee 20s linear infinite;
+          }
+        `}</style>
+      </section>
+
       {/* 스토리 레일 */}
       <section className="py-4 px-8 md:px-10 lg:px-12">
         <StoryRail />

@@ -100,14 +100,14 @@ export default function UserMenu() {
       <div className="flex items-center gap-4">
         <Link
           href="/auth/login"
-          className="px-4 py-2 text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
+          className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors"
         >
           로그인
         </Link>
         <span className="text-gray-300">|</span>
         <Link
           href="/auth/signup"
-          className="px-4 py-2 text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
+          className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors"
         >
           회원가입
         </Link>
