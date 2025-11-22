@@ -97,11 +97,24 @@ export default function UserMenu() {
 
   if (!user) {
     return (
-      <div className="flex items-center gap-4 relative" style={{ zIndex: 101 }}>
+      <div 
+        className="flex items-center gap-4 relative" 
+        style={{ 
+          zIndex: 9999, 
+          position: 'relative',
+          border: '5px solid green', // 🐛 임시 디버깅용 초록 테두리
+          pointerEvents: 'auto'
+        }}
+      >
         <Link
           href="/auth/login"
           className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors cursor-pointer relative z-10"
-          style={{ zIndex: 101, position: 'relative' }}
+          style={{ 
+            zIndex: 9999, 
+            position: 'relative',
+            pointerEvents: 'auto',
+            border: '2px solid orange' // 🐛 임시 디버깅용 주황 테두리
+          }}
         >
           로그인
         </Link>
@@ -109,7 +122,12 @@ export default function UserMenu() {
         <Link
           href="/auth/signup"
           className="px-4 py-2 text-gray-500 hover:text-[#0D4FFF] text-sm font-medium transition-colors cursor-pointer relative z-10"
-          style={{ zIndex: 101, position: 'relative' }}
+          style={{ 
+            zIndex: 9999, 
+            position: 'relative',
+            pointerEvents: 'auto',
+            border: '2px solid orange' // 🐛 임시 디버깅용 주황 테두리
+          }}
         >
           회원가입
         </Link>

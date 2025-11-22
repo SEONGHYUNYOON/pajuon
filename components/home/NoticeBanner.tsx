@@ -180,7 +180,13 @@ export default function NoticeBanner() {
 
   return (
     <>
-      <section className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden" style={{ zIndex: 1 }}>
+      <section 
+        className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden" 
+        style={{ 
+          zIndex: 1,
+          position: 'relative' // 헤더 위에 겹치지 않도록 relative 유지
+        }}
+      >
         <div className="flex items-center justify-between gap-4">
           {/* 메시지 표시 - Seamless 무한 스크롤 */}
           <div 

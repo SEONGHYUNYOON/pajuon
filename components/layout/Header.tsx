@@ -8,11 +8,25 @@ import ChatDrawer from "@/components/chat/ChatDrawer";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-[100] bg-white border-b border-gray-100 w-full" style={{ position: 'relative', zIndex: 100 }}>
-      <div className="w-full px-4 md:px-6 lg:px-8 relative">
-        <div className="flex items-center justify-between h-16 relative">
+    <header 
+      className="sticky top-0 z-[9999] bg-white border-b border-gray-100 w-full" 
+      style={{ 
+        position: 'sticky', 
+        zIndex: 9999,
+        border: '5px solid red' // 🐛 임시 디버깅용 빨간 테두리
+      }}
+    >
+      <div className="w-full px-4 md:px-6 lg:px-8 relative" style={{ zIndex: 9999 }}>
+        <div className="flex items-center justify-between h-16 relative" style={{ zIndex: 9999 }}>
           {/* 좌측: UserMenu */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-[101]" style={{ zIndex: 101 }}>
+          <div 
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-[9999]" 
+            style={{ 
+              zIndex: 9999,
+              border: '5px solid blue', // 🐛 임시 디버깅용 파란 테두리
+              pointerEvents: 'auto'
+            }}
+          >
             <UserMenu />
           </div>
 
