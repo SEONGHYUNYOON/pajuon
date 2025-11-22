@@ -101,3 +101,30 @@ button:hover,
 .card:hover {
   box-shadow: var(--shadow-md);
 }
+
+/* NoticeBanner 무한 스크롤 애니메이션 */
+.banner-ticker-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-ticker-content {
+  display: flex;
+  animation: banner-scroll 30s linear infinite;
+  will-change: transform;
+}
+
+.banner-ticker-item {
+  flex-shrink: 0;
+  padding-right: 4rem; /* 메시지 간 간격 */
+}
+
+@keyframes banner-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%); /* 절반만 이동 (2번 반복했으므로) */
+  }
+}
