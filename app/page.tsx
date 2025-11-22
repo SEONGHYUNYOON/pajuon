@@ -104,6 +104,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 스토리 레일 */}
+      <section className="py-4 px-8 md:px-10 lg:px-12">
+        <StoryRail />
+      </section>
+
       {/* 퀵 메뉴 - 가로 배치 */}
       <div className="py-4 px-8 md:px-10 lg:px-12">
         <QuickMenu />
