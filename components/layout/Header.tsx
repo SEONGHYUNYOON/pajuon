@@ -35,7 +35,7 @@ export default function Header() {
               ></span>
               
               {/* 파주에 오다 텍스트 - 먼저 표시 */}
-              <span className="text-xs text-[#0D4FFF] font-medium opacity-80 group-hover:opacity-100 transition-opacity mb-0.5 hidden sm:inline-block leading-none">
+              <span className="text-sm text-[#0D4FFF] font-medium opacity-80 group-hover:opacity-100 transition-opacity mb-0.5 hidden sm:inline-block leading-none">
                 파주에 오다.
               </span>
               
