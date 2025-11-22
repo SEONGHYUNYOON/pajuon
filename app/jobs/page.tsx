@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MapPinIcon, ClockIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import { Plus, Pencil } from "lucide-react";
 
 const jobTypes = [
   { id: "all", label: "전체" },
@@ -124,7 +125,7 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-2xl mx-auto px-4">
         {/* 헤더 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">👔 파주인</h1>
@@ -132,7 +133,7 @@ export default function JobsPage() {
         </div>
 
         {/* 필터 */}
-        <div className="mb-6 flex flex-wrap gap-2 justify-center">
+        <div className="mb-8 flex flex-wrap gap-2 justify-center">
           {jobTypes.map((type) => (
             <button
               key={type.id}
@@ -151,7 +152,7 @@ export default function JobsPage() {
         {/* 구인구직 카드 리스트 */}
         <div className="space-y-4">
           {filteredJobs.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <div className="text-center py-12 bg-white rounded-xl shadow-sm">
               <p className="text-gray-500 text-lg">등록된 구인구직이 없습니다.</p>
             </div>
           ) : (
@@ -159,50 +160,64 @@ export default function JobsPage() {
               <Link
                 key={job.id}
                 href={`/jobs/${job.id}`}
-                className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6"
+                className="block bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 mb-4"
               >
+                {/* 상단: 제목 + 작성일 */}
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-bold text-gray-900">{job.title}</h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        job.type === "full-time"
-                          ? "bg-green-100 text-green-600"
-                          : job.type === "part-time"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-orange-100 text-orange-600"
-                      }`}>
-                        {jobTypes.find(t => t.id === job.type)?.label}
-                      </span>
+                  <h3 className="text-lg font-bold text-gray-900 flex-1 pr-4">{job.title}</h3>
+                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                    {new Date().toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                  </span>
+                </div>
+
+                {/* 중단: 급여 정보 + 근무지/시간 */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-1 mb-3">
+                    <span className="text-2xl font-bold text-[#0D4FFF]">{job.wage}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <MapPinIcon className="w-4 h-4 text-gray-400" />
+                      <span>{job.location}</span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-2">{job.company}</p>
+                    <div className="flex items-center gap-1">
+                      <ClockIcon className="w-4 h-4 text-gray-400" />
+                      <span>{job.hours}</span>
+                    </div>
                   </div>
+                  <p className="text-gray-600 text-sm mt-2">{job.company}</p>
                 </div>
 
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="flex items-center gap-1 text-red-500 font-bold text-lg">
-                    <CurrencyDollarIcon className="w-5 h-5" />
-                    <span>{job.wage}</span>
-                  </div>
+                {/* 하단: 태그 뱃지 */}
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                    job.type === "full-time"
+                      ? "bg-green-100 text-green-700"
+                      : job.type === "part-time"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-orange-100 text-orange-700"
+                  }`}>
+                    {jobTypes.find(t => t.id === job.type)?.label}
+                  </span>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <MapPinIcon className="w-4 h-4" />
-                    <span>{job.location}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <ClockIcon className="w-4 h-4" />
-                    <span>{job.hours}</span>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 text-sm mt-3 line-clamp-2">{job.description}</p>
               </Link>
             ))
           )}
         </div>
       </div>
+
+      {/* 플로팅 공고 등록 버튼 */}
+      <Link
+        href="/jobs/new"
+        className="fixed bottom-24 right-6 md:right-[calc(50%-300px)] bg-[#0D4FFF] text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2 z-50"
+        onClick={(e) => {
+          e.preventDefault();
+          alert("준비 중입니다");
+        }}
+      >
+        <Plus className="w-5 h-5" />
+        <span className="font-medium">공고 등록</span>
+      </Link>
     </div>
   );
 }
