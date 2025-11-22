@@ -8,7 +8,7 @@ import ChatDrawer from "@/components/chat/ChatDrawer";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 w-full">
+    <header className="sticky top-0 z-[100] bg-white border-b border-gray-100 w-full" style={{ position: 'relative', zIndex: 100 }}>
       <div className="w-full px-4 md:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16 relative">
           {/* 좌측: UserMenu */}
