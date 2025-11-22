@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Newspaper, Flame, ShoppingBag, Map, Heart } from "lucide-react";
-import WeatherBanner from "@/components/home/WeatherBanner";
+import { Heart } from "lucide-react";
+import QuickMenu from "@/components/home/QuickMenu";
+import LiveStation from "@/components/realtime/LiveStation";
 
 export default function Home() {
   // 더미 데이터
@@ -28,70 +29,15 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
-      {/* 날씨 배너 - 초슬림 */}
-      <WeatherBanner />
-
-      {/* 메인 메뉴 - 퀵 아이콘 */}
-      <section className="px-4 py-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-5 gap-3">
-            <Link
-              href="/groups"
-              className="flex flex-col items-center space-y-1"
-            >
-              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
-                <Users className="w-7 h-7 text-primary" />
-              </div>
-              <span className="text-xs font-medium text-gray-700">모임</span>
-            </Link>
-            
-            <Link
-              href="/news"
-              className="flex flex-col items-center space-y-1"
-            >
-              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
-                <Newspaper className="w-7 h-7 text-primary" />
-              </div>
-              <span className="text-xs font-medium text-gray-700">소식</span>
-            </Link>
-            
-            <Link
-              href="/life/hot-place"
-              className="flex flex-col items-center space-y-1"
-            >
-              <div className="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center">
-                <Flame className="w-7 h-7 text-secondary" />
-              </div>
-              <span className="text-xs font-medium text-gray-700">핫플</span>
-            </Link>
-            
-            <Link
-              href="/life/market"
-              className="flex flex-col items-center space-y-1"
-            >
-              <div className="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center">
-                <ShoppingBag className="w-7 h-7 text-secondary" />
-              </div>
-              <span className="text-xs font-medium text-gray-700">장터</span>
-            </Link>
-            
-            <Link
-              href="/map"
-              className="flex flex-col items-center space-y-1"
-            >
-              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
-                <Map className="w-7 h-7 text-primary" />
-              </div>
-              <span className="text-xs font-medium text-gray-700">지도</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-[#F3F4F6] px-4">
+      {/* 퀵 메뉴 - 가로 배치 */}
+      <div className="py-4">
+        <QuickMenu />
+      </div>
 
       {/* 배너 - "파주에서 뭐 하고 놀까?" */}
-      <section className="px-4 py-8 bg-white">
-        <div className="max-w-3xl mx-auto">
+      <section className="py-8 bg-white rounded-3xl shadow-lg shadow-gray-200/50 mt-4 px-6">
+        <div className="w-full">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
             파주에서
             <br />
@@ -101,8 +47,8 @@ export default function Home() {
       </section>
 
       {/* 실시간 핫이슈 - 가로 스크롤 */}
-      <section className="px-4 py-6">
-        <div className="max-w-3xl mx-auto">
+      <section className="py-6">
+        <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-900">실시간 핫이슈</h2>
             <Link href="/now/issue" className="text-xs text-gray-500 hover:text-primary">
@@ -116,14 +62,14 @@ export default function Home() {
                 <Link
                   key={issue.id}
                   href={`/now/issue/${issue.id}`}
-                  className="flex-shrink-0 w-64 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                  className="flex-shrink-0 w-64 bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
                 >
                   {/* 이미지 */}
-                  <div className="w-full h-32 relative">
+                  <div className="bg-white">
                     <img
-                      src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80"
+                      src={`https://source.unsplash.com/random/400x300/?paju,city,news&sig=${issue.id}`}
                       alt={issue.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-32 object-cover"
                     />
                   </div>
                   <div className="p-3">
@@ -145,8 +91,8 @@ export default function Home() {
       </section>
 
       {/* 중고장터 - 당근마켓 스타일 */}
-      <section className="px-4 py-6">
-        <div className="max-w-3xl mx-auto">
+      <section className="py-6">
+        <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-900">중고거래</h2>
             <Link href="/life/market" className="text-xs text-gray-500 hover:text-primary">
@@ -154,7 +100,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="space-y-0 divide-y divide-gray-100 bg-white rounded-2xl overflow-hidden shadow-sm">
+          <div className="space-y-0 divide-y divide-gray-100 bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50">
             {marketItems.map((item) => (
               <Link
                 key={item.id}
@@ -162,13 +108,11 @@ export default function Home() {
                 className="flex items-center space-x-3 p-3 hover:bg-gray-50 transition-colors"
               >
                 {/* 썸네일 */}
-                <div className="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80"
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <img
+                  src={`https://source.unsplash.com/random/200x200/?product,secondhand&sig=${item.id}`}
+                  alt={item.title}
+                  className="w-16 h-16 flex-shrink-0 rounded-xl object-cover"
+                />
                 
                 {/* 텍스트 */}
                 <div className="flex-1 min-w-0">
@@ -191,8 +135,8 @@ export default function Home() {
       </section>
 
       {/* 우리동네 핫플 - 2열 그리드 사진 카드 */}
-      <section className="px-4 py-6">
-        <div className="max-w-3xl mx-auto">
+      <section className="py-6">
+        <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-900">우리동네 핫플</h2>
             <Link href="/life/hot-place" className="text-xs text-gray-500 hover:text-primary">
@@ -205,14 +149,16 @@ export default function Home() {
               <Link
                 key={place.id}
                 href={`/life/hot-place/${place.id}`}
-                className="relative aspect-[4/3] bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                className="relative aspect-[4/3] bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
               >
                 {/* 이미지 */}
-                <img
-                  src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80"
-                  alt={place.title}
-                  className="w-full h-full object-cover"
-                />
+                <div className="bg-white w-full h-full">
+                  <img
+                    src={`https://source.unsplash.com/random/400x300/?cafe,food,restaurant&sig=${place.id}`}
+                    alt={place.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 
                 {/* 하단 정보 */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
@@ -230,6 +176,9 @@ export default function Home() {
 
       {/* 하단 여백 */}
       <div className="h-16"></div>
+
+      {/* 실시간 라이브 위젯 */}
+      <LiveStation />
     </div>
   );
 }

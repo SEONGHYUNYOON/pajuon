@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { MagnifyingGlassIcon, BellIcon } from "@heroicons/react/24/outline";
+import WeatherBadge from "@/components/home/WeatherBadge";
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-2xl mx-auto px-4">
+      <div className="max-w-3xl mx-auto w-full px-4">
         <div className="flex items-center justify-between h-16">
           {/* 로고 */}
           <Link href="/" className="flex items-center space-x-2">
@@ -15,6 +16,9 @@ export default function Header() {
             </div>
             <span className="text-xl font-bold text-gray-900">파주온</span>
           </Link>
+
+          {/* 중앙: 날씨 뱃지 */}
+          <WeatherBadge />
 
           {/* 우측 아이콘 */}
           <div className="flex items-center space-x-4">

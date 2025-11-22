@@ -37,6 +37,100 @@ interface Group {
   createdAt: string;
 }
 
+// 더미 데이터
+const dummyGroups: Group[] = [
+  {
+    id: "1",
+    name: "파주 주말 등산회",
+    description: "매 주말 함께 등산하며 건강한 삶을 추구하는 모임입니다. 초보자 환영!",
+    type: "HIKING",
+    coverImage: "https://source.unsplash.com/random/800x600/?hiking,mountain&sig=1",
+    creator: {
+      id: "1",
+      nickname: "등산러버",
+      profileImage: null,
+    },
+    memberCount: 45,
+    postCount: 23,
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "2",
+    name: "운정 맛집 탐방대",
+    description: "파주 맛집을 발굴하고 함께 먹으러 다니는 맛집 덕후 모임",
+    type: "OTHER",
+    coverImage: "https://source.unsplash.com/random/800x600/?food,restaurant&sig=2",
+    creator: {
+      id: "2",
+      nickname: "맛집왕",
+      profileImage: null,
+    },
+    memberCount: 120,
+    postCount: 67,
+    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "3",
+    name: "새벽 독서 모임",
+    description: "평일 새벽 6시에 만나 함께 독서하고 인사이트를 나누는 모임",
+    type: "OTHER",
+    coverImage: "https://source.unsplash.com/random/800x600/?book,reading&sig=3",
+    creator: {
+      id: "3",
+      nickname: "책벌레",
+      profileImage: null,
+    },
+    memberCount: 28,
+    postCount: 15,
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "4",
+    name: "토요일 풋살",
+    description: "토요일 오후 풋살을 즐기는 모임입니다. 체력 단련과 친목 도모!",
+    type: "SOCCER",
+    coverImage: "https://source.unsplash.com/random/800x600/?soccer,football&sig=4",
+    creator: {
+      id: "4",
+      nickname: "축구매니아",
+      profileImage: null,
+    },
+    memberCount: 32,
+    postCount: 12,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "5",
+    name: "파주 자전거 라이딩",
+    description: "주말에 함께 자전거 타며 파주 풍경을 즐기는 모임",
+    type: "RIDING",
+    coverImage: "https://source.unsplash.com/random/800x600/?bicycle,cycling&sig=5",
+    creator: {
+      id: "5",
+      nickname: "라이더",
+      profileImage: null,
+    },
+    memberCount: 56,
+    postCount: 31,
+    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "6",
+    name: "캠핑 모임",
+    description: "계절마다 함께 캠핑하며 자연을 즐기는 모임입니다",
+    type: "CAMPING",
+    coverImage: "https://source.unsplash.com/random/800x600/?camping,tent&sig=6",
+    creator: {
+      id: "6",
+      nickname: "캠퍼",
+      profileImage: null,
+    },
+    memberCount: 38,
+    postCount: 19,
+    createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
 export default function GroupsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,11 +149,24 @@ export default function GroupsPage() {
         : "/api/groups";
       const response = await fetch(url);
       const data = await response.json();
-      if (data.groups) {
+      
+      // API에서 가져온 데이터가 없거나 비어있으면 더미 데이터 사용
+      if (data.groups && data.groups.length > 0) {
         setGroups(data.groups);
+      } else {
+        // 카테고리 필터링 적용
+        const filtered = selectedCategory
+          ? dummyGroups.filter((g) => g.type === selectedCategory)
+          : dummyGroups;
+        setGroups(filtered);
       }
     } catch (error) {
       console.error("Failed to load groups:", error);
+      // 에러 발생 시에도 더미 데이터 사용
+      const filtered = selectedCategory
+        ? dummyGroups.filter((g) => g.type === selectedCategory)
+        : dummyGroups;
+      setGroups(filtered);
     } finally {
       setIsLoading(false);
     }
@@ -72,8 +179,8 @@ export default function GroupsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F3F4F6] py-8 px-4">
+      <div className="w-full">
         {/* 헤더 */}
         <PageHeader
           title="함께해요 (모임)"
