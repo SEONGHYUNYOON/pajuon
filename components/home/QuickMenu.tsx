@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, GraduationCap, Heart, Newspaper, Map, MessageCircle } from "lucide-react";
+import { Users, GraduationCap, Heart, Newspaper, Map, MessageCircle, Camera } from "lucide-react";
 
 const menuItems = [
   {
@@ -51,6 +51,14 @@ const menuItems = [
     href: "/neighborhood",
     color: "text-indigo-500",
     hoverColor: "hover:text-indigo-600",
+  },
+  {
+    id: "photo",
+    label: "파주 사진전",
+    icon: Camera,
+    href: "/photo",
+    color: "text-pink-600",
+    hoverColor: "hover:text-pink-700",
   },
 ];
 

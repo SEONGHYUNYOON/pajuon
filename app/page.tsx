@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 import QuickMenu from "@/components/home/QuickMenu";
 import LiveStation from "@/components/realtime/LiveStation";
+import StoryRail from "@/components/home/StoryRail";
 
 // 이미지 다양화를 위한 고정된 이미지 ID 배열 (20개)
 const IMAGE_IDS = [
