@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* 메인 프로모션 배너 */}
-      <section className="relative h-64 md:h-80 lg:h-96 mb-6 rounded-2xl overflow-hidden shadow-lg">
+      <section className="relative h-64 md:h-80 lg:h-96 mb-6 rounded-2xl overflow-hidden shadow-lg mx-4 md:mx-6 lg:mx-8 mt-4">
         <img
           src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80&sig=main"
           alt="파주 프로모션"
@@ -80,12 +80,12 @@ export default function Home() {
       </section>
 
       {/* 퀵 메뉴 - 가로 배치 */}
-      <div className="py-4">
+      <div className="py-4 px-4 md:px-6 lg:px-8">
         <QuickMenu />
       </div>
 
       {/* 실시간 파주 톡 - 텍스트 리스트 */}
-      <section className="py-6">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">🔥 실시간 파주 톡</h2>
@@ -123,7 +123,7 @@ export default function Home() {
       </section>
 
       {/* 실시간 핫이슈 - 가로 스크롤 */}
-      <section className="py-6">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-900">실시간 핫이슈</h2>
@@ -143,7 +143,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80&sig=${index}`}
+                      src={`https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80&sig=${index}`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -167,7 +167,7 @@ export default function Home() {
       </section>
 
       {/* 중고장터 - 4열 그리드 */}
-      <section className="py-6">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">중고거래</h2>
@@ -186,7 +186,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80&sig=${item.id + index}`}
+                    src={`https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80&sig=${index}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -212,8 +212,62 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 파주시 행사 & 강연 */}
+      <section className="py-6 px-4 md:px-6 lg:px-8">
+        <div className="w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">🏛️ 파주시 행사 & 강연</h2>
+            <Link href="/events" className="text-sm text-gray-500 hover:text-primary">
+              더보기
+            </Link>
+          </div>
+          
+          <div className="overflow-x-auto -mx-4 px-4">
+            <div className="flex space-x-4" style={{ width: "max-content" }}>
+              {[
+                { id: 1, title: "[강연] 김영하 작가와 함께하는 북토크", location: "지혜의숲", date: "11.25", category: "강연" },
+                { id: 2, title: "[축제] 파주 장단콩 축제 개막식", location: "임진각 광장", date: "11.28", category: "축제" },
+                { id: 3, title: "[교육] 우리 아이 코딩 교실 모집", location: "운정행정센터", date: "12.01", category: "교육" },
+                { id: 4, title: "[공연] 파주 필하모닉 오케스트라 정기연주회", location: "시민회관", date: "12.10", category: "공연" },
+              ].map((event, index) => (
+                <Link
+                  key={event.id}
+                  href={`/events/${event.id}`}
+                  className="flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                >
+                  {/* 이미지 */}
+                  <div className="h-40 bg-gray-100">
+                    <img
+                      src={`https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&q=80&sig=${index}`}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* 내용 */}
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs font-medium rounded">
+                        {event.category}
+                      </span>
+                      <span className="text-xs text-gray-500">{event.date}</span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 flex items-center">
+                      📍 {event.location}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 우리동네 핫플 - 큰 그리드 */}
-      <section className="py-6">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">우리동네 핫플</h2>
@@ -232,7 +286,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80&sig=${place.id + index}`}
+                    src={`https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&sig=${index}`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -253,7 +307,7 @@ export default function Home() {
       </section>
 
       {/* 오늘의 모임 - 가로 스크롤 */}
-      <section className="py-6">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">오늘의 모임</h2>
@@ -273,7 +327,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`${group.image}&sig=${group.id + index}`}
+                      src={`${group.image}&sig=${index}`}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />

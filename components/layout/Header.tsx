@@ -7,7 +7,7 @@ import WeatherBadge from "@/components/home/WeatherBadge";
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 w-full">
-      <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8">
+      <div className="w-full px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2">
