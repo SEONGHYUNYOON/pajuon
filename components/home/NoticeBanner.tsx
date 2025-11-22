@@ -9,17 +9,33 @@ interface BannerMessage {
   id: string;
   content: string;
   created_at: string;
+  user_id: string | null;
+  author?: {
+    nickname: string;
+  };
 }
 
 export default function NoticeBanner() {
   const [messages, setMessages] = useState<BannerMessage[]>([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    checkCurrentUser();
     loadMessages();
     subscribeToMessages();
   }, []);
+
+  const checkCurrentUser = async () => {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error("Failed to check user:", error);
+    }
+  };
 
   // 자동 스크롤 (5초마다)
   useEffect(() => {
@@ -37,14 +53,14 @@ export default function NoticeBanner() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("banner_messages")
-        .select("id, content, created_at")
+        .select("id, content, created_at, user_id, author:profiles!user_id(nickname)")
         .order("created_at", { ascending: false })
         .limit(10);
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-        setMessages(data);
+        setMessages(data as BannerMessage[]);
         setCurrentMessageIndex(0);
       } else {
         // 기본 환영 메시지
@@ -52,6 +68,7 @@ export default function NoticeBanner() {
           id: "default",
           content: "파주온에 오신 것을 환영합니다!",
           created_at: new Date().toISOString(),
+          user_id: null,
         }]);
       }
     } catch (error) {
@@ -61,6 +78,7 @@ export default function NoticeBanner() {
         id: "default",
         content: "파주온에 오신 것을 환영합니다!",
         created_at: new Date().toISOString(),
+        user_id: null,
       }]);
     }
   };
@@ -93,7 +111,27 @@ export default function NoticeBanner() {
     loadMessages();
   };
 
-  const currentMessage = messages[currentMessageIndex]?.content || "파주온에 오신 것을 환영합니다!";
+  const handleMessageClick = () => {
+    const currentMsg = messages[currentMessageIndex];
+    if (!currentMsg || !currentMsg.user_id) {
+      alert("쪽지를 보낼 수 없는 대상입니다");
+      return;
+    }
+
+    if (currentUser && currentMsg.user_id === currentUser.id) {
+      alert("쪽지를 보낼 수 없는 대상입니다");
+      return;
+    }
+
+    // 채팅 Drawer 열기 (해당 작성자와의 채팅)
+    window.dispatchEvent(new CustomEvent("openChatDrawer", { 
+      detail: { userId: currentMsg.user_id } 
+    }));
+  };
+
+  const currentMessage = messages[currentMessageIndex];
+  const messageContent = currentMessage?.content || "파주온에 오신 것을 환영합니다!";
+  const authorNickname = currentMessage?.author?.nickname;
 
   return (
     <>
@@ -101,14 +139,20 @@ export default function NoticeBanner() {
         <div className="flex items-center justify-between">
           {/* 메시지 표시 */}
           <div className="flex-1 overflow-hidden relative h-8">
-            <div
+            <button
+              onClick={handleMessageClick}
+              className="absolute inset-0 flex items-center animate-slide-in whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity w-full text-left"
               key={currentMessageIndex}
-              className="absolute inset-0 flex items-center animate-slide-in whitespace-nowrap"
             >
               <span className="text-sm font-medium">
-                📢 {currentMessage}
+                📢 {messageContent}
+                {authorNickname && (
+                  <span className="ml-2 text-xs opacity-80">
+                    (작성자: {authorNickname})
+                  </span>
+                )}
               </span>
-            </div>
+            </button>
           </div>
 
           {/* 확성기 버튼 */}
@@ -134,8 +178,16 @@ export default function NoticeBanner() {
               opacity: 1;
             }
           }
+          @keyframes scroll {
+            from {
+              transform: translateX(100%);
+            }
+            to {
+              transform: translateX(-100%);
+            }
+          }
           .animate-slide-in {
-            animation: slide-in 0.5s ease-out;
+            animation: slide-in 0.8s ease-out;
           }
         `}</style>
       </section>

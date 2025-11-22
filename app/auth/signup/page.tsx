@@ -10,7 +10,7 @@ import { Input, Textarea } from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
 import { createClient } from "@/utils/supabase/client";
 
-const areas = ["운정동", "교하동", "금촌동", "문산읍", "탄현면", "기타"];
+const areas = ["운정", "금촌", "문산", "조리", "법원", "광탄", "탄현", "월롱", "적성", "파평", "장단"];
 const schoolTypes = ["초등학교", "중학교", "고등학교"];
 
 export default function SignupPage() {
@@ -20,9 +20,9 @@ export default function SignupPage() {
     password: "",
     passwordConfirm: "",
     nickname: "",
+    birthDate: "",
+    gender: "",
     area: "",
-    schoolType: "",
-    schoolName: "",
     agreeTerms: false,
     agreePrivacy: false,
   });
@@ -75,8 +75,8 @@ export default function SignupPage() {
     }
     if (!formData.password) {
       newErrors.password = "비밀번호를 입력해주세요.";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "비밀번호는 8자 이상이어야 합니다.";
+    } else if (formData.password.length < 4) {
+      newErrors.password = "비밀번호는 4자 이상이어야 합니다.";
     }
     if (formData.password !== formData.passwordConfirm) {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
@@ -86,11 +86,14 @@ export default function SignupPage() {
     } else if (nicknameCheck !== "available") {
       newErrors.nickname = "닉네임 중복 확인을 해주세요.";
     }
-    if (!formData.agreeTerms) {
-      newErrors.agreeTerms = "이용약관에 동의해주세요.";
+    if (!formData.birthDate) {
+      newErrors.birthDate = "생년월일을 입력해주세요.";
     }
-    if (!formData.agreePrivacy) {
-      newErrors.agreePrivacy = "개인정보 처리방침에 동의해주세요.";
+    if (!formData.gender) {
+      newErrors.gender = "성별을 선택해주세요.";
+    }
+    if (!formData.area) {
+      newErrors.area = "사는 곳을 선택해주세요.";
     }
 
     setErrors(newErrors);
@@ -118,8 +121,8 @@ export default function SignupPage() {
           data: {
             nickname: formData.nickname,
             area: formData.area || null,
-            school_type: formData.schoolType || null,
-            school_name: formData.schoolName || null,
+            birth_date: formData.birthDate || null,
+            gender: formData.gender || null,
           },
         },
       });
@@ -137,28 +140,18 @@ export default function SignupPage() {
       }
 
       // 2. 프로필 정보 업데이트
-      // 트리거로 자동 생성되지만, 추가 정보(닉네임, 학교 정보 등)를 업데이트
+      // 트리거로 자동 생성되지만, 추가 정보(닉네임, 지역 등)를 업데이트
       const profileUpdateData: {
         nickname: string;
         my_dongne?: string | null;
-        school_elementary?: string | null;
-        school_middle?: string | null;
-        school_high?: string | null;
+        birth_date?: string | null;
+        gender?: string | null;
       } = {
         nickname: formData.nickname,
         my_dongne: formData.area || null,
+        birth_date: formData.birthDate || null,
+        gender: formData.gender || null,
       };
-
-      // 학교 정보 추가
-      if (formData.schoolType && formData.schoolName) {
-        if (formData.schoolType === "초등학교") {
-          profileUpdateData.school_elementary = formData.schoolName;
-        } else if (formData.schoolType === "중학교") {
-          profileUpdateData.school_middle = formData.schoolName;
-        } else if (formData.schoolType === "고등학교") {
-          profileUpdateData.school_high = formData.schoolName;
-        }
-      }
 
       const { error: profileError } = await supabase
         .from("profiles")
@@ -189,7 +182,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-md mx-auto">
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -214,7 +207,7 @@ export default function SignupPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* 이메일 */}
             <Input
               label="이메일"
@@ -234,14 +227,14 @@ export default function SignupPage() {
               label="비밀번호"
               type="password"
               required
-              placeholder="8자 이상의 비밀번호를 입력하세요"
+              placeholder="4자 이상의 비밀번호를 입력하세요"
               value={formData.password}
               onChange={(e) => {
                 setFormData({ ...formData, password: e.target.value });
                 setErrors({ ...errors, password: "" });
               }}
               error={errors.password}
-              helperText="영문, 숫자, 특수문자를 포함하여 8자 이상 입력해주세요"
+              helperText="알파벳+숫자 조합 권장 (4자 이상)"
             />
 
             {/* 비밀번호 확인 */}
@@ -294,108 +287,80 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* 내 동네 설정 */}
-            <div className="relative">
-              <MapPinIcon className="absolute left-4 top-10 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+            {/* 생년월일 */}
+            <Input
+              label="생년월일"
+              type="date"
+              required
+              value={formData.birthDate}
+              onChange={(e) => {
+                setFormData({ ...formData, birthDate: e.target.value });
+                setErrors({ ...errors, birthDate: "" });
+              }}
+              error={errors.birthDate}
+            />
+
+            {/* 성별 */}
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                내 동네 설정
-                <span className="text-gray-500 text-xs ml-2">(선택사항, 동네별 소모임용)</span>
+                성별 <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, gender: "male" })}
+                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${
+                    formData.gender === "male"
+                      ? "bg-blue-50 border-blue-500 text-blue-700"
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  남성
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, gender: "female" })}
+                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${
+                    formData.gender === "female"
+                      ? "bg-pink-50 border-pink-500 text-pink-700"
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  여성
+                </button>
+              </div>
+              {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
+            </div>
+
+            {/* 사는 곳 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                사는 곳 <span className="text-red-500">*</span>
               </label>
               <select
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
                 value={formData.area}
-                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, area: e.target.value });
+                  setErrors({ ...errors, area: "" });
+                }}
+                required
               >
-                <option value="">선택해주세요</option>
+                <option value="">동네 선택</option>
                 {areas.map((area) => (
                   <option key={area} value={area}>
                     {area}
                   </option>
                 ))}
               </select>
-              <p className="mt-1 text-xs text-gray-500">동네별 소모임에서 주로 활동하는 지역을 선택해주세요</p>
+              {errors.area && <p className="mt-1 text-sm text-red-600">{errors.area}</p>}
             </div>
 
-            {/* 출신 학교 인증 */}
-            <div className="border-t border-gray-200 pt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-4">
-                <AcademicCapIcon className="w-5 h-5 inline mr-2 text-orange-500" />
-                출신 학교 인증
-                <span className="text-gray-500 text-xs ml-2">(선택사항, 아이러브스쿨용)</span>
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative">
-                  <select
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
-                    value={formData.schoolType}
-                    onChange={(e) => setFormData({ ...formData, schoolType: e.target.value })}
-                  >
-                    <option value="">학교 구분 선택</option>
-                    {schoolTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Input
-                  type="text"
-                  placeholder="학교명을 입력하세요"
-                  value={formData.schoolName}
-                  onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
-                  disabled={!formData.schoolType}
-                />
-              </div>
-              <p className="mt-2 text-xs text-gray-500">
-                * 학교 인증은 회원가입 후에도 가능합니다 (아이러브스쿨 메뉴에서 인증)
+            {/* 약관 동의 안내 */}
+            <div className="border-t border-gray-200 pt-4">
+              <p className="text-xs text-gray-500 text-center">
+                가입 시 이용약관 및 개인정보 처리방침에 동의한 것으로 간주합니다.
               </p>
-            </div>
-
-            {/* 이용약관 동의 */}
-            <div className="border-t border-gray-200 pt-6 space-y-4">
-              <div className="flex items-start">
-                <input
-                  id="agreeTerms"
-                  name="agreeTerms"
-                  type="checkbox"
-                  required
-                  className="h-5 w-5 mt-0.5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  checked={formData.agreeTerms}
-                  onChange={(e) => {
-                    setFormData({ ...formData, agreeTerms: e.target.checked });
-                    setErrors({ ...errors, agreeTerms: "" });
-                  }}
-                />
-                <label htmlFor="agreeTerms" className="ml-3 text-sm text-gray-700">
-                  <Link href="/support/terms" className="text-green-600 hover:text-green-700 underline">
-                    이용약관
-                  </Link>
-                  에 동의합니다 <span className="text-red-500">*</span>
-                </label>
-              </div>
-              {errors.agreeTerms && <p className="text-sm text-red-600 ml-8">{errors.agreeTerms}</p>}
-
-              <div className="flex items-start">
-                <input
-                  id="agreePrivacy"
-                  name="agreePrivacy"
-                  type="checkbox"
-                  required
-                  className="h-5 w-5 mt-0.5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  checked={formData.agreePrivacy}
-                  onChange={(e) => {
-                    setFormData({ ...formData, agreePrivacy: e.target.checked });
-                    setErrors({ ...errors, agreePrivacy: "" });
-                  }}
-                />
-                <label htmlFor="agreePrivacy" className="ml-3 text-sm text-gray-700">
-                  <Link href="/support/privacy" className="text-green-600 hover:text-green-700 underline">
-                    개인정보 처리방침
-                  </Link>
-                  에 동의합니다 <span className="text-red-500">*</span>
-                </label>
-              </div>
-              {errors.agreePrivacy && <p className="text-sm text-red-600 ml-8">{errors.agreePrivacy}</p>}
             </div>
 
             {/* 회원가입 버튼 */}

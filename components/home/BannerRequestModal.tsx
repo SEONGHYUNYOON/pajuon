@@ -26,8 +26,8 @@ export default function BannerRequestModal({
       return;
     }
 
-    if (content.length > 20) {
-      alert("메시지는 20자 이하로 입력해주세요.");
+    if (content.length > 50) {
+      alert("메시지는 50자 이하로 입력해주세요.");
       return;
     }
 
@@ -98,7 +98,7 @@ export default function BannerRequestModal({
               📢 실시간 제보 메시지 등록
             </h2>
             <p className="text-sm text-gray-600">
-              파주 시민들에게 알릴 내용을 20자 이내로 적어주세요.
+              분실물, 목격자 찾기 등 급한 용무를 50자 이내로 남겨주세요. 클릭 시 1:1 쪽지로 연결됩니다.
             </p>
           </div>
 
@@ -110,20 +110,20 @@ export default function BannerRequestModal({
                 value={content}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value.length <= 20) {
+                  if (value.length <= 50) {
                     setContent(value);
                   }
                 }}
                 placeholder="예: 자유로 교통 정체 제보, 분실물 찾습니다 등..."
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D4FFF] focus:border-transparent"
-                maxLength={20}
+                maxLength={50}
                 required
               />
               <div className="flex justify-end items-center mt-2">
                 <span className={`text-xs font-medium ${
-                  content.length >= 18 ? "text-red-500" : "text-gray-400"
+                  content.length >= 45 ? "text-red-500" : "text-gray-400"
                 }`}>
-                  {content.length}/20
+                  {content.length}/50
                 </span>
               </div>
             </div>
