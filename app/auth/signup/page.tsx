@@ -115,7 +115,44 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Debug: 회원가입 시도 로그
+    console.log("회원가입 시도:", formData);
+
+    // 간단한 validation (alert 사용)
+    if (!formData.email) {
+      alert("이메일을 입력해주세요");
+      return;
+    }
+    if (!formData.password) {
+      alert("비밀번호를 입력해주세요");
+      return;
+    }
+    if (formData.password.length < 4) {
+      alert("비밀번호는 4자 이상이어야 합니다");
+      return;
+    }
+    if (formData.password !== formData.passwordConfirm) {
+      alert("비밀번호가 일치하지 않습니다");
+      return;
+    }
+    if (!formData.nickname) {
+      alert("닉네임을 입력해주세요");
+      return;
+    }
+    if (!formData.birthDate) {
+      alert("생년월일을 입력해주세요");
+      return;
+    }
+    if (!formData.gender) {
+      alert("성별을 선택해주세요");
+      return;
+    }
+    if (!formData.area) {
+      alert("사는 곳을 선택해주세요");
+      return;
+    }
+    if (!isNicknameValid) {
+      alert("닉네임 중복 확인을 해주세요");
       return;
     }
 
@@ -176,15 +213,10 @@ export default function SignupPage() {
         // 나중에 사용자가 프로필 설정에서 수정할 수 있음
       }
 
-      // 3. 이메일 확인 필요 안내
-      if (!authData.session) {
-        // 이메일 확인이 필요한 경우
-        router.push("/auth/verify-email?email=" + encodeURIComponent(formData.email));
-      } else {
-        // 자동 로그인된 경우
-        router.push("/");
-        router.refresh();
-      }
+      // 3. 가입 성공 알림 및 리다이렉트
+      alert("가입 환영합니다!");
+      router.push("/");
+      router.refresh();
     } catch (error) {
       console.error("Signup error:", error);
       setErrors({ submit: "회원가입 중 오류가 발생했습니다." });
@@ -387,7 +419,7 @@ export default function SignupPage() {
               variant="primary"
               size="lg"
               fullWidth
-              disabled={isLoading || !isNicknameValid}
+              disabled={isLoading}
             >
               {isLoading ? "회원가입 중..." : "회원가입"}
             </Button>

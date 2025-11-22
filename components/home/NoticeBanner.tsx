@@ -51,19 +51,25 @@ export default function NoticeBanner() {
   const loadMessages = async () => {
     try {
       const supabase = createClient();
+      // 단순화: profiles join 제거 (RLS 권한 오류 방지)
       const { data, error } = await supabase
         .from("banner_messages")
-        .select("id, content, created_at, user_id, author:profiles!user_id(nickname)")
+        .select("id, content, created_at, user_id")
         .order("created_at", { ascending: false })
         .limit(10);
 
       if (error) {
         console.error("Failed to fetch banner messages:", error);
-        throw error;
+        // 에러가 발생해도 계속 진행 (fallback으로 넘어감)
       }
 
       if (data && data.length > 0) {
-        setMessages(data as BannerMessage[]);
+        // user_id가 있으면 "파주 이웃", 없으면 "익명"으로 설정
+        const messagesWithAuthor = data.map((msg) => ({
+          ...msg,
+          author: msg.user_id ? { nickname: "파주 이웃" } : undefined,
+        }));
+        setMessages(messagesWithAuthor as BannerMessage[]);
         setCurrentMessageIndex(0);
       } else {
         // Fallback: 하드코딩된 가상 데이터
@@ -73,21 +79,21 @@ export default function NoticeBanner() {
             content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
             created_at: new Date().toISOString(),
             user_id: "user1",
-            author: { nickname: "운정주민1" },
+            author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback2",
             content: "자유로 교통 정체 제보 - 심각함",
             created_at: new Date(Date.now() - 3600000).toISOString(),
             user_id: "user2",
-            author: { nickname: "파주시민2" },
+            author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback3",
             content: "분실물 찾습니다 - 갈색 지갑",
             created_at: new Date(Date.now() - 7200000).toISOString(),
             user_id: "user3",
-            author: { nickname: "금촌주민3" },
+            author: { nickname: "파주 이웃" },
           },
           {
             id: "fallback4",
@@ -108,14 +114,14 @@ export default function NoticeBanner() {
           content: "강아지 찾아요! 운정동에서 잃어버렸습니다",
           created_at: new Date().toISOString(),
           user_id: "user1",
-          author: { nickname: "운정주민1" },
+          author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback2",
           content: "자유로 교통 정체 제보 - 심각함",
           created_at: new Date(Date.now() - 3600000).toISOString(),
           user_id: "user2",
-          author: { nickname: "파주시민2" },
+          author: { nickname: "파주 이웃" },
         },
         {
           id: "fallback3",
