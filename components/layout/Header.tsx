@@ -12,7 +12,7 @@ export default function Header() {
       <div className="w-full px-4 md:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16 relative">
           {/* 좌측: UserMenu */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-[101]" style={{ zIndex: 101 }}>
             <UserMenu />
           </div>
 
