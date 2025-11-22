@@ -202,33 +202,32 @@ export default function GroupsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] py-8 px-4">
+    <div className="min-h-screen bg-black py-8 px-4">
       <div className="w-full">
         {/* 헤더 */}
-        <PageHeader
-          title="함께해요 (모임)"
-          description="관심사가 맞는 분들과 함께 새로운 만남을 시작해보세요"
-          icon={<UserGroupIcon className="w-8 h-8" />}
-          action={
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl font-bold text-white">함께해요 (모임)</h1>
             <Link
               href="/groups/create"
-              className="flex items-center px-6 py-3 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors font-medium"
+              className="flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
             >
               <PlusIcon className="w-5 h-5 mr-2" />
               모임 만들기
             </Link>
-          }
-        />
+          </div>
+          <p className="text-gray-400">관심사가 맞는 분들과 함께 새로운 만남을 시작해보세요</p>
+        </div>
 
         {/* 검색 및 필터 */}
-        <Card className="mb-8">
+        <div className="bg-neutral-900 rounded-lg p-6 mb-8 border border-neutral-800">
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="text"
                 placeholder="모임 이름이나 설명으로 검색..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-paju-blue focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -238,20 +237,25 @@ export default function GroupsPage() {
           {/* 카테고리 필터 */}
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
-              <FilterChip
+              <button
                 key={category.value || "all"}
-                label={category.label}
-                isActive={selectedCategory === category.value}
                 onClick={() => setSelectedCategory(category.value)}
-              />
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === category.value
+                    ? "bg-blue-500 text-white"
+                    : "bg-neutral-800 text-gray-300 hover:bg-neutral-700"
+                }`}
+              >
+                {category.label}
+              </button>
             ))}
           </div>
-        </Card>
+        </div>
 
-        {/* 모임 목록 - 인스타그램 피드 스타일 */}
+        {/* 모임 목록 - 인스타그램 피드 스타일 (다크 테마) */}
         {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">로딩 중...</p>
+            <p className="text-gray-400 text-lg">로딩 중...</p>
           </div>
         ) : (
           <>
@@ -259,24 +263,24 @@ export default function GroupsPage() {
               {filteredGroups.map((group) => (
                 <div
                   key={group.id}
-                  className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+                  className="bg-neutral-900 rounded-lg overflow-hidden"
                 >
                   {/* 헤더: 프로필 + 닉네임 + 더보기 */}
-                  <div className="flex items-center justify-between p-3 border-b border-gray-200">
+                  <div className="flex items-center justify-between p-3 border-b border-neutral-800">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
                         {group.creator.nickname.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-semibold text-gray-900 text-sm">{group.creator.nickname}</div>
+                        <div className="font-semibold text-white text-sm">{group.creator.nickname}</div>
                         <div className="text-xs text-gray-500">{new Date(group.createdAt).toLocaleDateString()}</div>
                       </div>
                     </div>
-                    <button className="text-gray-900 text-xl font-bold">⋯</button>
+                    <button className="text-white text-xl font-bold">⋯</button>
                   </div>
 
                   {/* 이미지: 1:1 비율 */}
-                  <div className="w-full aspect-square bg-gray-100 relative">
+                  <div className="w-full aspect-square bg-neutral-800 relative">
                     {group.coverImage ? (
                       <img
                         src={`${group.coverImage}&random=${Math.random()}`}
@@ -285,24 +289,24 @@ export default function GroupsPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <UserGroupIcon className="w-16 h-16 text-gray-300" />
+                        <UserGroupIcon className="w-16 h-16 text-neutral-600" />
                       </div>
                     )}
                   </div>
 
-                  {/* 액션 바: 하트, 댓글, 공유 */}
-                  <div className="p-3 flex items-center space-x-4 border-b border-gray-200">
-                    <button className="text-gray-900 hover:text-red-500 transition-colors">
+                  {/* 액션 바: 하트, 댓글, 공유 (이미지 바로 아래) */}
+                  <div className="p-3 flex items-center space-x-4 border-b border-neutral-800">
+                    <button className="text-white hover:text-red-500 transition-colors">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                     </button>
-                    <button className="text-gray-900 hover:text-blue-500 transition-colors">
+                    <button className="text-white hover:text-blue-500 transition-colors">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </button>
-                    <button className="text-gray-900 hover:text-blue-500 transition-colors">
+                    <button className="text-white hover:text-blue-500 transition-colors">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                       </svg>
@@ -312,14 +316,14 @@ export default function GroupsPage() {
                   {/* 본문: 아이디 + 본문 */}
                   <div className="p-3">
                     <div className="mb-2">
-                      <Link href={`/groups/${group.id}`} className="font-semibold text-gray-900 text-sm hover:underline">
+                      <Link href={`/groups/${group.id}`} className="font-semibold text-white text-sm hover:underline">
                         {group.creator.nickname}
                       </Link>
-                      <span className="text-gray-900 text-sm ml-2">
+                      <span className="text-white text-sm ml-2">
                         {group.description.length > 100 ? (
                           <>
                             {group.description.substring(0, 100)}...
-                            <button className="text-gray-500 ml-1">더보기</button>
+                            <button className="text-gray-400 ml-1">더보기</button>
                           </>
                         ) : (
                           group.description
@@ -328,7 +332,7 @@ export default function GroupsPage() {
                     </div>
 
                     {/* 댓글 미리보기 */}
-                    <button className="text-gray-500 text-sm mb-2 hover:text-gray-700">
+                    <button className="text-gray-400 text-sm mb-2 hover:text-gray-300">
                       댓글 {group.postCount}개 모두 보기
                     </button>
 
@@ -341,17 +345,17 @@ export default function GroupsPage() {
             </div>
 
             {filteredGroups.length === 0 && (
-              <Card className="text-center py-12">
-                <p className="text-gray-500 text-lg mb-4">
+              <div className="bg-neutral-900 rounded-lg text-center py-12 border border-neutral-800">
+                <p className="text-gray-400 text-lg mb-4">
                   {searchQuery ? "검색 결과가 없습니다." : "등록된 모임이 없습니다."}
                 </p>
                 <Link
                   href="/groups/create"
-                  className="inline-block px-6 py-3 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors"
+                  className="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                 >
                   첫 번째 모임 만들기
                 </Link>
-              </Card>
+              </div>
             )}
           </>
         )}

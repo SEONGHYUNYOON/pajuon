@@ -148,8 +148,8 @@ export default function Home() {
                       className="w-full h-32 object-cover"
                     />
                   </div>
-                  <div className="p-3">
-                    <div className="flex items-center space-x-2 mb-2">
+                  <div className="p-4 text-center flex flex-col items-center">
+                    <div className="flex items-center justify-center space-x-2 mb-2">
                       <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-lg">
                         {issue.category}
                       </span>

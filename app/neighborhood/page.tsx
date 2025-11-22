@@ -69,17 +69,17 @@ export default function NeighborhoodPage() {
           icon={<MessageCircle className="w-8 h-8" />}
         />
 
-        {/* 탭 (가로 스크롤) */}
+        {/* 탭 (가로 스크롤) - 알약 모양 버튼 */}
         <div className="mb-6 overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <div className="flex space-x-2" style={{ width: "max-content" }}>
+          <div className="flex gap-3" style={{ width: "max-content" }}>
             {neighborhoods.map((neighborhood) => (
               <button
                 key={neighborhood.id}
                 onClick={() => setSelectedNeighborhood(neighborhood.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`py-2 px-4 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                   selectedNeighborhood === neighborhood.id
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white font-bold shadow-md"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 {neighborhood.label}
