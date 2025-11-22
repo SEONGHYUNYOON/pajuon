@@ -27,10 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="light" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans bg-gray-100 flex flex-col items-center min-h-screen text-gray-900`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans bg-gray-100 min-h-screen text-gray-900`}>
         <Providers>
           <Header />
-          <main className="w-full max-w-[600px] bg-white min-h-screen shadow-2xl">
+          <main className="w-full max-w-5xl mx-auto bg-white min-h-screen px-4 md:px-6 lg:px-8">
             {children}
           </main>
           <Footer />
