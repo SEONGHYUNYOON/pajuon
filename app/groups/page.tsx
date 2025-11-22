@@ -12,6 +12,30 @@ import PageHeader from "@/components/ui/PageHeader";
 import FilterChip from "@/components/ui/FilterChip";
 import Card from "@/components/ui/Card";
 
+// 이미지 다양화를 위한 고정된 이미지 ID 배열 (20개)
+const IMAGE_IDS = [
+  "photo-1505740420928-5e560c06d30e",
+  "photo-1511632765486-a01980e01a18",
+  "photo-1551632811-561732d1e306",
+  "photo-1559339352-11d035aa65de",
+  "photo-1509042239860-f550ce710b93",
+  "photo-1544531586-fde5298cdd40",
+  "photo-1481627834876-b7833e8f5570",
+  "photo-1431324155629-1a6deb1dec8d",
+  "photo-1488646953014-85cb44e25828",
+  "photo-1478131143081-80f7f84ca84d",
+  "photo-1544947950-fa07a98d237f",
+  "photo-1526170375885-4d8ecf77b99f",
+  "photo-1506905925346-21bda4d32df4",
+  "photo-1519681393784-d120267933ba",
+  "photo-1464822759844-d150ad90c88c",
+  "photo-1506905925346-21bda4d32df4",
+  "photo-1506443432602-ac2fcd6f54e0",
+  "photo-1469474968028-56623f02e42e",
+  "photo-1470071459604-3b5ec3a7fe05",
+  "photo-1441974231531-c6227db76b6e",
+];
+
 const categories = [
   { label: "전체", value: null },
   { label: "등산", value: "HIKING" },
@@ -255,7 +279,7 @@ export default function GroupsPage() {
         ) : (
           <>
             <div className="max-w-[500px] mx-auto space-y-6">
-              {filteredGroups.map((group) => (
+              {filteredGroups.map((group, index) => (
                 <div
                   key={group.id}
                   className="bg-neutral-900 rounded-lg overflow-hidden"
@@ -276,17 +300,11 @@ export default function GroupsPage() {
 
                   {/* 이미지: 1:1 비율 */}
                   <div className="w-full aspect-square bg-neutral-800 relative">
-                    {group.coverImage ? (
-                      <img
-                        src={`${group.coverImage}&random=${Math.random()}`}
-                        alt={group.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <UserGroupIcon className="w-16 h-16 text-neutral-600" />
-                      </div>
-                    )}
+                    <img
+                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
+                      alt={group.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   {/* 액션 바: 하트, 댓글, 공유 (이미지 바로 아래) */}

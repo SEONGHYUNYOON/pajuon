@@ -4,6 +4,30 @@ import { useState } from "react";
 import Link from "next/link";
 import { PlusIcon, MagnifyingGlassIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
+// 이미지 다양화를 위한 고정된 이미지 ID 배열 (20개)
+const IMAGE_IDS = [
+  "photo-1505740420928-5e560c06d30e",
+  "photo-1511632765486-a01980e01a18",
+  "photo-1551632811-561732d1e306",
+  "photo-1559339352-11d035aa65de",
+  "photo-1509042239860-f550ce710b93",
+  "photo-1544531586-fde5298cdd40",
+  "photo-1481627834876-b7833e8f5570",
+  "photo-1431324155629-1a6deb1dec8d",
+  "photo-1488646953014-85cb44e25828",
+  "photo-1478131143081-80f7f84ca84d",
+  "photo-1544947950-fa07a98d237f",
+  "photo-1526170375885-4d8ecf77b99f",
+  "photo-1506905925346-21bda4d32df4",
+  "photo-1519681393784-d120267933ba",
+  "photo-1464822759844-d150ad90c88c",
+  "photo-1506905925346-21bda4d32df4",
+  "photo-1506443432602-ac2fcd6f54e0",
+  "photo-1469474968028-56623f02e42e",
+  "photo-1470071459604-3b5ec3a7fe05",
+  "photo-1441974231531-c6227db76b6e",
+];
+
 const tabs = ["팝니다", "삽니다", "나눔합니다"];
 
 const baseItems = [
@@ -97,13 +121,18 @@ export default function MarketPage() {
 
         {/* 물품 목록 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map((item) => (
+          {filteredItems.map((item, index) => (
             <Link
               key={item.id}
               href={`/life/market/${item.id}`}
               className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100"
             >
-              <div className="h-48 bg-gradient-to-r from-green-400 to-orange-400 relative">
+              <div className="h-48 bg-gray-100 relative">
+                <img
+                  src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=400&q=80&auto=format&fit=crop`}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded text-xs font-medium text-gray-900">
                   {item.status}
                 </div>

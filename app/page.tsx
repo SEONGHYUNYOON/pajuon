@@ -5,6 +5,30 @@ import { Heart } from "lucide-react";
 import QuickMenu from "@/components/home/QuickMenu";
 import LiveStation from "@/components/realtime/LiveStation";
 
+// 이미지 다양화를 위한 고정된 이미지 ID 배열 (20개)
+const IMAGE_IDS = [
+  "photo-1505740420928-5e560c06d30e", // 헤드폰
+  "photo-1511632765486-a01980e01a18", // 도시
+  "photo-1551632811-561732d1e306", // 등산
+  "photo-1559339352-11d035aa65de", // 커피
+  "photo-1509042239860-f550ce710b93", // 책
+  "photo-1544531586-fde5298cdd40", // 행사
+  "photo-1481627834876-b7833e8f5570", // 독서
+  "photo-1431324155629-1a6deb1dec8d", // 운동
+  "photo-1488646953014-85cb44e25828", // 자전거
+  "photo-1478131143081-80f7f84ca84d", // 캠핑
+  "photo-1544947950-fa07a98d237f", // 카메라
+  "photo-1526170375885-4d8ecf77b99f", // 일몰
+  "photo-1506905925346-21bda4d32df4", // 호수
+  "photo-1519681393784-d120267933ba", // 산
+  "photo-1464822759844-d150ad90c88c", // 해변
+  "photo-1506905925346-21bda4d32df4", // 자연
+  "photo-1506443432602-ac2fcd6f54e0", // 숲
+  "photo-1469474968028-56623f02e42e", // 자연
+  "photo-1470071459604-3b5ec3a7fe05", // 산
+  "photo-1441974231531-c6227db76b6e", // 풍경
+];
+
 export default function Home() {
   // 더미 데이터
   const hotIssues = [
@@ -63,7 +87,7 @@ export default function Home() {
       {/* 메인 프로모션 배너 */}
       <section className="relative h-48 mb-6 rounded-2xl overflow-hidden shadow-lg mx-8 md:mx-10 lg:mx-12 mt-4">
         <img
-          src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80"
+          src={`https://images.unsplash.com/${IMAGE_IDS[1]}?w=1200&q=80&auto=format&fit=crop`}
           alt="파주 프로모션"
           className="w-full h-full object-cover"
         />
@@ -100,19 +124,22 @@ export default function Home() {
                 href={`/posts/${post.id}`}
                 className="block p-4 hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
-                        {post.category}
-                      </span>
-                      <span className="text-xs text-gray-400">{post.time}</span>
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
-                      {post.title}
-                    </h3>
+                <div className="flex items-center gap-3">
+                  {/* 카테고리 뱃지 (좌측 고정) */}
+                  <div className="flex-shrink-0 flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
+                      {post.category}
+                    </span>
+                    <span className="text-xs text-gray-400">{post.time}</span>
                   </div>
-                  <div className="ml-4 text-xs text-gray-400">
+                  
+                  {/* 제목 (중앙 정렬 & 공간 차지) */}
+                  <h3 className="flex-1 text-center text-sm font-semibold text-gray-900 truncate px-4">
+                    {post.title}
+                  </h3>
+                  
+                  {/* 조회수 (우측 고정) */}
+                  <div className="flex-shrink-0 text-xs text-gray-400">
                     조회 {post.views}
                   </div>
                 </div>
@@ -143,7 +170,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80"
+                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -186,7 +213,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"
+                    src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=400&q=80&auto=format&fit=crop`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -238,7 +265,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=600&q=80"
+                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
@@ -286,7 +313,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
+                    src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -327,7 +354,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=600&q=80"
+                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />

@@ -73,10 +73,20 @@ export default function WeatherBadge() {
 
   if (!weather) return null;
 
+  // 미세먼지 더미 데이터
+  const dustLevel = 32;
+  const dustStatus = dustLevel <= 30 ? "좋음" : dustLevel <= 80 ? "보통" : "나쁨";
+  const dustColor = dustLevel <= 30 ? "text-green-600" : dustLevel <= 80 ? "text-yellow-600" : "text-red-600";
+
   return (
-    <div className="px-3 py-1.5 bg-gray-50 rounded-full text-sm text-gray-600 flex items-center space-x-1">
-      <span>{getWeatherEmoji(weather.code)}</span>
-      <span className="font-medium">{weather.temperature}°C</span>
+    <div className="px-3 py-1.5 bg-gray-50 rounded-full text-xs text-gray-600 flex flex-col items-center space-y-0.5">
+      <div className="flex items-center space-x-1">
+        <span>{getWeatherEmoji(weather.code)}</span>
+        <span className="font-medium">{weather.temperature}°C</span>
+      </div>
+      <div className={`text-xs ${dustColor} font-medium`}>
+        미세먼지: {dustStatus}({dustLevel}㎍/m³)
+      </div>
     </div>
   );
 }
