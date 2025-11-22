@@ -112,7 +112,7 @@ button:hover,
 .banner-ticker-content {
   display: inline-flex;
   white-space: nowrap;
-  animation: banner-scroll 60s linear infinite;
+  animation: banner-scroll 55s linear infinite;
   will-change: transform;
   cursor: pointer;
 }

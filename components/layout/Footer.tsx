@@ -7,16 +7,42 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* 브랜드 섹션 */}
           <div className="col-span-1 lg:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-xl">ON</span>
+            <div className="flex items-center space-x-3 mb-4" style={{ marginLeft: '1rem' }}>
+              <div className="relative inline-flex items-center justify-center">
+                {/* 외부 글로우 효과 */}
+                <span className="absolute inset-0 bg-gradient-to-br from-[#0D4FFF] via-[#3B82F6] to-[#60A5FA] rounded-full blur-md opacity-50"></span>
+                
+                {/* On 배지 - 전원 버튼이 O를 대체 (사이즈 키움) */}
+                <span className="relative inline-flex items-center gap-0 bg-gradient-to-br from-[#0D4FFF] via-[#2563EB] to-[#1E40AF] text-white px-4 py-2 rounded-full text-xl font-bold shadow-lg leading-none">
+                  {/* 전원 버튼 아이콘 */}
+                  <span className="relative inline-flex items-center justify-center leading-none" style={{ width: '1em', height: '1em', marginRight: '-0.15em', verticalAlign: 'baseline' }}>
+                    <svg 
+                      className="w-full h-full text-white" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      style={{ display: 'inline-block', verticalAlign: 'baseline' }}
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="12" cy="12" r="8" className="drop-shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+                      <path 
+                        d="M12 8 L12 4" 
+                        className="drop-shadow-[0_0_4px_rgba(255,255,255,0.8)]"
+                      />
+                    </svg>
+                  </span>
+                  
+                  {/* n 텍스트 */}
+                  <span className="relative z-10 font-bold leading-none">n</span>
+                </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white">PAJU ON</span>
-                <span className="text-sm text-orange-300 -mt-1 font-medium">파주온</span>
               </div>
             </div>
-            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+            <p className="text-sm text-gray-400 mb-4 leading-relaxed" style={{ marginLeft: '1rem' }}>
               경기도 파주시 시민을 위한 참여형 커뮤니티 플랫폼
               <br />
               <span className="text-orange-300 font-medium">파주가 켜진다, 파주의 모든 것이 있다</span>

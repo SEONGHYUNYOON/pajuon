@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PhotoIcon, XMarkIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { PhotoIcon, XMarkIcon, MapPinIcon, LightBulbIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/utils/supabase/client";
+import { autoClassify, getCategoryConfidence } from "@/lib/marketClassifier";
 
 export default function MarketWritePage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function MarketWritePage() {
   };
   const [formData, setFormData] = useState({
     type: "팝니다",
+    category: "전체", // 카테고리 추가
     title: "",
     price: "",
     description: "",
@@ -36,6 +38,11 @@ export default function MarketWritePage() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  
+  // 자동 분류 결과
+  const [autoDetectedCategory, setAutoDetectedCategory] = useState<string | null>(null);
+  const [autoDetectedType, setAutoDetectedType] = useState<string | null>(null);
+  const [showAutoDetected, setShowAutoDetected] = useState(false);
 
   // 로그인 확인
   if (status === "loading") {
@@ -135,7 +142,7 @@ export default function MarketWritePage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">파주장터 글쓰기</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">파주장터 글쓰기</h1>
 
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -143,13 +150,13 @@ export default function MarketWritePage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
             {/* 거래 유형 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
                 거래 유형 *
               </label>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 justify-items-center">
                 {["팝니다", "삽니다", "나눔합니다"].map((type) => (
                   <button
                     key={type}
@@ -178,8 +185,102 @@ export default function MarketWritePage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="예: 아이폰 14 프로 팝니다"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => {
+                  const newTitle = e.target.value;
+                  setFormData({ ...formData, title: newTitle });
+                  
+                  // 자동 분류 수행
+                  if (newTitle.trim().length > 0) {
+                    const { category, type } = autoClassify(newTitle);
+                    setAutoDetectedCategory(category);
+                    setAutoDetectedType(type);
+                    setShowAutoDetected(true);
+                  } else {
+                    setShowAutoDetected(false);
+                  }
+                }}
               />
+              
+              {/* 자동 분류 결과 표시 */}
+              {showAutoDetected && formData.title.trim().length > 0 && (
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <LightBulbIcon className="w-5 h-5 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900">AI 자동 추천</span>
+                  </div>
+                  
+                  <div className="space-y-2 flex flex-col items-center">
+                    {autoDetectedCategory && autoDetectedCategory !== "전체" && (
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-xs text-blue-700">카테고리:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, category: autoDetectedCategory });
+                            setShowAutoDetected(false);
+                          }}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition-colors"
+                        >
+                          {autoDetectedCategory} 적용
+                        </button>
+                        <span className="text-xs text-blue-600">
+                          (신뢰도: {getCategoryConfidence(formData.title, autoDetectedCategory)}%)
+                        </span>
+                      </div>
+                    )}
+                    
+                    {autoDetectedType && (
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-xs text-blue-700">거래 유형:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, type: autoDetectedType });
+                            setShowAutoDetected(false);
+                          }}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition-colors"
+                        >
+                          {autoDetectedType} 적용
+                        </button>
+                      </div>
+                    )}
+                    
+                    {!autoDetectedCategory && !autoDetectedType && (
+                      <span className="text-xs text-blue-600 text-center">추천할 항목을 찾지 못했습니다.</span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 카테고리 선택 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                카테고리 *
+                {autoDetectedCategory && autoDetectedCategory !== "전체" && formData.category !== autoDetectedCategory && (
+                  <span className="ml-2 text-xs text-blue-600">
+                    (AI 추천: {autoDetectedCategory})
+                  </span>
+                )}
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 justify-items-center">
+                {["전체", "전자제품", "가구", "자동차", "부동산", "기타"].map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, category })}
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                      formData.category === category
+                        ? "bg-green-600 text-white"
+                        : autoDetectedCategory === category
+                        ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* 가격 */}

@@ -32,30 +32,30 @@ const IMAGE_IDS = [
 ];
 
 export default function Home() {
-  // 더미 데이터
+  // 더미 데이터 - 각 항목에 맞는 이미지 ID 지정
   const hotIssues = [
-    { id: 1, title: "파주시 지역경제 활성화 사업 추진", category: "뉴스", time: "2시간 전" },
-    { id: 2, title: "운정호수공원 문화행사 개최 안내", category: "공지", time: "5시간 전" },
-    { id: 3, title: "파주시 주요 도로 교통 정보", category: "교통", time: "실시간" },
-    { id: 4, title: "파주 시민의 날 기념 행사", category: "이벤트", time: "1일 전" },
+    { id: 1, title: "파주시 지역경제 활성화 사업 추진", category: "뉴스", time: "2시간 전", imageId: "photo-1511632765486-a01980e01a18" }, // 도시
+    { id: 2, title: "운정호수공원 문화행사 개최 안내", category: "공지", time: "5시간 전", imageId: "photo-1506905925346-21bda4d32df4" }, // 호수
+    { id: 3, title: "파주시 주요 도로 교통 정보", category: "교통", time: "실시간", imageId: "photo-1488646953014-85cb44e25828" }, // 자전거/교통
+    { id: 4, title: "파주 시민의 날 기념 행사", category: "이벤트", time: "1일 전", imageId: "photo-1544531586-fde5298cdd40" }, // 행사
   ];
 
   const hotPlaces = [
-    { id: 1, title: "헤이리 예술마을 카페거리", likes: 156 },
-    { id: 2, title: "출판도시 독서카페", likes: 128 },
-    { id: 3, title: "마장호수 카페 일몰 명소", likes: 89 },
-    { id: 4, title: "문산 맛집 골목", likes: 142 },
+    { id: 1, title: "헤이리 예술마을 카페거리", likes: 156, imageId: "photo-1559339352-11d035aa65de" }, // 커피/카페
+    { id: 2, title: "출판도시 독서카페", likes: 128, imageId: "photo-1509042239860-f550ce710b93" }, // 책/독서
+    { id: 3, title: "마장호수 카페 일몰 명소", likes: 89, imageId: "photo-1526170375885-4d8ecf77b99f" }, // 일몰
+    { id: 4, title: "문산 맛집 골목", likes: 142, imageId: "photo-1512058564366-18510be2db19" }, // 음식/맛집
   ];
 
   const marketItems = [
-    { id: 1, title: "아이폰 14 프로 팝니다", price: 800000, location: "운정동", time: "2시간 전" },
-    { id: 2, title: "무료 나눔 - 책상", price: 0, location: "교하동", time: "5시간 전" },
-    { id: 3, title: "유모차 판매합니다", price: 200000, location: "문산읍", time: "1일 전" },
-    { id: 4, title: "에어프라이어 삽니다", price: 50000, location: "금촌동", time: "1일 전" },
-    { id: 5, title: "LG 세탁기 판매", price: 150000, location: "교하동", time: "3시간 전" },
-    { id: 6, title: "노트북 삽니다", price: 0, location: "운정동", time: "30분 전" },
-    { id: 7, title: "침대 프레임 무료나눔", price: 0, location: "금촌동", time: "6시간 전" },
-    { id: 8, title: "자전거 판매", price: 80000, location: "문산읍", time: "1시간 전" },
+    { id: 1, title: "아이폰 14 프로 팝니다", price: 800000, location: "운정동", time: "2시간 전", imageId: "photo-1523275335684-37898b6baf30" }, // 스마트폰
+    { id: 2, title: "무료 나눔 - 책상", price: 0, location: "교하동", time: "5시간 전", imageId: "photo-1586023492125-27b2c045efd7" }, // 책상/가구
+    { id: 3, title: "유모차 판매합니다", price: 200000, location: "문산읍", time: "1일 전", imageId: "photo-1555252333-9f8e92e65df9" }, // 유모차
+    { id: 4, title: "에어프라이어 삽니다", price: 50000, location: "금촌동", time: "1일 전", imageId: "photo-1556912172-45b7abe8b7e8" }, // 주방용품
+    { id: 5, title: "LG 세탁기 판매", price: 150000, location: "교하동", time: "3시간 전", imageId: "photo-1558618666-fcd25c85cd64" }, // 가전제품
+    { id: 6, title: "노트북 삽니다", price: 0, location: "운정동", time: "30분 전", imageId: "photo-1496181133206-80ce9b88a853" }, // 노트북
+    { id: 7, title: "침대 프레임 무료나눔", price: 0, location: "금촌동", time: "6시간 전", imageId: "photo-1631889992176-9a26b96e95a3" }, // 침대/가구
+    { id: 8, title: "자전거 판매", price: 80000, location: "문산읍", time: "1시간 전", imageId: "photo-1488646953014-85cb44e25828" }, // 자전거
   ];
 
   // 실시간 파주 톡 (텍스트 리스트)
@@ -74,14 +74,14 @@ export default function Home() {
     { id: 12, title: "파주 지역 축구 모임 새로 시작합니다", category: "모임", views: 189, time: "3시간 전" },
   ];
 
-  // 오늘의 모임 (가로 스크롤)
+  // 오늘의 모임 (가로 스크롤) - 각 모임 성격에 맞는 이미지
   const todayGroups = [
-    { id: 1, name: "주말 등산 모임", members: 45, category: "등산", image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" },
-    { id: 2, name: "맛집 탐방대", members: 32, category: "맛집", image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80" },
-    { id: 3, name: "독서 모임", members: 28, category: "독서", image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" },
-    { id: 4, name: "토요일 풋살", members: 22, category: "운동", image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" },
-    { id: 5, name: "자전거 라이딩", members: 35, category: "라이딩", image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" },
-    { id: 6, name: "캠핑 모임", members: 41, category: "캠핑", image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" },
+    { id: 1, name: "주말 등산 모임", members: 45, category: "등산", image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" }, // 등산
+    { id: 2, name: "맛집 탐방대", members: 32, category: "맛집", image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80" }, // 맛집
+    { id: 3, name: "독서 모임", members: 28, category: "독서", image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" }, // 독서
+    { id: 4, name: "토요일 풋살", members: 22, category: "운동", image: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80" }, // 운동
+    { id: 5, name: "자전거 라이딩", members: 35, category: "라이딩", image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80" }, // 자전거
+    { id: 6, name: "캠핑 모임", members: 41, category: "캠핑", image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=800&q=80" }, // 캠핑
   ];
 
   return (
@@ -93,13 +93,13 @@ export default function Home() {
           alt="파주 프로모션"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-6 md:px-10">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center" style={{ paddingLeft: '4rem', paddingRight: '2.5rem' }}>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
               파주에서 만나요
             </h1>
-            <p className="text-base md:text-lg text-white/90">
-              함께 만들어가는 파주 커뮤니티
+            <p className="text-base md:text-lg text-white/90" style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', letterSpacing: '0.03em' }}>
+              참여형 커뮤니티 PAJU On
             </p>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function Home() {
       </div>
 
       {/* 실시간 파주 톡 - 텍스트 리스트 */}
-      <section className="py-6 px-8 md:px-10 lg:px-12">
+      <section className="py-6 px-8 md:px-10 lg:px-12" style={{ paddingLeft: '4rem', paddingRight: '4rem' }}>
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">🔥 실시간 파주 톡</h2>
@@ -180,7 +180,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="bg-white">
                     <img
-                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
+                      src={`https://images.unsplash.com/${issue.imageId}?w=600&q=80&auto=format&fit=crop`}
                       alt={issue.title}
                       className="w-full h-32 object-cover"
                     />
@@ -223,7 +223,7 @@ export default function Home() {
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
                   <img
-                    src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=400&q=80&auto=format&fit=crop`}
+                    src={`https://images.unsplash.com/${item.imageId}?w=400&q=80&auto=format&fit=crop`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -262,11 +262,11 @@ export default function Home() {
           <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {[
-                { id: 1, title: "[강연] 김영하 작가와 함께하는 북토크", location: "지혜의숲", date: "11.25", category: "강연" },
-                { id: 2, title: "[축제] 파주 장단콩 축제 개막식", location: "임진각 광장", date: "11.28", category: "축제" },
-                { id: 3, title: "[교육] 우리 아이 코딩 교실 모집", location: "운정행정센터", date: "12.01", category: "교육" },
-                { id: 4, title: "[공연] 파주 필하모닉 오케스트라 정기연주회", location: "시민회관", date: "12.10", category: "공연" },
-              ].map((event, index) => (
+                { id: 1, title: "[강연] 김영하 작가와 함께하는 북토크", location: "지혜의숲", date: "11.25", category: "강연", imageId: "photo-1509042239860-f550ce710b93" }, // 책/강연
+                { id: 2, title: "[축제] 파주 장단콩 축제 개막식", location: "임진각 광장", date: "11.28", category: "축제", imageId: "photo-1544531586-fde5298cdd40" }, // 행사/축제
+                { id: 3, title: "[교육] 우리 아이 코딩 교실 모집", location: "운정행정센터", date: "12.01", category: "교육", imageId: "photo-1516321318423-f06f85e504b3" }, // 교육/코딩
+                { id: 4, title: "[공연] 파주 필하모닉 오케스트라 정기연주회", location: "시민회관", date: "12.10", category: "공연", imageId: "photo-1470225620780-dba8ba36b745" }, // 공연/콘서트
+              ].map((event) => (
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
@@ -275,7 +275,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
+                      src={`https://images.unsplash.com/${event.imageId}?w=600&q=80&auto=format&fit=crop`}
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
@@ -323,7 +323,7 @@ export default function Home() {
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
                   <img
-                    src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
+                    src={`https://images.unsplash.com/${place.imageId}?w=600&q=80&auto=format&fit=crop`}
                     alt={place.title}
                     className="w-full h-full object-cover"
                   />
@@ -331,10 +331,12 @@ export default function Home() {
                 
                 {/* 하단 정보 */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                  <h3 className="text-white font-semibold text-sm mb-1">{place.title}</h3>
-                  <div className="flex items-center space-x-1">
-                    <Heart className="w-3.5 h-3.5 text-white" />
-                    <span className="text-white text-xs">{place.likes}</span>
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <h3 className="text-white font-semibold text-sm mb-1">{place.title}</h3>
+                    <div className="flex items-center space-x-1">
+                      <Heart className="w-3.5 h-3.5 text-white" />
+                      <span className="text-white text-xs">{place.likes}</span>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -364,7 +366,7 @@ export default function Home() {
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
                     <img
-                      src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=600&q=80&auto=format&fit=crop`}
+                      src={group.image}
                       alt={group.name}
                       className="w-full h-full object-cover"
                     />

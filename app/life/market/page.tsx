@@ -30,42 +30,84 @@ const IMAGE_IDS = [
 
 const tabs = ["팝니다", "삽니다", "나눔합니다"];
 
+const categories = ["전체", "전자제품", "가구", "자동차", "부동산", "기타"];
+
 const baseItems = [
-  { id: 1, title: "아이폰 14 프로 팝니다", price: 800000, location: "운정동", time: "2시간 전", images: 1, type: "팝니다", status: "판매중" },
-  { id: 2, title: "무료 나눔 - 책상", price: 0, location: "교하동", time: "5시간 전", images: 2, type: "나눔합니다", status: "나눔중" },
-  { id: 3, title: "에어프라이어 삽니다", price: 50000, location: "금촌동", time: "1일 전", images: 1, type: "삽니다", status: "구매중" },
-  { id: 4, title: "유모차 판매합니다", price: 200000, location: "문산읍", time: "1일 전", images: 3, type: "팝니다", status: "판매중" },
-  { id: 5, title: "무료 나눔 - 옷장", price: 0, location: "운정동", time: "2일 전", images: 2, type: "나눔합니다", status: "나눔중" },
-  { id: 6, title: "자전거 팝니다", price: 150000, location: "교하동", time: "2일 전", images: 1, type: "팝니다", status: "판매중" },
-  { id: 7, title: "LG 세탁기 판매", price: 150000, location: "교하동", time: "3시간 전", images: 1, type: "팝니다", status: "판매중" },
-  { id: 8, title: "노트북 삽니다", price: 0, location: "운정동", time: "30분 전", images: 1, type: "삽니다", status: "구매중" },
-  { id: 9, title: "침대 프레임 무료나눔", price: 0, location: "금촌동", time: "6시간 전", images: 2, type: "나눔합니다", status: "나눔중" },
-  { id: 10, title: "자전거 판매", price: 80000, location: "문산읍", time: "1시간 전", images: 1, type: "팝니다", status: "판매중" },
-  { id: 11, title: "냉장고 팝니다", price: 300000, location: "운정동", time: "4시간 전", images: 2, type: "팝니다", status: "판매중" },
-  { id: 12, title: "의자 무료나눔", price: 0, location: "교하동", time: "1일 전", images: 1, type: "나눔합니다", status: "나눔중" },
-  { id: 13, title: "책상 삽니다", price: 100000, location: "금촌동", time: "3시간 전", images: 1, type: "삽니다", status: "구매중" },
-  { id: 14, title: "컴퓨터 팝니다", price: 500000, location: "문산읍", time: "5시간 전", images: 3, type: "팝니다", status: "판매중" },
-  { id: 15, title: "TV 무료나눔", price: 0, location: "운정동", time: "2일 전", images: 2, type: "나눔합니다", status: "나눔중" },
-  { id: 16, title: "스마트폰 삽니다", price: 200000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", status: "구매중" },
-  { id: 17, title: "가전제품 팝니다", price: 250000, location: "금촌동", time: "6시간 전", images: 2, type: "팝니다", status: "판매중" },
-  { id: 18, title: "책장 무료나눔", price: 0, location: "문산읍", time: "3시간 전", images: 1, type: "나눔합니다", status: "나눔중" },
-  { id: 19, title: "노트북 팝니다", price: 600000, location: "운정동", time: "7시간 전", images: 2, type: "팝니다", status: "판매중" },
-  { id: 20, title: "모니터 삽니다", price: 150000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", status: "구매중" },
-  { id: 21, title: "소파 팝니다", price: 400000, location: "금촌동", time: "4시간 전", images: 3, type: "팝니다", status: "판매중" },
-  { id: 22, title: "옷장 무료나눔", price: 0, location: "문산읍", time: "2일 전", images: 2, type: "나눔합니다", status: "나눔중" },
-  { id: 23, title: "에어컨 팝니다", price: 350000, location: "운정동", time: "5시간 전", images: 2, type: "팝니다", status: "판매중" },
-  { id: 24, title: "의자 삽니다", price: 50000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", status: "구매중" },
+  // 전자제품 - 팝니다
+  { id: 1, title: "아이폰 14 프로 팝니다", price: 800000, location: "운정동", time: "2시간 전", images: 1, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1523275335684-37898b6af30" },
+  { id: 7, title: "LG 세탁기 판매", price: 150000, location: "교하동", time: "3시간 전", images: 1, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1558618666-fcd25c85cd64" },
+  { id: 11, title: "냉장고 팝니다", price: 300000, location: "운정동", time: "4시간 전", images: 2, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1556912172-45b7abe8b7e8" },
+  { id: 14, title: "컴퓨터 팝니다", price: 500000, location: "문산읍", time: "5시간 전", images: 3, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1496181133206-80ce9b88a853" },
+  { id: 17, title: "가전제품 팝니다", price: 250000, location: "금촌동", time: "6시간 전", images: 2, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1558618666-fcd25c85cd64" },
+  { id: 19, title: "노트북 팝니다", price: 600000, location: "운정동", time: "7시간 전", images: 2, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1496181133206-80ce9b88a853" },
+  { id: 23, title: "에어컨 팝니다", price: 350000, location: "운정동", time: "5시간 전", images: 2, type: "팝니다", category: "전자제품", status: "판매중", imageId: "photo-1558618666-fcd25c85cd64" },
+  
+  // 가구 - 팝니다
+  { id: 21, title: "소파 팝니다", price: 400000, location: "금촌동", time: "4시간 전", images: 3, type: "팝니다", category: "가구", status: "판매중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  
+  // 자동차 - 팝니다
+  { id: 34, title: "현대 아반떼 판매합니다", price: 12000000, location: "운정동", time: "1일 전", images: 3, type: "팝니다", category: "자동차", status: "판매중", imageId: "photo-1549317661-bd32c8ce0db2" },
+  { id: 35, title: "기아 K5 팝니다", price: 15000000, location: "교하동", time: "2일 전", images: 3, type: "팝니다", category: "자동차", status: "판매중", imageId: "photo-1550355291-bbee04a84627" },
+  { id: 36, title: "현대 소나타 판매", price: 18000000, location: "금촌동", time: "3일 전", images: 3, type: "팝니다", category: "자동차", status: "판매중", imageId: "photo-1492144534655-ae79c964c9d7" },
+  
+  // 부동산 - 팝니다
+  { id: 25, title: "운정동 아파트 매매", price: 350000000, location: "운정동", time: "3시간 전", images: 2, type: "팝니다", category: "부동산", status: "판매중", imageId: "photo-1564013799919-ab600027ffc6" },
+  { id: 26, title: "교하동 원룸 전세", price: 50000000, location: "교하동", time: "5시간 전", images: 2, type: "팝니다", category: "부동산", status: "판매중", imageId: "photo-1522708323590-d24dbb6b0267" },
+  { id: 27, title: "금촌동 단독주택 매매", price: 280000000, location: "금촌동", time: "1일 전", images: 3, type: "팝니다", category: "부동산", status: "판매중", imageId: "photo-1568605114967-8130f3a36994" },
+  { id: 28, title: "문산읍 상가 임대", price: 5000000, location: "문산읍", time: "2일 전", images: 2, type: "팝니다", category: "부동산", status: "판매중", imageId: "photo-1486406146926-c627a92ad1ab" },
+  { id: 29, title: "운정동 오피스텔 전세", price: 80000000, location: "운정동", time: "6시간 전", images: 2, type: "팝니다", category: "부동산", status: "판매중", imageId: "photo-1522708323590-d24dbb6b0267" },
+  
+  // 기타 - 팝니다
+  { id: 4, title: "유모차 판매합니다", price: 200000, location: "문산읍", time: "1일 전", images: 3, type: "팝니다", category: "기타", status: "판매중", imageId: "photo-1555252333-9f8e92e65df9" },
+  { id: 6, title: "자전거 팝니다", price: 150000, location: "교하동", time: "2일 전", images: 1, type: "팝니다", category: "기타", status: "판매중", imageId: "photo-1488646953014-85cb44e25828" },
+  { id: 10, title: "자전거 판매", price: 80000, location: "문산읍", time: "1시간 전", images: 1, type: "팝니다", category: "기타", status: "판매중", imageId: "photo-1488646953014-85cb44e25828" },
+  
+  // 전자제품 - 삽니다
+  { id: 3, title: "에어프라이어 삽니다", price: 50000, location: "금촌동", time: "1일 전", images: 1, type: "삽니다", category: "전자제품", status: "구매중", imageId: "photo-1556912172-45b7abe8b7e8" },
+  { id: 8, title: "노트북 삽니다", price: 0, location: "운정동", time: "30분 전", images: 1, type: "삽니다", category: "전자제품", status: "구매중", imageId: "photo-1496181133206-80ce9b88a853" },
+  { id: 16, title: "스마트폰 삽니다", price: 200000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", category: "전자제품", status: "구매중", imageId: "photo-1523275335684-37898b6af30" },
+  { id: 20, title: "모니터 삽니다", price: 150000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", category: "전자제품", status: "구매중", imageId: "photo-1496181133206-80ce9b88a853" },
+  
+  // 가구 - 삽니다
+  { id: 13, title: "책상 삽니다", price: 100000, location: "금촌동", time: "3시간 전", images: 1, type: "삽니다", category: "가구", status: "구매중", imageId: "photo-1586023492125-27b2c045efd7" },
+  { id: 24, title: "의자 삽니다", price: 50000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", category: "가구", status: "구매중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  
+  // 자동차 - 삽니다
+  { id: 37, title: "중형차 구매하고 싶어요", price: 10000000, location: "운정동", time: "5시간 전", images: 1, type: "삽니다", category: "자동차", status: "구매중", imageId: "photo-1549317661-bd32c8ce0db2" },
+  { id: 38, title: "경차 삽니다", price: 5000000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", category: "자동차", status: "구매중", imageId: "photo-1550355291-bbee04a84627" },
+  
+  // 부동산 - 삽니다
+  { id: 30, title: "운정동 아파트 구매", price: 300000000, location: "운정동", time: "4시간 전", images: 1, type: "삽니다", category: "부동산", status: "구매중", imageId: "photo-1564013799919-ab600027ffc6" },
+  { id: 31, title: "교하동 원룸 전세", price: 40000000, location: "교하동", time: "1일 전", images: 1, type: "삽니다", category: "부동산", status: "구매중", imageId: "photo-1522708323590-d24dbb6b0267" },
+  { id: 32, title: "금촌동 단독주택 구매", price: 250000000, location: "금촌동", time: "2일 전", images: 1, type: "삽니다", category: "부동산", status: "구매중", imageId: "photo-1568605114967-8130f3a36994" },
+  { id: 33, title: "문산읍 토지 구매", price: 80000000, location: "문산읍", time: "3일 전", images: 1, type: "삽니다", category: "부동산", status: "구매중", imageId: "photo-1486406146926-c627a92ad1ab" },
+  
+  // 나눔합니다 - 전자제품
+  { id: 15, title: "TV 무료나눔", price: 0, location: "운정동", time: "2일 전", images: 2, type: "나눔합니다", category: "전자제품", status: "나눔중", imageId: "photo-1544947950-fa07a98d237f" },
+  
+  // 나눔합니다 - 가구
+  { id: 2, title: "무료 나눔 - 책상", price: 0, location: "교하동", time: "5시간 전", images: 2, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1586023492125-27b2c045efd7" },
+  { id: 5, title: "무료 나눔 - 옷장", price: 0, location: "운정동", time: "2일 전", images: 2, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  { id: 9, title: "침대 프레임 무료나눔", price: 0, location: "금촌동", time: "6시간 전", images: 2, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  { id: 12, title: "의자 무료나눔", price: 0, location: "교하동", time: "1일 전", images: 1, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  { id: 18, title: "책장 무료나눔", price: 0, location: "문산읍", time: "3시간 전", images: 1, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1509042239860-f550ce710b93" },
+  { id: 22, title: "옷장 무료나눔", price: 0, location: "문산읍", time: "2일 전", images: 2, type: "나눔합니다", category: "가구", status: "나눔중", imageId: "photo-1631889992176-9a26b96e95a3" },
+  
+  // 나눔합니다 - 기타
+  { id: 39, title: "자전거 무료나눔", price: 0, location: "운정동", time: "4시간 전", images: 1, type: "나눔합니다", category: "기타", status: "나눔중", imageId: "photo-1488646953014-85cb44e25828" },
 ];
 
 const items = baseItems;
 
 export default function MarketPage() {
   const [activeTab, setActiveTab] = useState("팝니다");
+  const [activeCategory, setActiveCategory] = useState("전체");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredItems = items.filter(
     (item) =>
       item.type === activeTab &&
+      (activeCategory === "전체" || item.category === activeCategory) &&
       (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.location.includes(searchQuery))
   );
@@ -74,7 +116,7 @@ export default function MarketPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">파주장터</h1>
           <p className="text-lg text-gray-600">중고 물품 거래와 나눔을 해보세요</p>
         </div>
@@ -92,6 +134,23 @@ export default function MarketPage() {
               }`}
             >
               {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* 카테고리 필터 */}
+        <div className="bg-white rounded-xl shadow-sm p-2 mb-6 flex flex-wrap gap-2 justify-center">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
+                activeCategory === category
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:bg-gray-100 bg-gray-50"
+              }`}
+            >
+              {category}
             </button>
           ))}
         </div>
@@ -129,7 +188,7 @@ export default function MarketPage() {
             >
               <div className="h-48 bg-gray-100 relative">
                 <img
-                  src={`https://images.unsplash.com/${IMAGE_IDS[index % IMAGE_IDS.length]}?w=400&q=80&auto=format&fit=crop`}
+                  src={`https://images.unsplash.com/${item.imageId || IMAGE_IDS[index % IMAGE_IDS.length]}?w=400&q=80&auto=format&fit=crop`}
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
@@ -141,6 +200,9 @@ export default function MarketPage() {
                     📸 {item.images}
                   </div>
                 )}
+                <div className="absolute bottom-3 left-3 px-2 py-1 bg-blue-500/90 backdrop-blur-sm rounded text-xs font-medium text-white">
+                  {item.category}
+                </div>
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>

@@ -88,7 +88,7 @@ export default function NeighborhoodPage() {
         </div>
 
         {/* 게시글 목록 */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <p className="text-gray-500 text-lg">등록된 게시글이 없습니다.</p>
@@ -98,31 +98,27 @@ export default function NeighborhoodPage() {
               <Link
                 key={post.id}
                 href={`/neighborhood/${post.id}`}
-                className="block bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                className="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded">
-                      {post.neighborhoodLabel}
-                    </span>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded">
-                      {post.category}
-                    </span>
-                  </div>
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded">
+                    {post.neighborhoodLabel}
+                  </span>
+                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded">
+                    {post.category}
+                  </span>
                   <span className="text-xs text-gray-400">{post.time}</span>
                 </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 text-center">
                   {post.title}
                 </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2 text-center">
                   {post.content}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center space-x-4">
-                    <span>{post.author}</span>
-                    <span>조회 {post.views}</span>
-                    <span>댓글 {post.comments}</span>
-                  </div>
+                <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
+                  <span>{post.author}</span>
+                  <span>조회 {post.views}</span>
+                  <span>댓글 {post.comments}</span>
                 </div>
               </Link>
             ))

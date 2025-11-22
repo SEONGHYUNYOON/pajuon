@@ -3,7 +3,6 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -26,33 +25,186 @@ function LoginContent() {
     setIsLoading(true);
 
     try {
-      const supabase = createClient();
+      console.log("🔐 === LOGIN START ===");
+      console.log("📧 Email:", formData.email);
       
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      // 환경 변수 확인
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      console.log("🔍 Environment check:", {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseKey,
+        urlPreview: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : "MISSING"
+      });
+      
+      if (!supabaseUrl || !supabaseKey) {
+        setIsLoading(false);
+        const errorMsg = "Supabase 환경 변수가 설정되지 않았습니다. 서버를 재시작해주세요.";
+        console.error("❌ Missing environment variables");
+        setError(errorMsg);
+        alert(errorMsg);
+        return;
+      }
+      
+      // Supabase 클라이언트 생성
+      console.log("🔧 Creating Supabase client...");
+      let supabase;
+      try {
+        supabase = createClient();
+        console.log("✅ Supabase client created successfully");
+      } catch (clientErr: any) {
+        setIsLoading(false);
+        console.error("❌ Failed to create Supabase client:", clientErr);
+        const errorMsg = `Supabase 클라이언트 생성 실패: ${clientErr.message}`;
+        setError(errorMsg);
+        alert(errorMsg);
+        return;
+      }
+      
+      // 인증 상태 변경 리스너를 먼저 설정 (SIGNED_IN 이벤트 감지)
+      let loginCompleted = false;
+      let redirectTimeout: NodeJS.Timeout | null = null;
+      
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log("🔐 Auth state changed:", event, session?.user?.id);
+        
+        if (event === "SIGNED_IN" && session?.user) {
+          if (loginCompleted) return; // 이미 처리됨
+          loginCompleted = true;
+          
+          console.log("✅ Login confirmed via SIGNED_IN event");
+          console.log("👤 User ID:", session.user.id);
+          
+          // 리다이렉트 타임아웃 정리
+          if (redirectTimeout) {
+            clearTimeout(redirectTimeout);
+          }
+          
+          // 세션이 쿠키에 저장될 시간 확보
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          const callbackUrl = searchParams.get("callbackUrl") || "/";
+          console.log("🚀 Redirecting to:", callbackUrl);
+          
+          // 리스너 정리
+          subscription.unsubscribe();
+          
+          // 완전한 페이지 새로고침으로 쿠키 동기화
+          window.location.href = callbackUrl;
+        }
+      });
+      
+      // 로그인 요청 (타임아웃 포함)
+      console.log("📡 Sending login request to Supabase...");
+      const requestStart = Date.now();
+      
+      // 타임아웃과 함께 로그인 요청
+      const loginPromise = supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
-
-      if (signInError) {
-        console.error("Login error:", signInError);
-        const errorMessage = signInError.message || "이메일 또는 비밀번호가 올바르지 않습니다.";
-        setError(errorMessage);
-        alert(errorMessage);
-        setIsLoading(false);
-        return;
-      }
-
-      if (data.user) {
-        // 로그인 성공
-        const callbackUrl = searchParams.get("callbackUrl") || "/";
-        // 서버 컴포넌트(헤더) 데이터 새로고침 (필수!)
-        router.refresh();
-        // 그 다음 홈으로 이동
-        router.push(callbackUrl);
+      
+      const timeoutPromise = new Promise((_, reject) => {
+        redirectTimeout = setTimeout(() => {
+          reject(new Error("로그인 요청 타임아웃 (10초)"));
+        }, 10000);
+      });
+      
+      try {
+        const { data, error: signInError } = await Promise.race([
+          loginPromise,
+          timeoutPromise
+        ]) as { data: any; error: any };
+        
+        // 타임아웃 정리
+        if (redirectTimeout) {
+          clearTimeout(redirectTimeout);
+        }
+        
+        const requestDuration = Date.now() - requestStart;
+        console.log(`📡 Response received (${requestDuration}ms)`);
+        
+        if (signInError) {
+          console.error("❌ Login error:", signInError);
+          
+          // 리스너 정리
+          subscription.unsubscribe();
+          
+          const errorMessage = signInError.message || "이메일 또는 비밀번호가 올바르지 않습니다.";
+          setError(errorMessage);
+          alert(errorMessage);
+          setIsLoading(false);
+          return;
+        }
+        
+        // 응답을 받았지만 이미 SIGNED_IN 이벤트로 처리되었을 수 있음
+        if (data?.user && !loginCompleted) {
+          console.log("✅ === LOGIN SUCCESS (from response) ===");
+          console.log("👤 User ID:", data.user.id);
+          console.log("🔑 Has Session:", !!data.session);
+          
+          loginCompleted = true;
+          
+          // 세션이 쿠키에 저장될 시간 확보
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // 리스너 정리
+          subscription.unsubscribe();
+          
+          const callbackUrl = searchParams.get("callbackUrl") || "/";
+          console.log("🚀 Redirecting to:", callbackUrl);
+          
+          window.location.href = callbackUrl;
+          return;
+        } else if (!data?.user) {
+          console.error("❌ Login failed: user is null");
+          
+          // 리스너 정리
+          subscription.unsubscribe();
+          
+          setError("로그인에 실패했습니다. 다시 시도해주세요.");
+          alert("로그인에 실패했습니다. 다시 시도해주세요.");
+          setIsLoading(false);
+        }
+        // loginCompleted가 true면 SIGNED_IN 이벤트에서 처리됨
+      } catch (timeoutError: any) {
+        // 타임아웃 발생
+        if (redirectTimeout) {
+          clearTimeout(redirectTimeout);
+        }
+        
+        console.error("❌ Login timeout:", timeoutError);
+        
+        // 리스너 정리
+        subscription.unsubscribe();
+        
+        // 하지만 SIGNED_IN 이벤트가 발생했을 수 있으므로 조금 더 기다림
+        if (!loginCompleted) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          if (!loginCompleted) {
+            setError("로그인 요청 시간이 초과되었습니다. 네트워크 상태를 확인해주세요.");
+            alert("로그인 요청 시간이 초과되었습니다. 네트워크 상태를 확인해주세요.");
+            setIsLoading(false);
+          }
+        }
       }
     } catch (err: any) {
-      console.error("Login error:", err);
-      const errorMessage = err?.message || "로그인 중 오류가 발생했습니다.";
+      console.error("❌ === LOGIN EXCEPTION ===");
+      console.error("❌ Error:", err);
+      console.error("❌ Error message:", err?.message);
+      console.error("❌ Error stack:", err?.stack);
+      
+      let errorMessage = "로그인 중 오류가 발생했습니다.";
+      if (err?.message?.includes("fetch") || err?.message?.includes("network") || err?.code === "ECONNREFUSED") {
+        errorMessage = "네트워크 오류가 발생했습니다. 브라우저 개발자 도구(F12)의 Network 탭에서 요청 상태를 확인해주세요.";
+      } else if (err?.message?.includes("Missing Supabase")) {
+        errorMessage = "Supabase 설정이 누락되었습니다. 서버를 재시작해주세요.";
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
       alert(errorMessage);
       setIsLoading(false);
@@ -65,8 +217,52 @@ function LoginContent() {
         {/* 헤더 */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
-              <span className="text-white font-bold text-3xl">ON</span>
+            <div className="relative inline-flex items-center justify-center">
+              {/* 외부 글로우 효과 */}
+              <span className="absolute inset-0 bg-gradient-to-br from-[#0D4FFF] via-[#3B82F6] to-[#60A5FA] rounded-full blur-md opacity-50 animate-pulse"></span>
+              
+              {/* On 배지 - 전원 버튼이 O를 대체 */}
+              <span className="relative inline-flex items-center gap-0 bg-gradient-to-br from-[#0D4FFF] via-[#2563EB] to-[#1E40AF] text-white px-8 py-4 rounded-full text-3xl font-bold shadow-2xl transform hover:scale-110 hover:shadow-[#0D4FFF]/50 transition-all duration-300 leading-none">
+                {/* 전원 버튼 아이콘 */}
+                <span className="relative inline-flex items-center justify-center leading-none" style={{ width: '1em', height: '1em', marginRight: '-0.15em', verticalAlign: 'baseline' }}>
+                  <svg 
+                    className="w-full h-full text-white" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    style={{ display: 'inline-block', verticalAlign: 'baseline' }}
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="12" cy="12" r="8" className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                    <path 
+                      d="M12 8 L12 4" 
+                      className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                    />
+                  </svg>
+                  {/* 발광 효과 */}
+                  <span className="absolute inset-0 text-white opacity-40 animate-ping pointer-events-none">
+                    <svg 
+                      className="w-full h-full"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    >
+                      <circle cx="12" cy="12" r="8" />
+                      <path d="M12 8 L12 4" />
+                    </svg>
+                  </span>
+                </span>
+                
+                {/* n 텍스트 */}
+                <span className="relative z-10 font-bold leading-none">n</span>
+                
+                {/* 배경 움직이는 그라데이션 */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-1000"></span>
+              </span>
             </div>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-2">로그인</h2>
@@ -88,34 +284,26 @@ function LoginContent() {
             )}
 
             {/* 이메일 */}
-            <div className="relative">
-              <EnvelopeIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
-              <Input
-                label="이메일"
-                type="email"
-                required
-                className="pl-12"
-                placeholder="이메일을 입력하세요"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                error={error && !formData.email ? "이메일을 입력해주세요" : undefined}
-              />
-            </div>
+            <Input
+              label="이메일"
+              type="email"
+              required
+              placeholder="이메일을 입력하세요"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              error={error && !formData.email ? "이메일을 입력해주세요" : undefined}
+            />
 
             {/* 비밀번호 */}
-            <div className="relative">
-              <LockClosedIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
-              <Input
-                label="비밀번호"
-                type="password"
-                required
-                className="pl-12"
-                placeholder="비밀번호를 입력하세요"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                error={error && !formData.password ? "비밀번호를 입력해주세요" : undefined}
-              />
-            </div>
+            <Input
+              label="비밀번호"
+              type="password"
+              required
+              placeholder="비밀번호를 입력하세요"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              error={error && !formData.password ? "비밀번호를 입력해주세요" : undefined}
+            />
 
             {/* 비밀번호 찾기 및 로그인 상태 유지 */}
             <div className="flex items-center justify-between">

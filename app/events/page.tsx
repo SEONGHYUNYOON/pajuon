@@ -24,7 +24,7 @@ const events = [
     maxParticipants: 50,
     status: "신청중",
     type: "미팅",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80", // 친구 모임/미팅
     isMatchmaking: true,
   },
   {
@@ -37,7 +37,7 @@ const events = [
     maxParticipants: 40,
     status: "신청중",
     type: "미팅",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80", // 파티/모임
     isMatchmaking: true,
   },
   {
@@ -50,7 +50,7 @@ const events = [
     maxParticipants: 200,
     status: "신청중",
     type: "축제",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=80", // 축제/행사
     isMatchmaking: false,
   },
   {
@@ -63,7 +63,7 @@ const events = [
     maxParticipants: 100,
     status: "신청중",
     type: "토론",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80", // 토론/회의
     isMatchmaking: false,
   },
   {
@@ -76,7 +76,7 @@ const events = [
     maxParticipants: 50,
     status: "신청중",
     type: "미팅",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1482517967863-00e15c9b44be?auto=format&fit=crop&w=800&q=80", // 크리스마스/데코레이션
     isMatchmaking: true,
   },
 ];
@@ -107,8 +107,8 @@ export default function EventsPage() {
   const regularEvents = events.filter((e) => !e.isMatchmaking);
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] py-8 px-4">
-      <div className="w-full">
+    <div className="min-h-screen bg-[#F3F4F6] py-8" style={{ paddingLeft: '6rem', paddingRight: '6rem' }}>
+      <div className="w-full max-w-7xl mx-auto">
         {/* 헤더 */}
         <PageHeader
           title="ON-이벤트"

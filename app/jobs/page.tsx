@@ -124,24 +124,24 @@ export default function JobsPage() {
     : jobs.filter(job => job.type === selectedType);
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-xl px-4 space-y-6">
+    <main className="flex flex-col items-center w-full min-h-screen bg-[#F8F9FA] py-6">
+      <div className="w-full max-w-xl px-4 space-y-5">
         {/* 헤더 */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">👔 파주인</h1>
-          <p className="text-gray-600">파주 지역 구인구직 정보</p>
+        <div className="text-center pt-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">👔 파주인</h1>
+          <p className="text-gray-500 text-sm">파주 지역 구인구직 정보</p>
         </div>
 
-        {/* 필터 */}
-        <div className="flex flex-wrap gap-2 justify-center">
+        {/* 필터 - 당근마켓 스타일 */}
+        <div className="flex flex-wrap gap-2 justify-center px-2">
           {jobTypes.map((type) => (
             <button
               key={type.id}
               onClick={() => setSelectedType(type.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 selectedType === type.id
-                  ? "bg-blue-500 text-white shadow-md"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-[#FF6F0F] text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
               }`}
             >
               {type.label}
@@ -149,53 +149,56 @@ export default function JobsPage() {
           ))}
         </div>
 
-        {/* 구인구직 카드 리스트 */}
-        <div className="space-y-4 mb-24">
+        {/* 구인구직 카드 리스트 - 당근마켓 스타일 */}
+        <div className="space-y-3 mb-24">
           {filteredJobs.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-              <p className="text-gray-500 text-lg">등록된 구인구직이 없습니다.</p>
+            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+              <p className="text-gray-400 text-base">등록된 구인구직이 없어요</p>
             </div>
           ) : (
             filteredJobs.map((job) => (
               <Link
                 key={job.id}
                 href={`/jobs/${job.id}`}
-                className="block bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 mb-4"
+                className="block bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 active:scale-[0.98]"
               >
                 {/* 상단: 제목 + 작성일 */}
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold text-gray-900 flex-1 pr-4">{job.title}</h3>
-                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                  <h3 className="text-base font-semibold text-gray-900 flex-1 pr-3 leading-snug">{job.title}</h3>
+                  <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
                     {new Date().toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
                   </span>
                 </div>
 
-                {/* 중단: 급여 정보 + 근무지/시간 */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-1 mb-3">
-                    <span className="text-2xl font-bold text-[#0D4FFF]">{job.wage}</span>
+                {/* 중단: 급여 정보 - 당근마켓 스타일 */}
+                <div className="mb-3">
+                  <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-xl font-bold text-[#FF6F0F]">{job.wage}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <MapPinIcon className="w-4 h-4 text-gray-400" />
-                      <span>{job.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
+                  
+                  {/* 지역 정보 - 더 직관적으로 */}
+                  <div className="flex items-center gap-2 mb-2.5 px-2 py-1.5 bg-gray-50 rounded-lg">
+                    <MapPinIcon className="w-4 h-4 text-[#FF6F0F] flex-shrink-0" />
+                    <span className="text-sm font-semibold text-gray-900">{job.location}</span>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
+                    <div className="flex items-center gap-1.5">
                       <ClockIcon className="w-4 h-4 text-gray-400" />
                       <span>{job.hours}</span>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm mt-2">{job.company}</p>
+                  <p className="text-gray-500 text-sm">{job.company}</p>
                 </div>
 
-                {/* 하단: 태그 뱃지 */}
+                {/* 하단: 태그 뱃지 - 당근마켓 스타일 */}
                 <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                     job.type === "full-time"
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-[#E8F5E9] text-[#2E7D32]"
                       : job.type === "part-time"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-orange-100 text-orange-700"
+                      ? "bg-[#E3F2FD] text-[#1565C0]"
+                      : "bg-[#FFF3E0] text-[#E65100]"
                   }`}>
                     {jobTypes.find(t => t.id === job.type)?.label}
                   </span>
@@ -206,17 +209,17 @@ export default function JobsPage() {
         </div>
       </div>
 
-      {/* 플로팅 공고 등록 버튼 */}
+      {/* 플로팅 공고 등록 버튼 - 당근마켓 스타일 */}
       <Link
         href="/jobs/new"
-        className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#0D4FFF] text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2 z-50 max-w-xl mx-auto"
+        className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#FF6F0F] text-white rounded-full px-6 py-3.5 shadow-lg hover:bg-[#E85A00] active:scale-95 transition-all flex items-center gap-2 z-50 max-w-xl mx-auto"
         onClick={(e) => {
           e.preventDefault();
           alert("준비 중입니다");
         }}
       >
         <Plus className="w-5 h-5" />
-        <span className="font-medium">공고 등록</span>
+        <span className="font-semibold">공고 등록</span>
       </Link>
     </main>
   );

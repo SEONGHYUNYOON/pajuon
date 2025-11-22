@@ -65,7 +65,7 @@ export default function NoticeBanner() {
         const fallbackMessages: BannerMessage[] = [
           {
             id: "fallback1",
-            content: "강아지 찾습니다! 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
+            content: "강아지를 찾습니다. 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
             created_at: new Date().toISOString(),
             user_id: "user1",
             author: { nickname: "파주 이웃" },
@@ -100,7 +100,7 @@ export default function NoticeBanner() {
       const fallbackMessages: BannerMessage[] = [
         {
           id: "fallback1",
-          content: "강아지 찾습니다! 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
+          content: "강아지를 찾습니다. 말티즈, 흰색, 운정역 근처에서 도망감 ㅠㅠ",
           created_at: new Date().toISOString(),
           user_id: "user1",
           author: { nickname: "파주 이웃" },
@@ -184,13 +184,13 @@ export default function NoticeBanner() {
     return msgs.map((msg) => {
       const authorText = msg.author?.nickname ? ` (작성자: ${msg.author.nickname})` : "";
       return `📢 ${msg.content}${authorText}`;
-    }).join("  •  "); // 메시지 간 구분자 (적당한 간격)
+    }).join("        •  •  •        "); // 메시지 간 구분자 (간격 더 넓힘)
   };
 
   const messageString = messages.length > 0 ? createMessageString(messages) : "파주온에 오신 것을 환영합니다!";
   
   // 텍스트를 2번 복제하여 끊김 없는 루프 구현
-  const duplicatedText = `${messageString}  •  ${messageString}  •  `;
+  const duplicatedText = `${messageString}        •  •  •        ${messageString}        •  •  •        `;
 
   return (
     <>
@@ -201,7 +201,7 @@ export default function NoticeBanner() {
           position: 'relative',
         }}
       >
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4" style={{ paddingRight: '0.5rem' }}>
           {/* 메시지 표시 - Seamless 무한 스크롤 */}
           <div 
             className="flex-1 overflow-hidden relative h-8"

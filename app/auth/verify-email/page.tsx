@@ -51,8 +51,49 @@ function VerifyEmailContent() {
         <Card padding="lg">
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-green-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                <EnvelopeIcon className="w-10 h-10 text-white" />
+              <div className="relative inline-flex items-center justify-center">
+                {/* 외부 글로우 효과 */}
+                <span className="absolute inset-0 bg-gradient-to-br from-[#0D4FFF] via-[#3B82F6] to-[#60A5FA] rounded-full blur-md opacity-50 animate-pulse"></span>
+                
+                {/* On 배지 - 전원 버튼이 O를 대체 */}
+                <span className="relative inline-flex items-center gap-0 bg-gradient-to-br from-[#0D4FFF] via-[#2563EB] to-[#1E40AF] text-white px-8 py-4 rounded-full text-3xl font-bold shadow-2xl leading-none">
+                  {/* 전원 버튼 아이콘 */}
+                  <span className="relative inline-flex items-center justify-center leading-none" style={{ width: '1em', height: '1em', marginRight: '-0.15em', verticalAlign: 'baseline' }}>
+                    <svg 
+                      className="w-full h-full text-white" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      style={{ display: 'inline-block', verticalAlign: 'baseline' }}
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="12" cy="12" r="8" className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                      <path 
+                        d="M12 8 L12 4" 
+                        className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                      />
+                    </svg>
+                    {/* 발광 효과 */}
+                    <span className="absolute inset-0 text-white opacity-40 animate-ping pointer-events-none">
+                      <svg 
+                        className="w-full h-full"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      >
+                        <circle cx="12" cy="12" r="8" />
+                        <path d="M12 8 L12 4" />
+                      </svg>
+                    </span>
+                  </span>
+                  
+                  {/* n 텍스트 */}
+                  <span className="relative z-10 font-bold leading-none">n</span>
+                </span>
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">이메일 확인 필요</h2>
