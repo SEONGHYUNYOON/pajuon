@@ -98,14 +98,15 @@ export default function BannerRequestModal({
               📢 실시간 제보 메시지 등록
             </h2>
             <p className="text-sm text-gray-600">
-              20자 이내의 긴급 메시지를 입력해주세요.
+              파주 시민들에게 알릴 내용을 20자 이내로 적어주세요.
             </p>
           </div>
 
           {/* 폼 */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <textarea
+              <input
+                type="text"
                 value={content}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -114,15 +115,11 @@ export default function BannerRequestModal({
                   }
                 }}
                 placeholder="예: 자유로 교통 정체 제보, 분실물 찾습니다 등..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D4FFF] focus:border-transparent resize-none"
-                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D4FFF] focus:border-transparent"
                 maxLength={20}
                 required
               />
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-xs text-gray-500">
-                  분실물, 교통 정보, 긴급 제보 등을 입력하세요
-                </span>
+              <div className="flex justify-end items-center mt-2">
                 <span className={`text-xs font-medium ${
                   content.length >= 18 ? "text-red-500" : "text-gray-400"
                 }`}>

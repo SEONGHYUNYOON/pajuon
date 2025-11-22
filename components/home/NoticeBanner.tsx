@@ -114,10 +114,11 @@ export default function NoticeBanner() {
           {/* 확성기 버튼 */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="ml-4 p-2 hover:bg-white/20 rounded-full transition-colors flex-shrink-0"
+            className="ml-4 bg-white text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm hover:bg-gray-100 transition-colors flex-shrink-0 flex items-center gap-1"
             aria-label="메시지 등록"
           >
-            <Megaphone className="w-5 h-5" />
+            <Megaphone className="w-4 h-4" />
+            <span>확성기 신청</span>
           </button>
         </div>
 
