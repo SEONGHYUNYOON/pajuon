@@ -111,13 +111,18 @@ button:hover,
 
 .banner-ticker-content {
   display: flex;
-  animation: banner-scroll 30s linear infinite;
+  animation: banner-scroll 40s linear infinite;
   will-change: transform;
+}
+
+.banner-ticker-content.banner-ticker-paused {
+  animation-play-state: paused;
 }
 
 .banner-ticker-item {
   flex-shrink: 0;
   padding-right: 4rem; /* 메시지 간 간격 */
+  min-width: max-content; /* 텍스트가 잘리지 않도록 */
 }
 
 @keyframes banner-scroll {
@@ -125,6 +130,6 @@ button:hover,
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%); /* 절반만 이동 (2번 반복했으므로) */
+    transform: translateX(-33.333%); /* 1/3만 이동 (3번 반복했으므로) */
   }
 }

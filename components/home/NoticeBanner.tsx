@@ -19,6 +19,7 @@ export default function NoticeBanner() {
   const [messages, setMessages] = useState<BannerMessage[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     checkCurrentUser();
@@ -163,18 +164,24 @@ export default function NoticeBanner() {
     }));
   };
 
-  // 무한 스크롤을 위한 메시지 리스트 2번 반복
-  const displayMessages = messages.length > 0 ? [...messages, ...messages] : [];
+  // 무한 스크롤을 위한 메시지 리스트 3번 반복 (끊김 방지)
+  const displayMessages = messages.length > 0 ? [...messages, ...messages, ...messages] : [];
 
   return (
     <>
       <section className="py-2 px-8 md:px-10 lg:px-12 bg-[#0D4FFF] text-white relative overflow-hidden">
         <div className="flex items-center justify-between gap-4">
           {/* 메시지 표시 - 무한 스크롤 */}
-          <div className="flex-1 overflow-hidden relative h-8">
+          <div 
+            className="flex-1 overflow-hidden relative h-8"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
             {displayMessages.length > 0 ? (
               <div className="banner-ticker-container">
-                <div className="banner-ticker-content">
+                <div 
+                  className={`banner-ticker-content ${isPaused ? 'banner-ticker-paused' : ''}`}
+                >
                   {displayMessages.map((msg, index) => (
                     <button
                       key={`${msg.id}-${index}`}

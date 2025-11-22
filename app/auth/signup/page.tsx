@@ -33,7 +33,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNicknameCheck = async () => {
-    if (!formData.nickname) {
+    if (!formData.nickname || formData.nickname.trim() === "") {
       setErrors({ ...errors, nickname: "닉네임을 입력해주세요." });
       setNicknameMessage("닉네임을 입력해주세요.");
       setIsNicknameValid(false);
@@ -53,37 +53,60 @@ export default function SignupPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select("nickname")
-        .eq("nickname", formData.nickname)
-        .maybeSingle(); // .single() 대신 .maybeSingle() 사용 (결과가 없어도 에러 안 냄)
+        .eq("nickname", formData.nickname.trim())
+        .maybeSingle();
 
+      // 에러 처리: 네트워크 에러와 실제 중복을 구분
       if (error) {
         console.error("Nickname check error:", error);
-        setNicknameCheck("unavailable");
-        setNicknameMessage("이미 사용 중인 닉네임입니다.");
-        setIsNicknameValid(false);
-        setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
+        // 네트워크 에러인 경우
+        if (error.message?.includes("network") || error.message?.includes("fetch")) {
+          setNicknameCheck("unavailable");
+          setNicknameMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+          setIsNicknameValid(false);
+          setErrors({ ...errors, nickname: "네트워크 오류가 발생했습니다." });
+        } else {
+          // 기타 에러
+          setNicknameCheck("unavailable");
+          setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
+          setIsNicknameValid(false);
+          setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
+        }
         return;
       }
 
-      // data가 null이면 사용 가능 (중복 없음)
-      if (!data) {
+      // 디버깅: data 상태 로그 출력
+      console.log("Nickname check result - data:", data, "error:", error);
+
+      // data가 null 또는 undefined이면 사용 가능 (중복 없음)
+      // 명확한 null 체크
+      if (data === null || data === undefined) {
+        console.log("Nickname is available:", formData.nickname);
         setNicknameCheck("available");
         setNicknameMessage("사용 가능한 닉네임입니다.");
         setIsNicknameValid(true); // 중요: 반드시 true로 설정
         setErrors({ ...errors, nickname: "" });
       } else {
-        // data가 있으면 중복
+        // data 객체가 존재하면 중복
+        console.log("Nickname is already taken:", formData.nickname);
         setNicknameCheck("unavailable");
         setNicknameMessage("이미 사용 중인 닉네임입니다.");
         setIsNicknameValid(false);
         setErrors({ ...errors, nickname: "이미 사용 중인 닉네임입니다." });
       }
-    } catch (error) {
-      console.error("Nickname check error:", error);
+    } catch (error: any) {
+      console.error("Nickname check catch error:", error);
+      // catch 블록에서도 네트워크 에러 구분
+      const errorMessage = error?.message || "알 수 없는 오류";
+      if (errorMessage.includes("network") || errorMessage.includes("fetch")) {
+        setNicknameMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+        setErrors({ ...errors, nickname: "네트워크 오류가 발생했습니다." });
+      } else {
+        setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
+        setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
+      }
       setNicknameCheck("unavailable");
-      setNicknameMessage("닉네임 확인 중 오류가 발생했습니다.");
       setIsNicknameValid(false);
-      setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
     }
   };
 
