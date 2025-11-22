@@ -62,30 +62,29 @@ export default function NeighborhoodPage() {
   return (
     <div className="min-h-screen bg-white py-8">
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 헤더 */}
-        <PageHeader
-          title="동네별 수다방"
-          description="생활권별로 모인 우리 동네 이야기"
-          icon={<MessageCircle className="w-8 h-8" />}
-        />
+        {/* 헤더 - 컬러풀한 타이틀 */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 tracking-tighter mb-2">
+            동네별 수다방
+          </h1>
+          <p className="text-gray-600">생활권별로 모인 우리 동네 이야기</p>
+        </div>
 
-        {/* 탭 (가로 스크롤) - 알약 모양 버튼 */}
-        <div className="mb-6 overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <div className="flex gap-3" style={{ width: "max-content" }}>
-            {neighborhoods.map((neighborhood) => (
-              <button
-                key={neighborhood.id}
-                onClick={() => setSelectedNeighborhood(neighborhood.id)}
-                className={`py-2 px-4 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                  selectedNeighborhood === neighborhood.id
-                    ? "bg-blue-600 text-white font-bold shadow-md"
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-                }`}
-              >
-                {neighborhood.label}
-              </button>
-            ))}
-          </div>
+        {/* 탭 (중앙 정렬) - 알약 모양 버튼 */}
+        <div className="mb-6 flex justify-center flex-wrap gap-3">
+          {neighborhoods.map((neighborhood) => (
+            <button
+              key={neighborhood.id}
+              onClick={() => setSelectedNeighborhood(neighborhood.id)}
+              className={`py-2 px-4 rounded-full text-lg font-bold whitespace-nowrap transition-all ${
+                selectedNeighborhood === neighborhood.id
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-white text-gray-500 border-2 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {neighborhood.label}
+            </button>
+          ))}
         </div>
 
         {/* 게시글 목록 */}

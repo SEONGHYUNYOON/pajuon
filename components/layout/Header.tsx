@@ -16,11 +16,9 @@ export default function Header() {
             <span className="text-xs text-gray-500 ml-2">파주에 오다</span>
           </Link>
 
-          {/* 중앙: 날씨 뱃지 */}
-          <WeatherBadge />
-
-          {/* 우측 아이콘 */}
-          <div className="flex items-center space-x-4">
+          {/* 우측: 날씨 + 검색/알림 아이콘 */}
+          <div className="flex items-center space-x-4 ml-auto">
+            <WeatherBadge />
             <Link
               href="/search"
               className="p-2 text-gray-600 hover:text-primary transition-colors"

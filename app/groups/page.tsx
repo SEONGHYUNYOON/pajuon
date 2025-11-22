@@ -205,34 +205,28 @@ export default function GroupsPage() {
     <div className="min-h-screen bg-black py-8 px-4">
       <div className="w-full">
         {/* 헤더 */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold text-white">함께해요 (모임)</h1>
-            <Link
-              href="/groups/create"
-              className="flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-            >
-              <PlusIcon className="w-5 h-5 mr-2" />
-              모임 만들기
-            </Link>
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center mb-2">
+            <h1 className="text-3xl font-bold text-white">참여형 소셜</h1>
           </div>
           <p className="text-gray-400">관심사가 맞는 분들과 함께 새로운 만남을 시작해보세요</p>
         </div>
 
         {/* 검색 및 필터 */}
-        <div className="bg-neutral-900 rounded-lg p-6 mb-8 border border-neutral-800">
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
-            <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="모임 이름이나 설명으로 검색..."
-                className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        <div className="max-w-[500px] mx-auto">
+          <div className="bg-neutral-900 rounded-lg p-6 mb-8 border border-neutral-800">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <div className="flex-1 relative">
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="모임 이름이나 설명으로 검색..."
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
           {/* 카테고리 필터 */}
           <div className="flex flex-wrap gap-2">
@@ -251,6 +245,7 @@ export default function GroupsPage() {
             ))}
           </div>
         </div>
+        </div>
 
         {/* 모임 목록 - 인스타그램 피드 스타일 (다크 테마) */}
         {isLoading ? (
@@ -259,7 +254,7 @@ export default function GroupsPage() {
           </div>
         ) : (
           <>
-            <div className="max-w-2xl mx-auto space-y-6">
+            <div className="max-w-[500px] mx-auto space-y-6">
               {filteredGroups.map((group) => (
                 <div
                   key={group.id}
