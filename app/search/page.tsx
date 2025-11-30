@@ -13,10 +13,10 @@ export default function SearchPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white p-4">
-            <div className="max-w-2xl mx-auto mt-10">
-                <h1 className="text-2xl font-bold mb-6 text-center">통합 검색</h1>
-                <form onSubmit={handleSearch} className="relative">
+        <div className="min-h-screen bg-white p-4 flex flex-col items-center pt-20">
+            <div className="w-full max-w-2xl">
+                <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">통합 검색</h1>
+                <form onSubmit={handleSearch} className="relative mb-10">
                     <input
                         type="text"
                         value={query}

@@ -95,12 +95,9 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center" style={{ paddingLeft: '4rem', paddingRight: '2.5rem' }}>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              파주에서 만나요
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight drop-shadow-md">
+              파주On 파주에 오다
             </h1>
-            <p className="text-base md:text-lg text-white/90" style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', letterSpacing: '0.03em' }}>
-              참여형 커뮤니티 PAJU On
-            </p>
           </div>
         </div>
       </section>

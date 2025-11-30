@@ -9,8 +9,8 @@ export const ChatDrawerContext = createContext<{
   openChatDrawer: () => void;
   closeChatDrawer: () => void;
 }>({
-  openChatDrawer: () => {},
-  closeChatDrawer: () => {},
+  openChatDrawer: () => { },
+  closeChatDrawer: () => { },
 });
 
 export const useChatDrawer = () => useContext(ChatDrawerContext);
@@ -106,7 +106,7 @@ export default function ChatDrawer() {
 
     try {
       const supabase = createClient();
-      
+
       // 나에게 온 메시지 그룹화
       const { data: receivedMessages } = await supabase
         .from("messages")
@@ -211,7 +211,7 @@ export default function ChatDrawer() {
 
       if (data) {
         setMessages(data as Message[]);
-        
+
         // 읽음 처리
         await supabase
           .from("messages")
@@ -237,7 +237,7 @@ export default function ChatDrawer() {
   };
 
   const subscribeToMessages = (otherUserId: string) => {
-    if (!user) return () => {};
+    if (!user) return () => { };
 
     // 기존 채널 정리
     if (channelRef.current) {
@@ -265,7 +265,7 @@ export default function ChatDrawer() {
             }
             return [...prev, newMessage];
           });
-          
+
           // 읽음 처리
           if (newMessage.receiver_id === user.id) {
             supabase
@@ -358,58 +358,57 @@ export default function ChatDrawer() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-[#1e293b] shadow-2xl z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         {!selectedChat ? (
-          /* 채팅 목록 */
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">채팅함</h2>
+          /* 쪽지 목록 */
+          <div className="flex flex-col h-full text-white">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h2 className="text-lg font-bold">쪽지함</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <XMarkIcon className="w-6 h-6 text-gray-600" />
+                <XMarkIcon className="w-6 h-6 text-gray-300" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto">
               {conversations.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">채팅 내역이 없습니다.</p>
+                  <p className="text-gray-400">주고받은 쪽지가 없습니다.</p>
                 </div>
               ) : (
                 conversations.map((conv) => (
                   <button
                     key={conv.userId}
                     onClick={() => setSelectedChat(conv.userId)}
-                    className="w-full p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors flex items-center space-x-3"
+                    className="w-full p-4 border-b border-gray-700 hover:bg-gray-800 transition-colors flex items-center space-x-3"
                   >
                     <div className="flex-shrink-0">
                       {conv.profileImage ? (
                         <img
                           src={conv.profileImage}
                           alt={conv.nickname}
-                          className="w-12 h-12 rounded-full object-cover"
+                          className="w-12 h-12 rounded-full object-cover border border-gray-600"
                         />
                       ) : (
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                           {conv.nickname.charAt(0)}
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0 text-left">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-semibold text-gray-900">{conv.nickname}</span>
+                        <span className="font-semibold text-gray-100">{conv.nickname}</span>
                         {conv.unreadCount > 0 && (
-                          <span className="w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                          <span className="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                             {conv.unreadCount}
                           </span>
                         )}
                       </div>
                       {conv.lastMessage && (
-                        <p className="text-sm text-gray-500 truncate">{conv.lastMessage}</p>
+                        <p className="text-sm text-gray-400 truncate">{conv.lastMessage}</p>
                       )}
                     </div>
                   </button>
@@ -418,16 +417,16 @@ export default function ChatDrawer() {
             </div>
           </div>
         ) : (
-          /* 채팅방 */
-          <div className="flex flex-col h-full">
+          /* 쪽지방 */
+          <div className="flex flex-col h-full bg-[#1e293b]">
             {/* 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700 text-white">
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setSelectedChat(null)}
-                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
@@ -435,27 +434,27 @@ export default function ChatDrawer() {
                   <img
                     src={selectedConversation.profileImage}
                     alt={selectedConversation.nickname}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-10 h-10 rounded-full object-cover border border-gray-600"
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                     {selectedConversation?.nickname.charAt(0)}
                   </div>
                 )}
                 <div>
-                  <div className="font-semibold text-gray-900">{selectedConversation?.nickname}</div>
+                  <div className="font-semibold text-gray-100">{selectedConversation?.nickname}</div>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <XMarkIcon className="w-6 h-6 text-gray-600" />
+                <XMarkIcon className="w-6 h-6 text-gray-300" />
               </button>
             </div>
 
             {/* 메시지 목록 */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">
               {messages.map((message) => {
                 const isMine = message.sender_id === user.id;
                 return (
@@ -464,14 +463,13 @@ export default function ChatDrawer() {
                     className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                        isMine
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-100 text-gray-900"
-                      }`}
+                      className={`max-w-[70%] rounded-2xl px-4 py-2 ${isMine
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-700 text-gray-100"
+                        }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      <p className={`text-xs mt-1 ${isMine ? "text-blue-100" : "text-gray-500"}`}>
+                      <p className="text-sm whitespace-pre-wrap break-all leading-relaxed">{message.content}</p>
+                      <p className={`text-xs mt-1 ${isMine ? "text-blue-200" : "text-gray-400"}`}>
                         {new Date(message.created_at).toLocaleTimeString("ko-KR", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -485,7 +483,7 @@ export default function ChatDrawer() {
             </div>
 
             {/* 입력창 */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-700 bg-[#1e293b]">
               <div className="flex items-center space-x-2">
                 <input
                   type="text"
@@ -497,13 +495,13 @@ export default function ChatDrawer() {
                       sendMessage();
                     }
                   }}
-                  placeholder="메시지를 입력하세요..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="쪽지를 입력하세요..."
+                  className="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!messageInput.trim()}
-                  className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
                 >
                   <PaperAirplaneIcon className="w-5 h-5" />
                 </button>
