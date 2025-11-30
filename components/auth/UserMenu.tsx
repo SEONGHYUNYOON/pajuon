@@ -56,11 +56,19 @@ export default function UserMenu() {
             console.error("Profile load failed:", err);
           });
         } else {
-          console.log("⚠️ Session exists but profile not found - clearing session");
-          // 프로필이 없으면 세션 삭제
-          await supabase.auth.signOut();
-          setUser(null);
-          setUnreadCount(0);
+          console.log("⚠️ Session exists but profile not found - using session data");
+          // 프로필이 없으면 세션 정보로 기본값 설정
+          setUser({
+            id: session.user.id,
+            nickname: session.user.email?.split("@")[0] || "사용자",
+            email: session.user.email || "",
+            profileImage: null,
+          });
+          
+          // 추가 프로필 정보 로드 시도 (백그라운드)
+          loadUserProfile(session.user.id).catch((err) => {
+            console.error("Profile load failed:", err);
+          });
         }
       } else if (event === "SIGNED_OUT" || !session?.user) {
         console.log("❌ No session, clearing user state");
@@ -184,11 +192,19 @@ export default function UserMenu() {
             console.error("Profile load failed:", err);
           });
         } else {
-          // 세션은 있지만 프로필이 없으면 로그아웃 처리 (비동기, 에러 무시)
-          console.log("⚠️ Session exists but profile not found - logging out");
-          supabase.auth.signOut().catch(() => {}); // 에러 무시
-          setUser(null);
-          setUnreadCount(0);
+          // 세션은 있지만 프로필이 없으면 세션 정보로 기본값 설정
+          console.log("⚠️ Session exists but profile not found - using session data");
+          setUser({
+            id: user.id,
+            nickname: user.email?.split("@")[0] || "사용자",
+            email: user.email || "",
+            profileImage: null,
+          });
+          
+          // 추가 프로필 정보는 나중에 로드 (비동기, 에러 무시)
+          loadUserProfile(user.id).catch((err) => {
+            console.error("Profile load failed:", err);
+          });
         }
       } else {
         // 세션이 없거나 에러가 있으면 로그아웃 상태

@@ -1,75 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MapPinIcon, PlusIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 
 const areas = ["전체", "운정", "교하", "금촌", "문산", "기타"];
 
-const posts = [
-  {
-    id: 1,
-    title: "운정동 주민 모임 가입하세요",
-    area: "운정",
-    author: "운정러버",
-    date: "1시간 전",
-    comments: 15,
-    views: 234,
-  },
-  {
-    id: 2,
-    title: "교하동 이벤트 공유합니다",
-    area: "교하",
-    author: "교하맘",
-    date: "3시간 전",
-    comments: 8,
-    views: 156,
-  },
-  {
-    id: 3,
-    title: "금촌동 맛집 추천 받아요",
-    area: "금촌",
-    author: "금촌러버",
-    date: "5시간 전",
-    comments: 22,
-    views: 345,
-  },
-  {
-    id: 4,
-    title: "문산 지역 축제 함께 가요",
-    area: "문산",
-    author: "문산러버",
-    date: "1일 전",
-    comments: 12,
-    views: 189,
-  },
-  {
-    id: 5,
-    title: "운정동 공원 산책하실 분",
-    area: "운정",
-    author: "운정맘",
-    date: "1일 전",
-    comments: 6,
-    views: 98,
-  },
-  {
-    id: 6,
-    title: "교하동 자전거 동호회 모집",
-    area: "교하",
-    author: "교하사이클",
-    date: "2일 전",
-    comments: 18,
-    views: 267,
-  },
-];
+
 
 export default function LocalCommunityPage() {
   const [activeArea, setActiveArea] = useState("전체");
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPosts =
-    activeArea === "전체"
-      ? posts
-      : posts.filter((post) => post.area === activeArea);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      const supabase = createClient();
+
+      let query = supabase
+        .from("posts")
+        .select("*, profiles(nickname)")
+        .order("created_at", { ascending: false });
+
+      if (activeArea !== "전체") {
+        query = query.eq("area", activeArea);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching posts:", error);
+      } else {
+        setPosts(data.map(post => ({
+          id: post.id,
+          title: post.title,
+          area: post.area,
+          author: post.profiles?.nickname || "익명",
+          date: new Date(post.created_at).toLocaleDateString(),
+          comments: 0, // 댓글 수 쿼리 필요
+          views: post.views
+        })));
+      }
+      setLoading(false);
+    };
+
+    fetchPosts();
+  }, [activeArea]);
+
+  const filteredPosts = posts;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -104,11 +84,10 @@ export default function LocalCommunityPage() {
               <button
                 key={area}
                 onClick={() => setActiveArea(area)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeArea === area
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeArea === area
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
               >
                 {area}
               </button>

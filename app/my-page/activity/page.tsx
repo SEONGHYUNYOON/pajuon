@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DocumentTextIcon, ChatBubbleLeftRightIcon, BookmarkIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 
 function ActivityContent() {
   const router = useRouter();
@@ -11,35 +12,91 @@ function ActivityContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
 
+  const [myPosts, setMyPosts] = useState<any[]>([]);
+  const [myComments, setMyComments] = useState<any[]>([]);
+  const [myScraps, setMyScraps] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      if (!loggedIn) {
+    const fetchData = async () => {
+      const supabase = createClient();
+
+      // 1. 세션 확인
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
         router.push("/auth/login");
         return;
       }
+
       setIsLoggedIn(true);
-    }
+
+      try {
+        setLoading(true);
+
+        // 2. 내가 쓴 글 가져오기
+        const { data: postsData } = await supabase
+          .from("posts")
+          .select("*")
+          .eq("author_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (postsData) {
+          setMyPosts(postsData.map(post => ({
+            id: post.id,
+            title: post.title,
+            category: post.category,
+            date: new Date(post.created_at).toLocaleDateString(),
+            views: post.views,
+            comments: 0 // 댓글 수는 별도 쿼리 필요하지만 일단 0으로
+          })));
+        }
+
+        // 3. 내가 쓴 댓글 가져오기
+        const { data: commentsData } = await supabase
+          .from("comments")
+          .select("*, posts(title)")
+          .eq("author_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (commentsData) {
+          setMyComments(commentsData.map(comment => ({
+            id: comment.id,
+            postTitle: comment.posts?.title || "삭제된 게시글",
+            content: comment.content,
+            date: new Date(comment.created_at).toLocaleDateString(),
+            postId: comment.post_id
+          })));
+        }
+
+        // 4. 스크랩한 글 가져오기
+        const { data: scrapsData } = await supabase
+          .from("scraps")
+          .select("*, posts(*)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (scrapsData) {
+          setMyScraps(scrapsData.map(scrap => ({
+            id: scrap.id,
+            title: scrap.posts?.title || "삭제된 게시글",
+            category: scrap.posts?.category || "기타",
+            date: new Date(scrap.created_at).toLocaleDateString()
+          })));
+        }
+
+      } catch (error) {
+        console.error("Error fetching activity:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
 
     const tab = searchParams.get("tab") || "posts";
     setActiveTab(tab);
   }, [router, searchParams]);
-
-  // 임시 데이터 (실제로는 API에서 가져옴)
-  const myPosts = [
-    { id: 1, title: "파주 맛집 추천합니다", category: "맛집/카페", date: "2024-12-10", views: 123, comments: 5 },
-    { id: 2, title: "운정동 주민 모임 공지", category: "동네별 소모임", date: "2024-12-09", views: 234, comments: 12 },
-  ];
-
-  const myComments = [
-    { id: 1, postTitle: "파주 장터 물품 팝니다", content: "좋은 물건이네요!", date: "2024-12-10", postId: 1 },
-    { id: 2, postTitle: "파주 일자리 공고", content: "지원하고 싶습니다", date: "2024-12-09", postId: 2 },
-  ];
-
-  const myScraps = [
-    { id: 1, title: "파주 관광지 추천", category: "관광", date: "2024-12-08" },
-    { id: 2, title: "파주 쿠폰 정보", category: "쿠폰", date: "2024-12-07" },
-  ];
 
   if (!isLoggedIn) {
     return null;
@@ -63,33 +120,30 @@ function ActivityContent() {
         <div className="bg-white rounded-xl shadow-sm p-2 mb-6 flex space-x-2 border border-gray-100">
           <button
             onClick={() => setActiveTab("posts")}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
-              activeTab === "posts"
-                ? "bg-green-600 text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === "posts"
+              ? "bg-green-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
+              }`}
           >
             <DocumentTextIcon className="w-5 h-5" />
             <span>내가 쓴 글</span>
           </button>
           <button
             onClick={() => setActiveTab("comments")}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
-              activeTab === "comments"
-                ? "bg-green-600 text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === "comments"
+              ? "bg-green-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
+              }`}
           >
             <ChatBubbleLeftRightIcon className="w-5 h-5" />
             <span>내가 쓴 댓글</span>
           </button>
           <button
             onClick={() => setActiveTab("scraps")}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
-              activeTab === "scraps"
-                ? "bg-green-600 text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === "scraps"
+              ? "bg-green-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
+              }`}
           >
             <BookmarkIcon className="w-5 h-5" />
             <span>스크랩한 글</span>

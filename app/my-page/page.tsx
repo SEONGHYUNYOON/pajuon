@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DocumentTextIcon, ChatBubbleLeftRightIcon, BookmarkIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/utils/supabase/client";
 import UserRankBadge, { type UserRank } from "@/components/user/UserRankBadge";
 import RankProgress from "@/components/user/RankProgress";
 import { getCurrentRank } from "@/lib/rankConfig";
@@ -20,28 +21,47 @@ export default function MyPage() {
   });
 
   useEffect(() => {
-    // 클라이언트 사이드에서 로그인 상태 확인
-    if (typeof window !== "undefined") {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      if (!loggedIn) {
+    const fetchUserData = async () => {
+      const supabase = createClient();
+
+      // 1. 세션 확인
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
         router.push("/auth/login");
         return;
       }
+
       setIsLoggedIn(true);
-      
-      // 사용자 정보 로드 (실제로는 API 호출)
-      const nickname = localStorage.getItem("userNickname") || "";
-      const email = localStorage.getItem("userEmail") || "";
-      const area = localStorage.getItem("userArea") || "";
-      
-      setUserInfo({
-        nickname,
-        email,
-        area,
-        points: 750, // 임시 데이터
-        avatar: "",
-      });
-    }
+
+      // 2. 프로필 정보 가져오기
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setUserInfo({
+          nickname: profile.nickname || user.email?.split("@")[0] || "사용자",
+          email: user.email || "",
+          area: profile.location || "",
+          points: profile.activity_points || 0,
+          avatar: "", // 프로필 이미지는 별도 스토리지 로직 필요 (일단 비워둠)
+        });
+      } else {
+        // 프로필이 없는 경우 기본값
+        setUserInfo({
+          nickname: user.email?.split("@")[0] || "사용자",
+          email: user.email || "",
+          area: "",
+          points: 0,
+          avatar: "",
+        });
+      }
+    };
+
+    fetchUserData();
   }, [router]);
 
   if (!isLoggedIn) {
