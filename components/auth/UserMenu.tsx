@@ -22,25 +22,25 @@ export default function UserMenu() {
         setIsLoading(false);
       }
     }, 3000);
-    
+
     // 초기 세션 확인
     checkUser();
-    
+
     // 로그인 상태 변경 감지
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("🔐 Auth state changed:", event, session?.user?.id);
-      
+
       if (session?.user && event === "SIGNED_IN") {
         console.log("✅ Session found, checking profile...");
-        
+
         // 프로필이 실제로 있는지 먼저 확인
         const { data: profile } = await supabase
           .from("profiles")
           .select("id, nickname")
           .eq("id", session.user.id)
           .maybeSingle();
-        
+
         if (profile) {
           console.log("✅ Valid login: profile exists");
           // 프로필 정보로 사용자 설정
@@ -50,7 +50,7 @@ export default function UserMenu() {
             email: session.user.email || "",
             profileImage: null,
           });
-          
+
           // 추가 프로필 정보 로드
           loadUserProfile(session.user.id).catch((err) => {
             console.error("Profile load failed:", err);
@@ -64,7 +64,7 @@ export default function UserMenu() {
             email: session.user.email || "",
             profileImage: null,
           });
-          
+
           // 추가 프로필 정보 로드 시도 (백그라운드)
           loadUserProfile(session.user.id).catch((err) => {
             console.error("Profile load failed:", err);
@@ -102,37 +102,36 @@ export default function UserMenu() {
   const checkUser = async () => {
     try {
       const supabase = createClient();
-      
+
       // 타임아웃과 함께 세션 확인 (무한 대기 방지)
       const sessionCheckPromise = Promise.all([
         supabase.auth.getUser(),
         supabase.auth.getSession()
       ]);
-      
+
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Session check timeout")), 2000);
+        setTimeout(() => reject(new Error("Session check timeout")), 5000); // 2초 -> 5초로 증가
       });
-      
+
       let user, session, userError, sessionError;
-      
+
       try {
         const [userResult, sessionResult] = await Promise.race([
           sessionCheckPromise,
           timeoutPromise
         ]) as any[];
-        
+
         user = userResult?.data?.user;
         userError = userResult?.error;
         session = sessionResult?.data?.session;
         sessionError = sessionResult?.error;
       } catch (timeoutErr) {
-        console.log("⚠️ Session check timeout - assuming logged out");
-        setUser(null);
-        setUnreadCount(0);
+        console.log("⚠️ Session check timeout - stopping loading but keeping current state");
+        // 타임아웃 시 강제 로그아웃 하지 않음 (이미 onAuthStateChange로 로그인 되었을 수 있음)
         setIsLoading(false);
         return;
       }
-      
+
       console.log("🔍 User check:", {
         user: user?.id,
         session: session?.user?.id,
@@ -141,7 +140,7 @@ export default function UserMenu() {
         userError: userError?.message,
         sessionError: sessionError?.message
       });
-      
+
       // 세션과 사용자가 있고, 에러가 없는 경우만 로그인 상태로 인정
       if (user && session?.user && !userError && !sessionError) {
         // 프로필이 실제로 있는지 먼저 확인 (타임아웃 포함)
@@ -150,19 +149,19 @@ export default function UserMenu() {
           .select("id, nickname")
           .eq("id", user.id)
           .maybeSingle();
-        
+
         const profileTimeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error("Profile check timeout")), 2000);
         });
-        
+
         let profile, profileError;
-        
+
         try {
           const profileResult = await Promise.race([
             profileCheckPromise,
             profileTimeoutPromise
           ]) as any;
-          
+
           profile = profileResult?.data;
           profileError = profileResult?.error;
         } catch (timeoutErr) {
@@ -170,12 +169,12 @@ export default function UserMenu() {
           profile = null;
           profileError = null;
         }
-        
+
         console.log("🔍 Profile check:", {
           hasProfile: !!profile,
           profileError: profileError?.message
         });
-        
+
         // 프로필이 있는 경우만 로그인 상태로 인정
         if (profile) {
           console.log("✅ Valid login: user and profile both exist");
@@ -186,7 +185,7 @@ export default function UserMenu() {
             email: user.email || "",
             profileImage: null,
           });
-          
+
           // 추가 프로필 정보는 나중에 로드 (비동기, 에러 무시)
           loadUserProfile(user.id).catch((err) => {
             console.error("Profile load failed:", err);
@@ -200,7 +199,7 @@ export default function UserMenu() {
             email: user.email || "",
             profileImage: null,
           });
-          
+
           // 추가 프로필 정보는 나중에 로드 (비동기, 에러 무시)
           loadUserProfile(user.id).catch((err) => {
             console.error("Profile load failed:", err);
@@ -225,9 +224,9 @@ export default function UserMenu() {
   const loadUserProfile = async (userId: string) => {
     try {
       const supabase = createClient();
-      
+
       console.log("🔍 Loading profile for user:", userId);
-      
+
       // 프로필 정보 가져오기 (에러 상세 로깅)
       // profiles 테이블의 실제 스키마에 맞춰 필드 선택
       // 007_create_profiles_table_simple.sql 기준: id, email, nickname, birthdate, gender, location, role, activity_point, activity_points
@@ -297,24 +296,24 @@ export default function UserMenu() {
   const handleLogout = async () => {
     try {
       console.log("🚪 로그아웃 시작");
-      
+
       // 먼저 상태 초기화 (UI 즉시 업데이트)
       setUser(null);
       setUnreadCount(0);
       setIsDropdownOpen(false);
       setIsLoading(true); // 로딩 상태로 설정하여 깜빡임 방지
-      
+
       const supabase = createClient();
-      
+
       // Supabase 로그아웃 (세션 및 쿠키 삭제)
       const { error: signOutError } = await supabase.auth.signOut();
-      
+
       if (signOutError) {
         console.error("❌ 로그아웃 에러:", signOutError);
       } else {
         console.log("✅ 로그아웃 성공");
       }
-      
+
       // 모든 Supabase 관련 쿠키 직접 삭제
       const cookies = document.cookie.split(";");
       cookies.forEach((cookie) => {
@@ -326,12 +325,12 @@ export default function UserMenu() {
           document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
         }
       });
-      
+
       // 완전한 페이지 리로드로 세션 완전히 제거
       // 약간의 지연을 주어 쿠키 삭제가 확실히 완료되도록 함
       await new Promise(resolve => setTimeout(resolve, 100));
       window.location.href = "/";
-      
+
     } catch (error) {
       console.error("❌ 로그아웃 예외:", error);
       // 에러가 발생해도 강제로 리로드
@@ -347,7 +346,7 @@ export default function UserMenu() {
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      
+
       // 버튼이나 드롭다운 내부를 클릭한 경우 무시
       if (
         (buttonRef.current && buttonRef.current.contains(target)) ||
@@ -356,7 +355,7 @@ export default function UserMenu() {
         console.log("🔘 내부 클릭 감지, 드롭다운 유지");
         return;
       }
-      
+
       // 외부 클릭 시 드롭다운 닫기
       console.log("🔘 외부 클릭, 드롭다운 닫기");
       setIsDropdownOpen(false);
@@ -417,10 +416,10 @@ export default function UserMenu() {
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          
+
           const newState = !isDropdownOpen;
           console.log("🔘 내 정보 버튼 클릭, 드롭다운:", newState ? "열기" : "닫기");
-          
+
           // 즉시 상태 변경하여 드롭다운 표시
           setIsDropdownOpen(newState);
         }}
@@ -447,53 +446,53 @@ export default function UserMenu() {
 
       {/* 드롭다운 메뉴 */}
       {isDropdownOpen && (
-        <div 
-            ref={dropdownRef}
-            className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-            onClick={(e) => {
-              e.stopPropagation();
+        <div
+          ref={dropdownRef}
+          className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <Link
+            href="/my-page"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+            onClick={() => {
+              console.log("🔘 내 프로필 클릭");
+              setIsDropdownOpen(false);
             }}
           >
-            <Link
-              href="/my-page"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              onClick={() => {
-                console.log("🔘 내 프로필 클릭");
-                setIsDropdownOpen(false);
-              }}
-            >
-              내 프로필
-            </Link>
-            <Link
-              href="/chat"
-              className="relative block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              onClick={() => {
-                console.log("🔘 채팅함 클릭");
-                setIsDropdownOpen(false);
-              }}
-            >
-              채팅함
-              {unreadCount > 0 && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </Link>
-            <div className="border-t border-gray-200 my-2"></div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log("🔘 로그아웃 클릭");
-                handleLogout();
-                setIsDropdownOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors"
-            >
-              로그아웃
-            </button>
-          </div>
+            내 프로필
+          </Link>
+          <Link
+            href="/chat"
+            className="relative block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+            onClick={() => {
+              console.log("🔘 채팅함 클릭");
+              setIsDropdownOpen(false);
+            }}
+          >
+            채팅함
+            {unreadCount > 0 && (
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </Link>
+          <div className="border-t border-gray-200 my-2"></div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("🔘 로그아웃 클릭");
+              handleLogout();
+              setIsDropdownOpen(false);
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors"
+          >
+            로그아웃
+          </button>
+        </div>
       )}
     </div>
   );
