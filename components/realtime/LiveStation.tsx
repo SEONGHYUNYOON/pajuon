@@ -338,10 +338,10 @@ export default function LiveStation() {
                     }`}
                 >
                   {msg.nickname !== nickname && (
-                    <span className="text-xs text-gray-400 mb-1 ml-1">{msg.nickname}</span>
+                    <span className="text-xs text-gray-400 mb-1 ml-3">{msg.nickname}</span>
                   )}
                   <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 relative ${msg.nickname === nickname
+                    className={`max-w-[85%] rounded-2xl px-5 py-3 relative mx-2 ${msg.nickname === nickname
                       ? "bg-blue-600 text-white"
                       : "bg-[#1e293b] text-gray-100 border border-gray-700"
                       }`}

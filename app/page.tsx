@@ -87,11 +87,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 overflow-x-hidden">
-      {/* 상단 헤더 */}
-      <Header />
-
       {/* 메인 배너 섹션 */}
-      <section className="relative w-full bg-white pt-4 pb-8 rounded-b-[3rem] shadow-sm overflow-hidden">
+      <section className="relative w-full bg-white pt-4 pb-8 rounded-b-[3rem] shadow-sm overflow-hidden h-[400px]">
         <img
           src={`https://images.unsplash.com/${IMAGE_IDS[1]}?w=1200&q=80&auto=format&fit=crop`}
           alt="파주 프로모션"
