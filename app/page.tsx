@@ -388,8 +388,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 하단 여백 */}
-      <div className="h-16"></div>
+      {/* 하단 여백 및 버전 표시 */}
+      <div className="py-8 text-center text-gray-300 text-xs">
+        v1.2 (Updated)
+      </div>
 
       {/* 실시간 라이브 위젯 */}
       <LiveStation />
