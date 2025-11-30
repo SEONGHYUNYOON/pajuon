@@ -169,14 +169,63 @@ export default function LiveStation() {
     }
   }, [messages.length]);
 
+  // 창 크기 및 위치 상태
+  const [size, setSize] = useState({ width: 380, height: 600 });
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number } | null>(null);
+
+  // 리사이징 핸들러
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !resizeRef.current) return;
+
+      const { startX, startY, startWidth, startHeight } = resizeRef.current;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      // 최소 크기 제한 (300x400)
+      const newWidth = Math.max(300, startWidth + deltaX);
+      const newHeight = Math.max(400, startHeight - deltaY); // 위로 늘어나므로 deltaY를 뺌
+
+      setSize({ width: newWidth, height: newHeight });
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      resizeRef.current = null;
+      document.body.style.cursor = "default";
+    };
+
+    if (isResizing) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    resizeRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: size.width,
+      startHeight: size.height,
+    };
+    document.body.style.cursor = "nwse-resize";
+  };
+
   return (
     <>
       {/* Floating 버튼 (좌측 상단 또는 하단) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 left-4 z-50 bg-white rounded-full shadow-lg shadow-gray-200/50 p-4 hover:shadow-xl transition-all duration-300 flex items-center space-x-2 ${
-          isOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
+        className={`fixed bottom-6 left-4 z-50 bg-white rounded-full shadow-lg shadow-gray-200/50 p-4 hover:shadow-xl transition-all duration-300 flex items-center space-x-2 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
         aria-label="실시간 채팅 열기"
       >
         <div className="relative">
@@ -205,9 +254,36 @@ export default function LiveStation() {
 
       {/* 채팅 패널 */}
       {isOpen && (
-        <div className="fixed bottom-6 left-4 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-3xl shadow-2xl shadow-gray-200/50 flex flex-col max-h-[600px] border border-gray-100">
+        <div
+          className="fixed bottom-6 left-4 z-50 bg-white rounded-3xl shadow-2xl shadow-gray-200/50 flex flex-col border border-gray-100 transition-all duration-75 ease-out"
+          style={{
+            width: `${size.width}px`,
+            height: `${size.height}px`,
+            maxHeight: '80vh',
+            maxWidth: '90vw'
+          }}
+        >
+          {/* 리사이즈 핸들 (우측 상단 모서리) */}
+          <div
+            className="absolute top-0 right-0 w-6 h-6 cursor-ne-resize z-50 opacity-0 hover:opacity-100"
+            onMouseDown={startResize}
+          />
+          {/* 리사이즈 핸들 (우측 하단은 고정이므로, 좌측 상단이나 우측 상단으로 조절해야 함. 여기서는 우측 상단 모서리로 크기 조절 구현) */}
+          {/* 실제로는 bottom-left 고정이므로, width는 우측으로, height는 위쪽으로 늘어남 */}
+          {/* 우측 상단 핸들 */}
+          <div
+            className="absolute -top-2 -right-2 w-8 h-8 cursor-nesw-resize z-50 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50"
+            onMouseDown={startResize}
+            title="크기 조절"
+          >
+            <div className="w-4 h-4 border-t-2 border-r-2 border-gray-400 rounded-tr-sm" />
+          </div>
+
           {/* 헤더 */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-3xl flex items-center justify-between">
+          <div
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-3xl flex items-center justify-between shrink-0 cursor-move"
+          // 드래그 이동 기능은 일단 제외 (복잡도 감소), 필요시 추가
+          >
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Users className="w-5 h-5" />
@@ -219,7 +295,7 @@ export default function LiveStation() {
                 <span className="text-sm font-bold">파주 LIVE</span>
                 {onlineCount > 0 && (
                   <span className="text-xs text-white/80">
-                    🟢 현재 {onlineCount}명의 파주 시민이 접속 중
+                    🟢 {onlineCount}명 접속 중
                   </span>
                 )}
               </div>
@@ -245,25 +321,22 @@ export default function LiveStation() {
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex flex-col ${
-                    msg.nickname === nickname ? "items-end" : "items-start"
-                  }`}
+                  className={`flex flex-col ${msg.nickname === nickname ? "items-end" : "items-start"
+                    }`}
                 >
                   {msg.nickname !== nickname && (
                     <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-3 py-2 ${
-                      msg.nickname === nickname
+                    className={`max-w-[80%] rounded-2xl px-3 py-2 ${msg.nickname === nickname
                         ? "bg-blue-500 text-white"
                         : "bg-white text-gray-900 shadow-sm"
-                    }`}
+                      }`}
                   >
                     <p className="text-sm break-words">{msg.message}</p>
                     <span
-                      className={`text-xs mt-1 block ${
-                        msg.nickname === nickname ? "text-blue-100" : "text-gray-400"
-                      }`}
+                      className={`text-xs mt-1 block ${msg.nickname === nickname ? "text-blue-100" : "text-gray-400"
+                        }`}
                     >
                       {new Date(msg.timestamp).toLocaleTimeString("ko-KR", {
                         hour: "2-digit",
@@ -278,7 +351,7 @@ export default function LiveStation() {
           </div>
 
           {/* 입력 영역 */}
-          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-3xl">
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-3xl shrink-0">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -291,7 +364,7 @@ export default function LiveStation() {
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || !isConnected}
-                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium whitespace-nowrap"
               >
                 전송
               </button>

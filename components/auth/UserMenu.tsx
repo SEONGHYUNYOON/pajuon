@@ -44,10 +44,21 @@ export default function UserMenu() {
         console.log("✅ Session update from event");
         handleUserSet(session.user, supabase);
       } else if (event === "SIGNED_OUT") {
-        console.log("❌ Signed out event");
-        setUser(null);
-        setUnreadCount(0);
-        setIsLoading(false);
+        console.log("❓ Signed out event received - verifying...");
+
+        // 즉시 로그아웃 하지 않고, 진짜 세션이 없는지 더블 체크
+        const { data: { user: checkUser } } = await supabase.auth.getUser();
+
+        if (!checkUser) {
+          console.log("❌ Verified: No session found. Logging out.");
+          setUser(null);
+          setUnreadCount(0);
+          setIsLoading(false);
+        } else {
+          console.log("✅ False alarm: Session still exists. Ignoring SIGNED_OUT event.");
+          // 세션이 있다면 다시 정보 업데이트 시도
+          handleUserSet(checkUser, supabase);
+        }
       }
     });
 
