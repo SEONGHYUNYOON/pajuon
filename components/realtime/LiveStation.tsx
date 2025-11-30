@@ -323,10 +323,10 @@ export default function LiveStation() {
           </div>
 
           {/* 메시지 영역 */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#0f172a]">
             {messages.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm">
-                <MessageCircle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <div className="text-center py-8 text-gray-400 text-sm">
+                <MessageCircle className="w-12 h-12 mx-auto mb-2 text-gray-600" />
                 <p>아직 메시지가 없습니다.</p>
                 <p className="text-xs mt-1">첫 메시지를 보내보세요! 💬</p>
               </div>
@@ -338,17 +338,17 @@ export default function LiveStation() {
                     }`}
                 >
                   {msg.nickname !== nickname && (
-                    <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>
+                    <span className="text-xs text-gray-400 mb-1 ml-1">{msg.nickname}</span>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.nickname === nickname
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-900 shadow-sm"
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 relative ${msg.nickname === nickname
+                      ? "bg-blue-600 text-white"
+                      : "bg-[#1e293b] text-gray-100 border border-gray-700"
                       }`}
                   >
-                    <p className="text-sm break-all leading-relaxed">{msg.message}</p>
+                    <p className="text-sm break-words leading-relaxed whitespace-pre-wrap">{msg.message}</p>
                     <span
-                      className={`text-xs mt-1 block ${msg.nickname === nickname ? "text-blue-100" : "text-gray-400"
+                      className={`text-[10px] mt-1 block text-right ${msg.nickname === nickname ? "text-blue-200" : "text-gray-400"
                         }`}
                     >
                       {new Date(msg.timestamp).toLocaleTimeString("ko-KR", {
@@ -364,26 +364,26 @@ export default function LiveStation() {
           </div>
 
           {/* 입력 영역 */}
-          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-3xl shrink-0">
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-700 bg-[#1e293b] rounded-b-3xl shrink-0">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="메시지를 입력하세요..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm placeholder-gray-500"
                 maxLength={200}
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || !isConnected}
-                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium whitespace-nowrap"
+                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors text-sm font-medium whitespace-nowrap"
               >
                 전송
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              내 닉네임: <span className="font-medium">{nickname}</span>
+            <p className="text-xs text-gray-400 mt-2 text-center">
+              내 닉네임: <span className="font-medium text-gray-300">{nickname}</span>
             </p>
           </form>
         </div>

@@ -97,10 +97,12 @@ export default function QuickMenu() {
               <Link
                 key={item.id}
                 href={item.href}
-                className="flex flex-col items-center space-y-3 flex-1 transition-all hover:scale-105 active:scale-95"
+                className="flex flex-col items-center space-y-2 flex-1 transition-all hover:scale-105 active:scale-95 group"
               >
-                <div className="w-16 h-16 bg-gray-50 active:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
-                  <Icon className={`w-8 h-8 ${item.color} ${item.hoverColor} transition-colors`} />
+                <div className="relative p-[2px] rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 group-hover:from-yellow-300 group-hover:via-red-400 group-hover:to-purple-500 transition-all shadow-sm">
+                  <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center border-2 border-white">
+                    <Icon className={`w-7 h-7 ${item.color} transition-colors`} />
+                  </div>
                 </div>
                 <span className="text-xs font-medium text-gray-700 text-center leading-tight">
                   {item.label}

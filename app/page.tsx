@@ -6,6 +6,7 @@ import QuickMenu from "@/components/home/QuickMenu";
 import LiveStation from "@/components/realtime/LiveStation";
 import StoryRail from "@/components/home/StoryRail";
 import NoticeBanner from "@/components/home/NoticeBanner";
+import Header from "@/components/layout/Header";
 
 // 이미지 다양화를 위한 고정된 이미지 ID 배열 (20개)
 const IMAGE_IDS = [
@@ -85,9 +86,12 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* 메인 프로모션 배너 */}
-      <section className="relative h-48 mb-6 rounded-2xl overflow-hidden shadow-lg mx-8 md:mx-10 lg:mx-12 mt-4">
+    <div className="min-h-screen bg-gray-50 pb-20 overflow-x-hidden">
+      {/* 상단 헤더 */}
+      <Header />
+
+      {/* 메인 배너 섹션 */}
+      <section className="relative w-full bg-white pt-4 pb-8 rounded-b-[3rem] shadow-sm overflow-hidden">
         <img
           src={`https://images.unsplash.com/${IMAGE_IDS[1]}?w=1200&q=80&auto=format&fit=crop`}
           alt="파주 프로모션"
