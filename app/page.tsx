@@ -142,12 +142,12 @@ export default function Home() {
                     </span>
                     <span className="text-xs text-gray-400">{post.time}</span>
                   </div>
-                  
+
                   {/* 제목 (중앙 정렬 & 공간 차지) */}
                   <h3 className="flex-1 text-center text-sm font-semibold text-gray-900 truncate px-4">
                     {post.title}
                   </h3>
-                  
+
                   {/* 조회수 (우측 고정) */}
                   <div className="flex-shrink-0 text-xs text-gray-400">
                     조회 {post.views}
@@ -168,14 +168,14 @@ export default function Home() {
               더보기
             </Link>
           </div>
-          
+
           <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-3" style={{ width: "max-content" }}>
               {hotIssues.map((issue, index) => (
                 <Link
                   key={issue.id}
                   href={`/now/issue/${issue.id}`}
-                  className="flex-shrink-0 w-64 bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                  className="flex-shrink-0 w-64 bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   {/* 이미지 */}
                   <div className="bg-white">
@@ -212,13 +212,13 @@ export default function Home() {
               더보기
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {marketItems.map((item, index) => (
               <Link
                 key={item.id}
                 href={`/life/market/${item.id}`}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 {/* 썸네일 */}
                 <div className="aspect-square bg-gray-100">
@@ -228,7 +228,7 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
+
                 {/* 텍스트 */}
                 <div className="p-3">
                   <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
@@ -258,7 +258,7 @@ export default function Home() {
               더보기
             </Link>
           </div>
-          
+
           <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {[
@@ -270,7 +270,7 @@ export default function Home() {
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className="flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                  className="flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
@@ -280,7 +280,7 @@ export default function Home() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   {/* 내용 */}
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
@@ -312,13 +312,13 @@ export default function Home() {
               더보기
             </Link>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {hotPlaces.map((place, index) => (
               <Link
                 key={place.id}
                 href={`/life/hot-place/${place.id}`}
-                className="relative aspect-[4/3] bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                className="relative aspect-[4/3] bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 {/* 이미지 */}
                 <div className="bg-white w-full h-full">
@@ -328,7 +328,7 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
+
                 {/* 하단 정보 */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                   <div className="flex flex-col items-center justify-center text-center">
@@ -354,14 +354,14 @@ export default function Home() {
               더보기
             </Link>
           </div>
-          
+
           <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex space-x-4" style={{ width: "max-content" }}>
               {todayGroups.map((group, index) => (
                 <Link
                   key={group.id}
                   href={`/groups/${group.id}`}
-                  className="flex-shrink-0 w-64 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow"
+                  className="flex-shrink-0 w-64 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   {/* 이미지 */}
                   <div className="h-40 bg-gray-100">
@@ -371,7 +371,7 @@ export default function Home() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   {/* 내용 */}
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">

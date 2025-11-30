@@ -31,6 +31,7 @@ export default function LiveStation() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
   const supabaseRef = useRef<any>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
 
   // 스크롤을 맨 아래로
   const scrollToBottom = () => {
@@ -219,6 +220,20 @@ export default function LiveStation() {
     document.body.style.cursor = "nwse-resize";
   };
 
+  // 채팅창 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && chatRef.current && !chatRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
     <>
       {/* Floating 버튼 (좌측 상단 또는 하단) */}
@@ -255,6 +270,7 @@ export default function LiveStation() {
       {/* 채팅 패널 */}
       {isOpen && (
         <div
+          ref={chatRef}
           className="fixed bottom-6 left-4 z-50 bg-white rounded-3xl shadow-2xl shadow-gray-200/50 flex flex-col border border-gray-100 transition-all duration-75 ease-out"
           style={{
             width: `${size.width}px`,
@@ -268,9 +284,7 @@ export default function LiveStation() {
             className="absolute top-0 right-0 w-6 h-6 cursor-ne-resize z-50 opacity-0 hover:opacity-100"
             onMouseDown={startResize}
           />
-          {/* 리사이즈 핸들 (우측 하단은 고정이므로, 좌측 상단이나 우측 상단으로 조절해야 함. 여기서는 우측 상단 모서리로 크기 조절 구현) */}
-          {/* 실제로는 bottom-left 고정이므로, width는 우측으로, height는 위쪽으로 늘어남 */}
-          {/* 우측 상단 핸들 */}
+          {/* 리사이즈 핸들 (우측 상단 아이콘) */}
           <div
             className="absolute -top-2 -right-2 w-8 h-8 cursor-nesw-resize z-50 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-200 hover:bg-gray-50"
             onMouseDown={startResize}
@@ -282,7 +296,6 @@ export default function LiveStation() {
           {/* 헤더 */}
           <div
             className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-3xl flex items-center justify-between shrink-0 cursor-move"
-          // 드래그 이동 기능은 일단 제외 (복잡도 감소), 필요시 추가
           >
             <div className="flex items-center space-x-2">
               <div className="relative">
@@ -328,12 +341,12 @@ export default function LiveStation() {
                     <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-3 py-2 ${msg.nickname === nickname
-                        ? "bg-blue-500 text-white"
-                        : "bg-white text-gray-900 shadow-sm"
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.nickname === nickname
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-900 shadow-sm"
                       }`}
                   >
-                    <p className="text-sm break-words">{msg.message}</p>
+                    <p className="text-sm break-all leading-relaxed">{msg.message}</p>
                     <span
                       className={`text-xs mt-1 block ${msg.nickname === nickname ? "text-blue-100" : "text-gray-400"
                         }`}
@@ -378,4 +391,3 @@ export default function LiveStation() {
     </>
   );
 }
-
