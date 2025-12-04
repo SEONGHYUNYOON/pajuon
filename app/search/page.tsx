@@ -42,10 +42,10 @@ export default function SearchPage() {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="검색어를 입력하세요..."
-                        className="w-full p-4 pl-14 pr-24 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm text-lg"
+                        className="w-full p-4 pl-12 pr-24 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm text-lg"
                         autoFocus
                     />
-                    <MagnifyingGlassIcon className="absolute left-5 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
+                    <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
                     <button
                         type="submit"
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors font-bold"

@@ -92,15 +92,15 @@ export default function JobsPage() {
           <p className="text-gray-500 text-sm">파주 지역 구인구직 정보</p>
         </div>
 
-        {/* 필터 - 가로 스크롤 가능 */}
-        <div className="flex overflow-x-auto pb-2 gap-2 px-2 no-scrollbar">
+        {/* 필터 - 중앙 정렬 & 사이즈 확대 */}
+        <div className="flex flex-wrap justify-center gap-3 px-2">
           {jobCategories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === cat.id
-                  ? "bg-[#FF6F0F] text-white shadow-sm"
-                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              className={`px-6 py-3 rounded-full text-lg font-bold whitespace-nowrap transition-all ${selectedCategory === cat.id
+                ? "bg-[#FF6F0F] text-white shadow-lg transform scale-105"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
                 }`}
             >
               {cat.label}
@@ -153,10 +153,10 @@ export default function JobsPage() {
                 {/* 하단: 태그 뱃지 - 당근마켓 스타일 */}
                 <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
                   <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${job.type === "full-time"
-                      ? "bg-[#E8F5E9] text-[#2E7D32]"
-                      : job.type === "part-time"
-                        ? "bg-[#E3F2FD] text-[#1565C0]"
-                        : "bg-[#FFF3E0] text-[#E65100]"
+                    ? "bg-[#E8F5E9] text-[#2E7D32]"
+                    : job.type === "part-time"
+                      ? "bg-[#E3F2FD] text-[#1565C0]"
+                      : "bg-[#FFF3E0] text-[#E65100]"
                     }`}>
                     {job.type === "full-time" ? "정규직" : job.type === "part-time" ? "알바" : "일용직"}
                   </span>

@@ -144,6 +144,94 @@ const albums = [
         comments: 22,
         thumbnail: "/album12.jpg",
     },
+    {
+        id: 13,
+        title: "교하 도서관 책 읽는 오후",
+        category: "일상",
+        author: "북웜",
+        date: "2달 전",
+        images: 4,
+        likes: 87,
+        comments: 12,
+        thumbnail: "/album13.jpg",
+    },
+    {
+        id: 14,
+        title: "반려견과 함께하는 산책",
+        category: "반려동물",
+        author: "멍멍이",
+        date: "2달 전",
+        images: 7,
+        likes: 134,
+        comments: 21,
+        thumbnail: "/album14.jpg",
+    },
+    {
+        id: 15,
+        title: "90년대 금촌역 앞",
+        category: "90년대 파주",
+        author: "역장님",
+        date: "3달 전",
+        images: 2,
+        likes: 312,
+        comments: 67,
+        thumbnail: "/album15.jpg",
+    },
+    {
+        id: 16,
+        title: "율곡고등학교 졸업식",
+        category: "옛날 학교",
+        author: "율곡인",
+        date: "3달 전",
+        images: 10,
+        likes: 156,
+        comments: 34,
+        thumbnail: "/album16.jpg",
+    },
+    {
+        id: 17,
+        title: "파주 출판단지 가을",
+        category: "일상",
+        author: "가을남자",
+        date: "3달 전",
+        images: 8,
+        likes: 245,
+        comments: 45,
+        thumbnail: "/album17.jpg",
+    },
+    {
+        id: 18,
+        title: "우리집 햄스터 찌찍이",
+        category: "반려동물",
+        author: "햄찌",
+        date: "4달 전",
+        images: 3,
+        likes: 78,
+        comments: 11,
+        thumbnail: "/album18.jpg",
+    },
+    {
+        id: 19,
+        title: "옛날 문산 터미널",
+        category: "90년대 파주",
+        author: "버스기사",
+        date: "4달 전",
+        images: 4,
+        likes: 199,
+        comments: 38,
+        thumbnail: "/album19.jpg",
+    },
+    {
+        id: 20,
+        title: "광탄고등학교 체육대회",
+        category: "옛날 학교",
+        author: "체육부장",
+        date: "5달 전",
+        images: 12,
+        likes: 167,
+        comments: 29,
+        thumbnail: "/album20.jpg",
+    },
 ];
 
 export default function PhotoPage() {
@@ -180,16 +268,16 @@ export default function PhotoPage() {
                     </div>
                 </div>
 
-                {/* 카테고리 필터 */}
-                <div className="bg-white rounded-xl shadow-sm p-4 mb-6 overflow-x-auto">
-                    <div className="flex flex-nowrap gap-2">
+                {/* 카테고리 필터 (중앙 정렬 & 사이즈 확대) */}
+                <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <div className="flex flex-wrap justify-center gap-3">
                         {categories.map((category) => (
                             <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${activeCategory === category
-                                        ? "bg-green-600 text-white"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                className={`px-6 py-3 rounded-full text-lg font-bold transition-all whitespace-nowrap ${activeCategory === category
+                                    ? "bg-green-600 text-white shadow-lg transform scale-105"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                             >
                                 {category}
