@@ -391,7 +391,7 @@ export default function Home() {
 
       {/* 하단 여백 및 버전 표시 */}
       <div className="py-8 text-center text-slate-600 text-xs">
-        v1.2 (Updated)
+        v1.3 (Updated)
       </div>
 
       {/* 실시간 라이브 위젯 */}
