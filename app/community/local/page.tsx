@@ -152,13 +152,13 @@ export default function LocalCommunityPage() {
         {/* 동네 필터 */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 text-center">동네 선택</h2>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-3">
             {areas.map((area) => (
               <button
                 key={area}
                 onClick={() => setActiveArea(area)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeArea === area
-                  ? "bg-green-600 text-white"
+                className={`px-6 py-3 rounded-full text-lg font-bold transition-all whitespace-nowrap ${activeArea === area
+                  ? "bg-green-600 text-white shadow-lg transform scale-105"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
               >

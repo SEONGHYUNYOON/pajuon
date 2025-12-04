@@ -168,7 +168,7 @@ export default function GroupsPage() {
         </div>
 
         {/* 검색 및 필터 */}
-        <div className="max-w-[500px] mx-auto mb-8">
+        <div className="max-w-4xl mx-auto mb-8">
           <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800 space-y-4">
             {/* 검색창 */}
             <div className="relative">
@@ -182,25 +182,29 @@ export default function GroupsPage() {
               />
             </div>
 
-            {/* 카테고리 드롭다운 */}
-            <div className="relative">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full appearance-none bg-neutral-800 border border-neutral-700 text-white py-3 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            {/* 카테고리 버튼 (중앙 정렬 & 사이즈 확대) */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => setSelectedCategory("ALL")}
+                className={`px-6 py-3 rounded-full text-lg font-bold transition-all whitespace-nowrap ${selectedCategory === "ALL"
+                  ? "bg-blue-600 text-white shadow-lg transform scale-105"
+                  : "bg-neutral-800 text-gray-400 hover:bg-neutral-700 border border-neutral-700"
+                  }`}
               >
-                <option value="ALL">전체 카테고리 보기</option>
-                {categoryGroups.map((group) => (
-                  <optgroup key={group.label} label={group.label}>
-                    {group.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <ChevronDownIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                전체
+              </button>
+              {categoryGroups.flatMap(g => g.options).map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setSelectedCategory(option.value)}
+                  className={`px-6 py-3 rounded-full text-lg font-bold transition-all whitespace-nowrap ${selectedCategory === option.value
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105"
+                    : "bg-neutral-800 text-gray-400 hover:bg-neutral-700 border border-neutral-700"
+                    }`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>

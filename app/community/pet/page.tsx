@@ -159,15 +159,15 @@ export default function PetCommunityPage() {
           </div>
         </div>
 
-        {/* 탭 */}
-        <div className="bg-white rounded-xl shadow-sm p-2 mb-6 flex space-x-2">
+        {/* 탭 (중앙 정렬 & 사이즈 확대) */}
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-8 flex flex-wrap justify-center gap-3">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === tab
-                ? "bg-green-600 text-white"
-                : "text-gray-700 hover:bg-gray-100"
+              className={`px-6 py-3 rounded-full text-lg font-bold transition-all whitespace-nowrap ${activeTab === tab
+                ? "bg-green-600 text-white shadow-lg transform scale-105"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
             >
               {tab}
