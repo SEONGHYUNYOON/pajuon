@@ -2,144 +2,187 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BriefcaseIcon, PlusIcon, UserIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon, ClockIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import { Plus, Pencil } from "lucide-react";
 
-const tabs = ["구인", "구직"];
-
-const jobOffers = [
-    { id: 1, title: "운정 카페 주말 알바 구합니다", company: "운정커피", location: "운정동", pay: "시급 10,000원", date: "방금 전", views: 12 },
-    { id: 2, title: "금촌 식당 홀서빙 직원 모집", company: "금촌식당", location: "금촌동", pay: "월 250만원", date: "1시간 전", views: 45 },
-    { id: 3, title: "문산 물류센터 단기 알바", company: "문산물류", location: "문산읍", pay: "일급 120,000원", date: "2시간 전", views: 89 },
-    { id: 4, title: "교하 학원 수학 강사님 모십니다", company: "교하수학", location: "교하동", pay: "협의", date: "3시간 전", views: 34 },
-    { id: 5, title: "편의점 야간 스태프 구인", company: "GS25 파주점", location: "금촌동", pay: "시급 11,000원", date: "5시간 전", views: 67 },
-    { id: 6, title: "배달 라이더 모집합니다", company: "파주배달", location: "전지역", pay: "건당 지급", date: "6시간 전", views: 112 },
-    { id: 7, title: "헤이리 예술마을 갤러리 직원", company: "헤이리갤러리", location: "탄현면", pay: "월 230만원", date: "1일 전", views: 156 },
-    { id: 8, title: "출판단지 북카페 매니저", company: "북카페", location: "문발동", pay: "월 260만원", date: "1일 전", views: 201 },
-    { id: 9, title: "요양보호사 선생님 구합니다", company: "파주요양원", location: "조리읍", pay: "시급 12,000원", date: "2일 전", views: 78 },
-    { id: 10, title: "영어유치원 보조교사 모집", company: "키즈잉글리쉬", location: "운정동", pay: "월 220만원", date: "2일 전", views: 95 },
-    { id: 11, title: "LG디스플레이 협력사 생산직", company: "협력사", location: "월롱면", pay: "월 300만원", date: "3일 전", views: 340 },
-    { id: 12, title: "롯데아울렛 매장 판매직", company: "의류매장", location: "문발동", pay: "월 240만원", date: "3일 전", views: 180 },
+const jobCategories = [
+  { id: "all", label: "전체" },
+  { id: "restaurant", label: "카페/식당" },
+  { id: "education", label: "교육/학원" },
+  { id: "office", label: "사무/관리" },
+  { id: "production", label: "생산/건설" },
+  { id: "service", label: "서비스/판매" },
+  { id: "other", label: "기타" },
 ];
 
-const jobSeekers = [
-    { id: 1, title: "주말 카페 알바 구합니다", name: "김**", location: "운정동", experience: "경력 1년", date: "방금 전", views: 8 },
-    { id: 2, title: "홀서빙 경력 있습니다", name: "이**", location: "금촌동", experience: "경력 3년", date: "30분 전", views: 23 },
-    { id: 3, title: "단기 알바 찾습니다", name: "박**", location: "교하동", experience: "무관", date: "1시간 전", views: 45 },
-    { id: 4, title: "운전직 일자리 구합니다", name: "최**", location: "문산읍", experience: "1종보통", date: "2시간 전", views: 67 },
-    { id: 5, title: "사무보조 아르바이트 희망", name: "정**", location: "운정동", experience: "컴활1급", date: "4시간 전", views: 34 },
-    { id: 6, title: "주방 보조 일자리 찾아요", name: "강**", location: "금촌동", experience: "경력 6개월", date: "5시간 전", views: 56 },
-    { id: 7, title: "과외 학생 구합니다 (수학)", name: "조**", location: "교하동", experience: "대학생", date: "1일 전", views: 89 },
-    { id: 8, title: "청소/가사 도우미 가능합니다", name: "윤**", location: "조리읍", experience: "경력 5년", date: "1일 전", views: 45 },
-    { id: 9, title: "등하원 도우미 구직", name: "장**", location: "운정동", experience: "육아경력", date: "2일 전", views: 32 },
-    { id: 10, title: "편의점 평일 오전 알바 희망", name: "임**", location: "문산읍", experience: "경력 2년", date: "2일 전", views: 78 },
-    { id: 11, title: "건설 현장 일용직 찾습니다", name: "한**", location: "파주전역", experience: "이수증O", date: "3일 전", views: 120 },
-    { id: 12, title: "반려동물 산책 알바 합니다", name: "오**", location: "운정동", experience: "반려인", date: "3일 전", views: 56 },
-];
+interface Job {
+  id: number;
+  title: string;
+  category: string;
+  type: "part-time" | "full-time" | "daily";
+  wage: string;
+  location: string;
+  hours: string;
+  company: string;
+  description: string;
+  createdAt: Date;
+}
+
+// 더미 데이터 생성기
+const generateJobs = (): Job[] => {
+  const jobs: Job[] = [];
+  const locations = ["운정동", "금촌동", "문산읍", "교하동", "탄현면", "광탄면", "월롱면"];
+  const companies = ["스타벅스", "파주학원", "LG디스플레이 협력사", "GS25", "파주시청", "이마트", "쿠팡 물류센터"];
+
+  const categoryData = {
+    restaurant: ["카페 알바", "홀서빙", "주방보조", "바리스타", "제과제빵"],
+    education: ["영어 강사", "수학 강사", "학원 차량 운행", "보조 교사", "채점 알바"],
+    office: ["사무보조", "경리/회계", "총무", "데이터 입력", "비서"],
+    production: ["생산직", "포장/검수", "물류센터", "지게차 운전", "건설 현장"],
+    service: ["편의점", "매장 관리", "캐셔", "주차 관리", "청소"],
+    other: ["배달", "단기 알바", "행사 보조", "모델", "기타"],
+  };
+
+  let idCounter = 1;
+
+  Object.entries(categoryData).forEach(([catId, titles]) => {
+    // 각 카테고리별 5개 이상 생성
+    for (let i = 0; i < 6; i++) {
+      const title = titles[i % titles.length];
+      const type = Math.random() > 0.6 ? "full-time" : Math.random() > 0.3 ? "part-time" : "daily";
+      const wage = type === "daily"
+        ? `일급 ${10 + Math.floor(Math.random() * 10)}만원`
+        : type === "full-time"
+          ? `월급 ${200 + Math.floor(Math.random() * 100)}만원`
+          : `시급 ${10000 + Math.floor(Math.random() * 5000)}원`;
+
+      jobs.push({
+        id: idCounter++,
+        title: `${title} 구합니다 (${i + 1})`,
+        category: catId,
+        type: type,
+        wage: wage,
+        location: locations[Math.floor(Math.random() * locations.length)],
+        hours: type === "full-time" ? "09:00 - 18:00" : "협의 가능",
+        company: companies[Math.floor(Math.random() * companies.length)],
+        description: "성실하고 책임감 강하신 분 모집합니다. 초보 가능.",
+        createdAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000),
+      });
+    }
+  });
+
+  return jobs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+};
+
+const jobs = generateJobs();
 
 export default function JobsPage() {
-    const [activeTab, setActiveTab] = useState("구인");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-    const posts = activeTab === "구인" ? jobOffers : jobSeekers;
+  const filteredJobs = selectedCategory === "all"
+    ? jobs
+    : jobs.filter(job => job.category === selectedCategory);
 
-    return (
-        <div className="py-8">
-            <div className="px-4 sm:px-6 lg:px-8">
-                {/* 헤더 */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between mb-4">
-                        <div>
-                            <div className="flex items-center justify-center space-x-3 mb-2">
-                                <BriefcaseIcon className="w-10 h-10 text-blue-600" />
-                                <h1 className="text-4xl font-bold text-gray-900 text-center">파주인</h1>
-                            </div>
-                            <p className="text-lg text-gray-600 text-center">
-                                파주의 모든 일자리 정보를 한눈에 확인하세요
-                            </p>
-                        </div>
-                        <Link
-                            href="/community/jobs/write"
-                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
-                        >
-                            <PlusIcon className="w-5 h-5 mr-2" />
-                            글쓰기
-                        </Link>
-                    </div>
-                </div>
-
-                {/* 탭 */}
-                <div className="bg-white rounded-xl shadow-sm p-2 mb-6 flex space-x-2">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === tab
-                                    ? "bg-blue-600 text-white"
-                                    : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
-                </div>
-
-                {/* 게시글 목록 */}
-                <div className="bg-white rounded-xl shadow-sm">
-                    <div className="p-6 border-b border-gray-200">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-gray-900">
-                                {activeTab} 게시판
-                            </h2>
-                            <div className="text-sm text-gray-500">
-                                총 {posts.length}개 글
-                            </div>
-                        </div>
-                    </div>
-                    <div className="divide-y divide-gray-200">
-                        {posts.map((post) => (
-                            <Link
-                                key={post.id}
-                                href={`/community/jobs/${post.id}`}
-                                className="block p-6 hover:bg-gray-50 transition-colors text-center"
-                            >
-                                <div className="flex flex-col items-center">
-                                    <div className="mb-2 w-full">
-                                        <div className="flex items-center justify-center gap-2 mb-2">
-                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${activeTab === "구인" ? "bg-blue-100 text-blue-700" : "bg-orange-100 text-orange-700"
-                                                }`}>
-                                                {activeTab === "구인" ? post.location : post.location}
-                                            </span>
-                                            <span className="text-xs text-gray-500">
-                                                {activeTab === "구인" ? (post as any).company : (post as any).name}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-lg font-semibold text-gray-900 truncate px-4">{post.title}</h3>
-                                    </div>
-
-                                    <div className="flex items-center justify-center text-sm text-gray-600 mb-2 space-x-3">
-                                        {activeTab === "구인" ? (
-                                            <>
-                                                <BuildingOfficeIcon className="w-4 h-4" />
-                                                <span className="font-medium text-blue-600">{(post as any).pay}</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <UserIcon className="w-4 h-4" />
-                                                <span className="font-medium text-orange-600">{(post as any).experience}</span>
-                                            </>
-                                        )}
-                                        <span>•</span>
-                                        <span>{post.date}</span>
-                                    </div>
-
-                                    <div className="flex items-center justify-center text-sm text-gray-500">
-                                        <span>조회 {post.views}</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </div>
+  return (
+    <main className="flex flex-col items-center w-full min-h-screen bg-[#F8F9FA] py-6">
+      <div className="w-full max-w-xl px-4 space-y-5">
+        {/* 헤더 */}
+        <div className="text-center pt-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">👔 파주인</h1>
+          <p className="text-gray-500 text-sm">파주 지역 구인구직 정보</p>
         </div>
-    );
+
+        {/* 필터 - 가로 스크롤 가능 */}
+        <div className="flex overflow-x-auto pb-2 gap-2 px-2 no-scrollbar">
+          {jobCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === cat.id
+                  ? "bg-[#FF6F0F] text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 구인구직 카드 리스트 - 당근마켓 스타일 */}
+        <div className="space-y-3 mb-24">
+          {filteredJobs.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+              <p className="text-gray-400 text-base">등록된 구인구직이 없어요</p>
+            </div>
+          ) : (
+            filteredJobs.map((job) => (
+              <Link
+                key={job.id}
+                href={`/jobs/${job.id}`}
+                className="block bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 active:scale-[0.98]"
+              >
+                {/* 상단: 제목 + 작성일 */}
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-base font-semibold text-gray-900 flex-1 pr-3 leading-snug">{job.title}</h3>
+                  <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
+                    {job.createdAt.toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                  </span>
+                </div>
+
+                {/* 중단: 급여 정보 - 당근마켓 스타일 */}
+                <div className="mb-3">
+                  <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-xl font-bold text-[#FF6F0F]">{job.wage}</span>
+                  </div>
+
+                  {/* 지역 정보 - 더 직관적으로 */}
+                  <div className="flex items-center gap-2 mb-2.5 px-2 py-1.5 bg-gray-50 rounded-lg w-fit">
+                    <MapPinIcon className="w-4 h-4 text-[#FF6F0F] flex-shrink-0" />
+                    <span className="text-sm font-semibold text-gray-900">{job.location}</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <ClockIcon className="w-4 h-4 text-gray-400" />
+                      <span>{job.hours}</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-500 text-sm">{job.company}</p>
+                </div>
+
+                {/* 하단: 태그 뱃지 - 당근마켓 스타일 */}
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${job.type === "full-time"
+                      ? "bg-[#E8F5E9] text-[#2E7D32]"
+                      : job.type === "part-time"
+                        ? "bg-[#E3F2FD] text-[#1565C0]"
+                        : "bg-[#FFF3E0] text-[#E65100]"
+                    }`}>
+                    {job.type === "full-time" ? "정규직" : job.type === "part-time" ? "알바" : "일용직"}
+                  </span>
+                  <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                    {jobCategories.find(c => c.id === job.category)?.label}
+                  </span>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* 플로팅 공고 등록 버튼 - 당근마켓 스타일 */}
+      <Link
+        href="/jobs/new"
+        className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#FF6F0F] text-white rounded-full px-6 py-3.5 shadow-lg hover:bg-[#E85A00] active:scale-95 transition-all flex items-center gap-2 z-50 max-w-xl mx-auto"
+        onClick={(e) => {
+          e.preventDefault();
+          alert("준비 중입니다");
+        }}
+      >
+        <Plus className="w-5 h-5" />
+        <span className="font-semibold">공고 등록</span>
+      </Link>
+    </main>
+  );
 }
+
