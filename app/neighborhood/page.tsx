@@ -5,21 +5,22 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 
-// 동네별 수다방 탭 (생활권 기준)
+// 동네별 수다방 탭 (행정구역 기준)
 const neighborhoods = [
-  { id: "all", label: "전체", areas: [] },
-  { id: "unjeong", label: "운정", areas: ["운정동", "교하동", "와동동"] },
-  { id: "geumchon", label: "금촌", areas: ["금촌동", "금릉동", "야동동"] },
-  { id: "munsan", label: "문산", areas: ["문산읍"] },
-  { id: "jori", label: "조리", areas: ["조리읍"] },
-  { id: "beobwon", label: "법원", areas: ["법원읍"] },
-  { id: "paju", label: "파주", areas: ["파주읍"] },
-  { id: "gwangtan", label: "광탄", areas: ["광탄면"] },
-  { id: "tanhyeon", label: "탄현", areas: ["탄현면"] },
-  { id: "wolrong", label: "월롱", areas: ["월롱면"] },
-  { id: "jeokseong", label: "적성", areas: ["적성면"] },
-  { id: "papyeong", label: "파평", areas: ["파평면"] },
-  { id: "jangdan", label: "장단", areas: ["장단면"] },
+  { id: "all", label: "전체" },
+  { id: "unjeong", label: "운정" },
+  { id: "geumchon", label: "금촌" },
+  { id: "munsan", label: "문산" },
+  { id: "gyoha", label: "교하" },
+  { id: "jori", label: "조리" },
+  { id: "beobwon", label: "법원" },
+  { id: "paju", label: "파주" },
+  { id: "gwangtan", label: "광탄" },
+  { id: "tanhyeon", label: "탄현" },
+  { id: "wolrong", label: "월롱" },
+  { id: "jeokseong", label: "적성" },
+  { id: "papyeong", label: "파평" },
+  { id: "jangdan", label: "장단" },
 ];
 
 // 더미 게시글 데이터 (20개 이상)
@@ -28,15 +29,15 @@ const generatePosts = () => {
   const categories = ["일상", "맛집", "질문", "정보", "나눔"];
   const neighborhoodsList = neighborhoods.slice(1); // "전체" 제외
 
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 1; i <= 30; i++) {
     const randomNeighborhood = neighborhoodsList[Math.floor(Math.random() * neighborhoodsList.length)];
     const randomCategory = categories[Math.floor(Math.random() * categories.length)];
     const randomTime = ["방금 전", "5분 전", "10분 전", "30분 전", "1시간 전", "2시간 전", "3시간 전", "1일 전"][Math.floor(Math.random() * 8)];
 
     posts.push({
       id: i,
-      title: `${randomNeighborhood.label} 지역 ${randomCategory} 이야기`,
-      content: `${randomNeighborhood.label} 지역에서 일어나는 다양한 이야기를 공유합니다.`,
+      title: `${randomNeighborhood.label} 주민분들 질문있어요 (${i})`,
+      content: `${randomNeighborhood.label} 지역 맛집 추천 부탁드립니다. 가족이랑 가기 좋은 곳으로요!`,
       neighborhood: randomNeighborhood.id,
       neighborhoodLabel: randomNeighborhood.label,
       category: randomCategory,
@@ -47,7 +48,7 @@ const generatePosts = () => {
       createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
     });
   }
-  return posts;
+  return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 const allPosts = generatePosts();
@@ -67,20 +68,19 @@ export default function NeighborhoodPage() {
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 tracking-tighter mb-2">
             동네별 수다방
           </h1>
-          <p className="text-gray-600">생활권별로 모인 우리 동네 이야기</p>
+          <p className="text-gray-600">우리 동네 이웃들과 소소한 이야기를 나눠보세요</p>
         </div>
 
         {/* 탭 (중앙 정렬) - 알약 모양 버튼 */}
-        <div className="mb-6 flex justify-center flex-wrap gap-3">
+        <div className="mb-6 flex justify-center flex-wrap gap-2">
           {neighborhoods.map((neighborhood) => (
             <button
               key={neighborhood.id}
               onClick={() => setSelectedNeighborhood(neighborhood.id)}
-              className={`py-2 px-4 rounded-full text-lg font-bold whitespace-nowrap transition-all ${
-                selectedNeighborhood === neighborhood.id
+              className={`py-2 px-4 rounded-full text-sm font-bold whitespace-nowrap transition-all ${selectedNeighborhood === neighborhood.id
                   ? "bg-blue-600 text-white shadow-md"
-                  : "bg-white text-gray-500 border-2 border-gray-200 hover:bg-gray-50"
-              }`}
+                  : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
+                }`}
             >
               {neighborhood.label}
             </button>
@@ -88,7 +88,7 @@ export default function NeighborhoodPage() {
         </div>
 
         {/* 게시글 목록 */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <p className="text-gray-500 text-lg">등록된 게시글이 없습니다.</p>
@@ -98,27 +98,29 @@ export default function NeighborhoodPage() {
               <Link
                 key={post.id}
                 href={`/neighborhood/${post.id}`}
-                className="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow"
+                className="block bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg transition-all active:scale-[0.99]"
               >
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs font-bold rounded">
                     {post.neighborhoodLabel}
                   </span>
-                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded">
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded">
                     {post.category}
                   </span>
-                  <span className="text-xs text-gray-400">{post.time}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{post.time}</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 text-center">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
                   {post.title}
                 </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2 text-center">
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                   {post.content}
                 </p>
-                <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-                  <span>{post.author}</span>
-                  <span>조회 {post.views}</span>
-                  <span>댓글 {post.comments}</span>
+                <div className="flex items-center text-xs text-gray-400 gap-3 border-t border-gray-50 pt-3">
+                  <span className="font-medium text-gray-500">{post.author}</span>
+                  <div className="flex items-center gap-3 ml-auto">
+                    <span>조회 {post.views}</span>
+                    <span className="text-blue-500 font-medium">댓글 {post.comments}</span>
+                  </div>
                 </div>
               </Link>
             ))

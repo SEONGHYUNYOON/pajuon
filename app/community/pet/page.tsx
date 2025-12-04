@@ -67,6 +67,66 @@ const posts = [
     views: 167,
     pet: "소형견용",
   },
+  {
+    id: 7,
+    title: "문산읍 저녁 산책 메이트 구해요",
+    category: "산책친구",
+    author: "문산댁",
+    date: "3일 전",
+    comments: 4,
+    views: 76,
+    pet: "말티즈, 2세",
+  },
+  {
+    id: 8,
+    title: "고양이 캣타워 드림합니다",
+    category: "용품나눔",
+    author: "냥이사랑",
+    date: "3일 전",
+    comments: 25,
+    views: 312,
+    pet: "대형",
+  },
+  {
+    id: 9,
+    title: "운정 24시 동물병원 추천좀요",
+    category: "병원/미용후기",
+    author: "다급해요",
+    date: "4일 전",
+    comments: 32,
+    views: 450,
+    pet: "푸들, 6세",
+  },
+  {
+    id: 10,
+    title: "강아지 수제간식 같이 만드실 분",
+    category: "산책친구",
+    author: "요리왕",
+    date: "4일 전",
+    comments: 11,
+    views: 134,
+    pet: "포메라니안, 1세",
+  },
+  {
+    id: 11,
+    title: "이동장 무료로 드려요",
+    category: "용품나눔",
+    author: "천사",
+    date: "5일 전",
+    comments: 9,
+    views: 156,
+    pet: "소형",
+  },
+  {
+    id: 12,
+    title: "교하 애견카페 후기입니다",
+    category: "병원/미용후기",
+    author: "카페탐방",
+    date: "5일 전",
+    comments: 14,
+    views: 223,
+    pet: "웰시코기, 3세",
+  },
 ];
 
 export default function PetCommunityPage() {
@@ -75,8 +135,8 @@ export default function PetCommunityPage() {
   const filteredPosts = posts.filter((post) => post.category === activeTab);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -105,11 +165,10 @@ export default function PetCommunityPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === tab
-                  ? "bg-green-600 text-white"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+              className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === tab
+                ? "bg-green-600 text-white"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
               {tab}
             </button>
@@ -123,29 +182,23 @@ export default function PetCommunityPage() {
               <Link
                 key={post.id}
                 href={`/community/pet/${post.id}`}
-                className="block p-6 hover:bg-gray-50 transition-colors"
+                className="block p-6 hover:bg-gray-50 transition-colors text-center"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium">
-                        {post.category}
-                      </span>
-                      <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600 mb-2">
-                      <span className="mr-4">🐾 {post.pet}</span>
-                      <span>작성자: {post.author}</span>
-                      <span className="mx-2">•</span>
-                      <span>{post.date}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 space-x-4">
-                      <span>조회 {post.views}</span>
-                    </div>
+                <div className="flex flex-col items-center">
+                  <div className="mb-2">
+                    <span className="inline-block px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium mb-2">
+                      {post.category}
+                    </span>
+                    <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
                   </div>
-                  <div className="ml-4 text-sm text-gray-500">
-                    <span className="text-green-600 font-medium">{post.comments}</span>
-                    <span className="ml-1">댓글</span>
+                  <div className="flex items-center justify-center text-sm text-gray-600 mb-2 space-x-3">
+                    <span>🐾 {post.pet}</span>
+                    <span>작성자: {post.author}</span>
+                    <span>{post.date}</span>
+                  </div>
+                  <div className="flex items-center justify-center text-sm text-gray-500 space-x-4">
+                    <span>조회 {post.views}</span>
+                    <span className="text-green-600 font-medium">댓글 {post.comments}</span>
                   </div>
                 </div>
               </Link>

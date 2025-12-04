@@ -86,9 +86,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-950 pb-20 overflow-x-hidden">
       {/* 메인 배너 섹션 */}
-      <section className="relative w-full bg-white pt-4 pb-8 rounded-b-[3rem] shadow-sm overflow-hidden h-[400px]">
+      <section className="relative w-full bg-slate-900 pt-0 pb-0 rounded-b-[2rem] shadow-none overflow-hidden h-[200px]">
         <img
           src={`https://images.unsplash.com/${IMAGE_IDS[1]}?w=1200&q=80&auto=format&fit=crop`}
           alt="파주 프로모션"
@@ -120,17 +120,17 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12" style={{ paddingLeft: '4rem', paddingRight: '4rem' }}>
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">🔥 실시간 파주 톡</h2>
+            <h2 className="text-xl font-bold text-white">🔥 실시간 파주 톡</h2>
             <Link href="/community" className="text-sm text-gray-500 hover:text-primary">
               더보기
             </Link>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 divide-y divide-gray-100">
+          <div className="bg-slate-900 rounded-2xl shadow-none divide-y divide-slate-800">
             {hotPosts.map((post) => (
               <Link
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="block p-4 hover:bg-gray-50 transition-colors"
+                className="block p-4 hover:bg-slate-800 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   {/* 카테고리 뱃지 (좌측 고정) */}
@@ -138,16 +138,16 @@ export default function Home() {
                     <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
                       {post.category}
                     </span>
-                    <span className="text-xs text-gray-400">{post.time}</span>
+                    <span className="text-xs text-slate-400">{post.time}</span>
                   </div>
 
                   {/* 제목 (중앙 정렬 & 공간 차지) */}
-                  <h3 className="flex-1 text-center text-sm font-semibold text-gray-900 truncate px-4">
+                  <h3 className="flex-1 text-center text-sm font-semibold text-white truncate px-4">
                     {post.title}
                   </h3>
 
                   {/* 조회수 (우측 고정) */}
-                  <div className="flex-shrink-0 text-xs text-gray-400">
+                  <div className="flex-shrink-0 text-xs text-slate-500">
                     조회 {post.views}
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12">
         <div className="w-full">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold text-gray-900">실시간 핫이슈</h2>
+            <h2 className="text-lg font-bold text-white">실시간 핫이슈</h2>
             <Link href="/now/issue" className="text-xs text-gray-500 hover:text-primary">
               더보기
             </Link>
@@ -173,10 +173,10 @@ export default function Home() {
                 <Link
                   key={issue.id}
                   href={`/now/issue/${issue.id}`}
-                  className="flex-shrink-0 w-64 bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="flex-shrink-0 w-64 bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300"
                 >
                   {/* 이미지 */}
-                  <div className="bg-white">
+                  <div className="bg-slate-900">
                     <img
                       src={`https://images.unsplash.com/${issue.imageId}?w=600&q=80&auto=format&fit=crop`}
                       alt={issue.title}
@@ -188,9 +188,9 @@ export default function Home() {
                       <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-lg">
                         {issue.category}
                       </span>
-                      <span className="text-xs text-gray-400">{issue.time}</span>
+                      <span className="text-xs text-slate-400">{issue.time}</span>
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                    <h3 className="text-sm font-semibold text-white line-clamp-2">
                       {issue.title}
                     </h3>
                   </div>
@@ -205,7 +205,7 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">중고거래</h2>
+            <h2 className="text-xl font-bold text-white">중고거래</h2>
             <Link href="/life/market" className="text-sm text-gray-500 hover:text-primary">
               더보기
             </Link>
@@ -216,10 +216,10 @@ export default function Home() {
               <Link
                 key={item.id}
                 href={`/life/market/${item.id}`}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300"
               >
                 {/* 썸네일 */}
-                <div className="aspect-square bg-gray-100">
+                <div className="aspect-square bg-slate-800">
                   <img
                     src={`https://images.unsplash.com/${item.imageId}?w=400&q=80&auto=format&fit=crop`}
                     alt={item.title}
@@ -229,13 +229,13 @@ export default function Home() {
 
                 {/* 텍스트 */}
                 <div className="p-3">
-                  <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
+                  <h3 className="text-sm font-medium text-white mb-1 line-clamp-2 min-h-[2.5rem]">
                     {item.title}
                   </h3>
-                  <div className="text-base font-bold text-gray-900 mb-1">
+                  <div className="text-base font-bold text-white mb-1">
                     {item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-gray-500">
+                  <div className="flex items-center space-x-1 text-xs text-slate-400">
                     <span>{item.location}</span>
                     <span>·</span>
                     <span>{item.time}</span>
@@ -251,7 +251,7 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">🏛️ 파주시 행사 & 강연</h2>
+            <h2 className="text-xl font-bold text-white">🏛️ 파주시 행사 & 강연</h2>
             <Link href="/events" className="text-sm text-gray-500 hover:text-primary">
               더보기
             </Link>
@@ -268,10 +268,10 @@ export default function Home() {
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className="flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="flex-shrink-0 w-72 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300"
                 >
                   {/* 이미지 */}
-                  <div className="h-40 bg-gray-100">
+                  <div className="h-40 bg-slate-800">
                     <img
                       src={`https://images.unsplash.com/${event.imageId}?w=600&q=80&auto=format&fit=crop`}
                       alt={event.title}
@@ -285,12 +285,12 @@ export default function Home() {
                       <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs font-medium rounded">
                         {event.category}
                       </span>
-                      <span className="text-xs text-gray-500">{event.date}</span>
+                      <span className="text-xs text-slate-400">{event.date}</span>
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <h3 className="text-sm font-semibold text-white mb-2 line-clamp-2">
                       {event.title}
                     </h3>
-                    <p className="text-xs text-gray-500 flex items-center">
+                    <p className="text-xs text-slate-400 flex items-center">
                       📍 {event.location}
                     </p>
                   </div>
@@ -305,7 +305,7 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">우리동네 핫플</h2>
+            <h2 className="text-xl font-bold text-white">우리동네 핫플</h2>
             <Link href="/life/hot-place" className="text-sm text-gray-500 hover:text-primary">
               더보기
             </Link>
@@ -316,10 +316,10 @@ export default function Home() {
               <Link
                 key={place.id}
                 href={`/life/hot-place/${place.id}`}
-                className="relative aspect-[4/3] bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="relative aspect-[4/3] bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300"
               >
                 {/* 이미지 */}
-                <div className="bg-white w-full h-full">
+                <div className="bg-slate-900 w-full h-full">
                   <img
                     src={`https://images.unsplash.com/${place.imageId}?w=600&q=80&auto=format&fit=crop`}
                     alt={place.title}
@@ -347,7 +347,7 @@ export default function Home() {
       <section className="py-6 px-8 md:px-10 lg:px-12">
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">오늘의 모임</h2>
+            <h2 className="text-xl font-bold text-white">오늘의 모임</h2>
             <Link href="/groups" className="text-sm text-gray-500 hover:text-primary">
               더보기
             </Link>
@@ -359,10 +359,10 @@ export default function Home() {
                 <Link
                   key={group.id}
                   href={`/groups/${group.id}`}
-                  className="flex-shrink-0 w-64 bg-white rounded-2xl overflow-hidden shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="flex-shrink-0 w-64 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all duration-300"
                 >
                   {/* 이미지 */}
-                  <div className="h-40 bg-gray-100">
+                  <div className="h-40 bg-slate-800">
                     <img
                       src={group.image}
                       alt={group.name}
@@ -376,9 +376,9 @@ export default function Home() {
                       <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded">
                         {group.category}
                       </span>
-                      <span className="text-xs text-gray-500">{group.members}명</span>
+                      <span className="text-xs text-slate-400">{group.members}명</span>
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                    <h3 className="text-sm font-semibold text-white line-clamp-2">
                       {group.name}
                     </h3>
                   </div>
@@ -390,7 +390,7 @@ export default function Home() {
       </section>
 
       {/* 하단 여백 및 버전 표시 */}
-      <div className="py-8 text-center text-gray-300 text-xs">
+      <div className="py-8 text-center text-slate-600 text-xs">
         v1.2 (Updated)
       </div>
 

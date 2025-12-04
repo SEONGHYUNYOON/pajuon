@@ -23,6 +23,7 @@ export default function SignupPage() {
     birthDate: "",
     gender: "",
     area: "",
+    name: "",
     agreeTerms: false,
     agreePrivacy: false,
   });
@@ -39,9 +40,9 @@ export default function SignupPage() {
       setIsNicknameValid(false);
       return;
     }
-    
+
     const trimmedNickname = formData.nickname.trim();
-    
+
     if (trimmedNickname.length < 2) {
       setNicknameCheck("unavailable");
       setNicknameMessage("닉네임은 2자 이상이어야 합니다.");
@@ -56,12 +57,12 @@ export default function SignupPage() {
 
     try {
       const supabase = createClient();
-      
+
       // 디버깅: API 요청 전 로그
       console.log("=== Nickname Check Debug ===");
       console.log("Checking nickname:", trimmedNickname);
       console.log("Supabase client created:", !!supabase);
-      
+
       // API 요청 시작
       const requestStartTime = Date.now();
       const { data, error } = await supabase
@@ -96,10 +97,10 @@ export default function SignupPage() {
 
         // 네트워크 에러 체크
         const errorMessage = error.message?.toLowerCase() || "";
-        if (errorMessage.includes("network") || 
-            errorMessage.includes("fetch") || 
-            errorMessage.includes("failed to fetch") ||
-            error.code === "ECONNREFUSED") {
+        if (errorMessage.includes("network") ||
+          errorMessage.includes("fetch") ||
+          errorMessage.includes("failed to fetch") ||
+          error.code === "ECONNREFUSED") {
           console.error("Network error detected");
           setNicknameCheck("unavailable");
           setNicknameMessage("네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.");
@@ -170,10 +171,10 @@ export default function SignupPage() {
 
       // 네트워크 에러 구분
       const errorMessage = (error?.message || "").toLowerCase();
-      if (errorMessage.includes("network") || 
-          errorMessage.includes("fetch") || 
-          errorMessage.includes("failed to fetch") ||
-          error?.code === "ECONNREFUSED") {
+      if (errorMessage.includes("network") ||
+        errorMessage.includes("fetch") ||
+        errorMessage.includes("failed to fetch") ||
+        error?.code === "ECONNREFUSED") {
         setNicknameMessage("네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.");
         setErrors({ ...errors, nickname: "네트워크 오류가 발생했습니다." });
       } else if (errorMessage.includes("404") || error?.status === 404) {
@@ -186,7 +187,7 @@ export default function SignupPage() {
         setNicknameMessage(`오류: ${error?.message || "알 수 없는 오류가 발생했습니다."}`);
         setErrors({ ...errors, nickname: "닉네임 확인 중 오류가 발생했습니다." });
       }
-      
+
       setNicknameCheck("unavailable");
       setIsNicknameValid(false);
     }
@@ -222,6 +223,9 @@ export default function SignupPage() {
     if (!formData.area) {
       newErrors.area = "사는 곳을 선택해주세요.";
     }
+    if (!formData.name) {
+      newErrors.name = "이름을 입력해주세요.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -229,7 +233,7 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Debug: 회원가입 시도 로그
     console.log("회원가입 시도:", formData);
 
@@ -266,6 +270,10 @@ export default function SignupPage() {
       alert("사는 곳을 선택해주세요");
       return;
     }
+    if (!formData.name) {
+      alert("이름을 입력해주세요");
+      return;
+    }
     // 닉네임 중복 확인 체크 (닉네임이 입력된 경우에만)
     if (formData.nickname && !isNicknameValid) {
       alert("닉네임 중복 확인을 해주세요");
@@ -288,6 +296,7 @@ export default function SignupPage() {
             area: formData.area || null,
             birth_date: formData.birthDate || null,
             gender: formData.gender || null,
+            name: formData.name || null,
           },
         },
       });
@@ -311,11 +320,13 @@ export default function SignupPage() {
         my_dongne?: string | null;
         birth_date?: string | null;
         gender?: string | null;
+        name?: string | null;
       } = {
         nickname: formData.nickname,
         my_dongne: formData.area || null,
         birth_date: formData.birthDate || null,
         gender: formData.gender || null,
+        name: formData.name || null,
       };
 
       const { error: profileError } = await supabase
@@ -349,30 +360,30 @@ export default function SignupPage() {
             <div className="relative inline-flex items-center justify-center">
               {/* 외부 글로우 효과 */}
               <span className="absolute inset-0 bg-gradient-to-br from-[#0D4FFF] via-[#3B82F6] to-[#60A5FA] rounded-full blur-md opacity-50 animate-pulse"></span>
-              
+
               {/* On 배지 - 전원 버튼이 O를 대체 */}
               <span className="relative inline-flex items-center gap-0 bg-gradient-to-br from-[#0D4FFF] via-[#2563EB] to-[#1E40AF] text-white px-8 py-4 rounded-full text-3xl font-bold shadow-2xl transform hover:scale-110 hover:shadow-[#0D4FFF]/50 transition-all duration-300 leading-none">
                 {/* 전원 버튼 아이콘 */}
                 <span className="relative inline-flex items-center justify-center leading-none" style={{ width: '1em', height: '1em', marginRight: '-0.15em', verticalAlign: 'baseline' }}>
-                  <svg 
-                    className="w-full h-full text-white" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-full h-full text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     style={{ display: 'inline-block', verticalAlign: 'baseline' }}
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <circle cx="12" cy="12" r="8" className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
-                    <path 
-                      d="M12 8 L12 4" 
+                    <path
+                      d="M12 8 L12 4"
                       className="drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]"
                     />
                   </svg>
                   {/* 발광 효과 */}
                   <span className="absolute inset-0 text-white opacity-40 animate-ping pointer-events-none">
-                    <svg 
+                    <svg
                       className="w-full h-full"
                       viewBox="0 0 24 24"
                       fill="none"
@@ -385,10 +396,10 @@ export default function SignupPage() {
                     </svg>
                   </span>
                 </span>
-                
+
                 {/* n 텍스트 */}
                 <span className="relative z-10 font-bold leading-none">n</span>
-                
+
                 {/* 배경 움직이는 그라데이션 */}
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-1000"></span>
               </span>
@@ -455,6 +466,20 @@ export default function SignupPage() {
               error={errors.passwordConfirm}
             />
 
+            {/* 이름 */}
+            <Input
+              label="이름"
+              type="text"
+              required
+              placeholder="실명을 입력하세요"
+              value={formData.name}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                setErrors({ ...errors, name: "" });
+              }}
+              error={errors.name}
+            />
+
             {/* 닉네임 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -489,9 +514,8 @@ export default function SignupPage() {
                 </Button>
               </div>
               {nicknameMessage && (
-                <p className={`mt-1 text-sm ${
-                  isNicknameValid ? "text-green-500" : "text-red-500"
-                }`}>
+                <p className={`mt-1 text-sm ${isNicknameValid ? "text-green-500" : "text-red-500"
+                  }`}>
                   {isNicknameValid ? "✓ " : "✗ "}{nicknameMessage}
                 </p>
               )}
@@ -519,22 +543,20 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, gender: "male" })}
-                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${
-                    formData.gender === "male"
-                      ? "bg-blue-50 border-blue-500 text-blue-700"
-                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
+                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${formData.gender === "male"
+                    ? "bg-blue-50 border-blue-500 text-blue-700"
+                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
                 >
                   남성
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, gender: "female" })}
-                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${
-                    formData.gender === "female"
-                      ? "bg-pink-50 border-pink-500 text-pink-700"
-                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
+                  className={`flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-medium ${formData.gender === "female"
+                    ? "bg-pink-50 border-pink-500 text-pink-700"
+                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
                 >
                   여성
                 </button>

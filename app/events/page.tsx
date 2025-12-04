@@ -7,295 +7,223 @@ import {
   MapPinIcon,
   UserGroupIcon,
   ClockIcon,
-  TicketIcon,
+  HeartIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
-import EventCalendar from "@/components/events/EventCalendar";
-import PageHeader from "@/components/ui/PageHeader";
-import Card from "@/components/ui/Card";
+import { Plus } from "lucide-react";
 
-const events = [
-  {
-    id: 1,
-    title: "💝 이번 주말 3:3 미팅 (여성 마감임박)",
-    date: "2024-12-15",
-    time: "14:00 - 17:00",
-    location: "파주시민회관 3층 대회의실",
-    participants: 45,
-    maxParticipants: 50,
-    status: "신청중",
-    type: "미팅",
-    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80", // 친구 모임/미팅
-    isMatchmaking: true,
-  },
-  {
-    id: 2,
-    title: "직장인 솔로 탈출 파티",
-    date: "2024-12-22",
-    time: "19:00 - 22:00",
-    location: "헤이리 예술마을 카페",
-    participants: 28,
-    maxParticipants: 40,
-    status: "신청중",
-    type: "미팅",
-    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80", // 파티/모임
-    isMatchmaking: true,
-  },
-  {
-    id: 3,
-    title: "파주 지역축제",
-    date: "2024-12-20",
-    time: "10:00 - 18:00",
-    location: "운정호수공원",
-    participants: 120,
-    maxParticipants: 200,
-    status: "신청중",
-    type: "축제",
-    image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=80", // 축제/행사
-    isMatchmaking: false,
-  },
-  {
-    id: 4,
-    title: "파주 시민 대토론회",
-    date: "2024-12-25",
-    time: "19:00 - 21:00",
-    location: "파주시청 대강당",
-    participants: 80,
-    maxParticipants: 100,
-    status: "신청중",
-    type: "토론",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80", // 토론/회의
-    isMatchmaking: false,
-  },
-  {
-    id: 5,
-    title: "💕 크리스마스 특별 미팅",
-    date: "2024-12-24",
-    time: "18:00 - 21:00",
-    location: "출판도시 레스토랑",
-    participants: 32,
-    maxParticipants: 50,
-    status: "신청중",
-    type: "미팅",
-    image: "https://images.unsplash.com/photo-1482517967863-00e15c9b44be?auto=format&fit=crop&w=800&q=80", // 크리스마스/데코레이션
-    isMatchmaking: true,
-  },
+const categories = [
+  { id: "all", label: "전체보기", icon: "🔍" },
+  { id: "coffee", label: "가벼운 번개", icon: "☕" },
+  { id: "blind_date", label: "설레는 소개팅", icon: "💘" },
+  { id: "activity", label: "취미로 썸타기", icon: "🏃" },
+  { id: "party", label: "공식 이벤트", icon: "🎉" },
+  { id: "review", label: "커플 후기", icon: "💖" },
 ];
 
+interface Event {
+  id: number;
+  title: string;
+  category: string;
+  date: string;
+  time: string;
+  location: string;
+  participants: number;
+  maxParticipants: number;
+  status: "recruiting" | "closing" | "closed";
+  tags: string[];
+  image: string;
+  genderRatio?: string; // 성비 (e.g., "5:5")
+}
+
+const generateEvents = (): Event[] => {
+  const events: Event[] = [];
+  const locations = ["운정 호수공원", "헤이리 예술마을", "야당역", "금촌 로터리", "출판단지"];
+
+  const categoryData = {
+    coffee: ["퇴근 후 커피 한잔", "주말 브런치 모임", "맛집 탐방 번개", "디저트 투어", "심야 카페 수다"],
+    blind_date: ["2030 직장인 소개팅", "3:3 미팅 하실 분", "주말 1:1 소개팅", "크리스마스 대비 미팅", "설레는 첫 만남"],
+    activity: ["주말 등산 데이트", "한강 라이딩 썸", "볼링 치며 친해져요", "원데이 베이킹 클래스", "반려견 산책 데이트"],
+    party: ["파주 솔로 탈출 파티", "와인 스탠딩 파티", "가면 무도회", "루프탑 맥주 파티", "연말 네트워킹 파티"],
+    review: ["저희 커플 됐어요!", "소개팅 성공 후기", "파주ON 덕분에 만났습니다", "100일 기념 후기", "결혼합니다💕"],
+  };
+
+  let idCounter = 1;
+
+  Object.entries(categoryData).forEach(([catId, titles]) => {
+    for (let i = 0; i < 5; i++) {
+      const title = titles[i % titles.length];
+      const status = Math.random() > 0.7 ? "closing" : Math.random() > 0.2 ? "recruiting" : "closed";
+
+      events.push({
+        id: idCounter++,
+        title: `${title} ${i + 1}`,
+        category: catId,
+        date: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        time: "19:00",
+        location: locations[Math.floor(Math.random() * locations.length)],
+        participants: Math.floor(Math.random() * 20) + 2,
+        maxParticipants: Math.floor(Math.random() * 20) + 10,
+        status: status,
+        tags: ["#2030", "#직장인", "#매너필수"],
+        image: `https://images.unsplash.com/photo-${[
+          "1511795409834-ef04bbd61622", // party
+          "1529156069898-49953e39b3ac", // friends
+          "1482517967863-00e15c9b44be", // christmas
+          "1544531586-fde5298cdd40", // festival
+          "1552664730-d307ca884978", // discussion
+        ][i % 5]}?auto=format&fit=crop&w=800&q=80`,
+        genderRatio: catId === "blind_date" || catId === "party" ? "5:5" : undefined,
+      });
+    }
+  });
+
+  return events.sort((a, b) => b.status.localeCompare(a.status)); // 모집중 우선
+};
+
+const events = generateEvents();
+
 export default function EventsPage() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // 더미 이벤트 데이터 (실제로는 API에서 가져옴)
-  const calendarEvents = events.map((event) => ({
-    id: event.id.toString(),
-    title: event.title,
-    startDate: new Date(event.date),
-    type: event.type === "미팅" ? "MATCHMAKING" : "OTHER",
-  }));
-
-  const handleDateClick = (date: Date) => {
-    setSelectedDate(date);
-    // 해당 날짜의 이벤트 필터링 등
-  };
-
-  const handleEventClick = (event: any) => {
-    // 이벤트 상세 페이지로 이동
-    window.location.href = `/events/${event.id}`;
-  };
-
-  // 미팅 이벤트와 일반 이벤트 분리
-  const matchmakingEvents = events.filter((e) => e.isMatchmaking);
-  const regularEvents = events.filter((e) => !e.isMatchmaking);
+  const filteredEvents = selectedCategory === "all"
+    ? events
+    : events.filter(event => event.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] py-8" style={{ paddingLeft: '6rem', paddingRight: '6rem' }}>
-      <div className="w-full max-w-7xl mx-auto">
-        {/* 헤더 */}
-        <PageHeader
-          title="ON-이벤트"
-          description="PAJU ON에서 주최하는 공식 이벤트에 참여해보세요"
-          icon={<CalendarIcon className="w-8 h-8" />}
-        />
-
-        {/* 이벤트 캘린더 */}
-        <div className="mb-8">
-          <EventCalendar
-            events={calendarEvents}
-            onDateClick={handleDateClick}
-            onEventClick={handleEventClick}
-          />
+    <div className="min-h-screen bg-pink-50/30 py-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 헤더 - 핑크/코랄 그라디언트 */}
+        <div className="relative rounded-3xl overflow-hidden mb-10 shadow-xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 opacity-90"></div>
+          <div className="relative z-10 p-10 text-center text-white">
+            <p className="text-lg font-medium mb-2 opacity-90">파주에서 시작되는 설렘</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">만남과 이벤트</h1>
+            <p className="text-white/80 max-w-xl mx-auto">
+              새로운 인연을 찾고 계신가요? 파주ON에서 설레는 만남을 시작해보세요.
+            </p>
+          </div>
+          {/* 장식용 원 */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-yellow-300/20 rounded-full translate-x-1/2 translate-y-1/2 blur-2xl"></div>
         </div>
 
-        {/* 선남선녀 미팅 섹션 - 강조 */}
-        {matchmakingEvents.length > 0 && (
-          <div className="mb-8 bg-gradient-to-r from-pink-50 to-rose-50 rounded-3xl p-6 shadow-lg shadow-gray-200/50 border border-pink-200">
-            <div className="flex items-center space-x-2 mb-6">
-              <span className="text-2xl">💖</span>
-              <h2 className="text-2xl font-bold text-gray-900">선남선녀 미팅</h2>
-              <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                HOT
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {matchmakingEvents.map((event) => (
-                <Card
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                  padding="none"
-                  className="overflow-hidden border-2 border-pink-200"
-                >
-                  {/* 티켓 스타일 헤더 */}
-                  <div className="h-48 bg-gradient-to-br from-pink-400 to-rose-400 relative overflow-hidden">
-                    {event.image && (
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="w-full h-full object-cover opacity-80"
-                      />
-                    )}
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-pink-600 border border-pink-300">
-                      💕 {event.type}
-                    </div>
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white rounded-full text-xs font-bold">
+        {/* 탭 메뉴 */}
+        <div className="flex overflow-x-auto pb-4 gap-3 mb-8 no-scrollbar justify-start md:justify-center">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`flex items-center px-5 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all shadow-sm ${selectedCategory === cat.id
+                  ? "bg-rose-500 text-white shadow-rose-200 ring-2 ring-rose-300"
+                  : "bg-white text-gray-600 hover:bg-rose-50 border border-gray-100"
+                }`}
+            >
+              <span className="mr-2 text-lg">{cat.icon}</span>
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 이벤트 카드 그리드 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+          {filteredEvents.map((event) => (
+            <Link
+              key={event.id}
+              href={`/events/${event.id}`}
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
+            >
+              {/* 이미지 영역 */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+                {/* 뱃지 */}
+                <div className="absolute top-3 left-3 flex gap-2">
+                  {event.status === "recruiting" && (
+                    <span className="px-2.5 py-1 bg-rose-500 text-white text-xs font-bold rounded-full shadow-lg">
                       모집중
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <TicketIcon className="w-12 h-12 text-white/30" />
-                    </div>
-                  </div>
-
-              {/* 티켓 내용 */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{event.title}</h3>
-                <div className="space-y-3 text-sm mb-4">
-                  <div className="flex items-center text-gray-700">
-                    <CalendarIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                    <span className="font-medium">{event.date}</span>
-                  </div>
-                  <div className="flex items-center text-gray-700">
-                    <ClockIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                    <span>{event.time}</span>
-                  </div>
-                  <div className="flex items-center text-gray-700">
-                    <MapPinIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                    <span className="line-clamp-1">{event.location}</span>
-                  </div>
-                  <div className="flex items-center text-gray-700">
-                    <UserGroupIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                    <span>
-                      {event.participants}/{event.maxParticipants}명 참여
                     </span>
+                  )}
+                  {event.status === "closing" && (
+                    <span className="px-2.5 py-1 bg-orange-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
+                      마감임박
+                    </span>
+                  )}
+                  {event.genderRatio && (
+                    <span className="px-2.5 py-1 bg-purple-500 text-white text-xs font-bold rounded-full shadow-lg">
+                      성비 {event.genderRatio}
+                    </span>
+                  )}
+                </div>
+
+                <div className="absolute bottom-3 left-3 text-white">
+                  <div className="flex items-center text-xs font-medium mb-1 opacity-90">
+                    <CalendarIcon className="w-3.5 h-3.5 mr-1" />
+                    {event.date} {event.time}
+                  </div>
+                  <div className="flex items-center text-xs font-medium opacity-90">
+                    <MapPinIcon className="w-3.5 h-3.5 mr-1" />
+                    {event.location}
                   </div>
                 </div>
-
-                {/* 참여 진행률 */}
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                  <div
-                    className="bg-pink-500 h-2 rounded-full transition-all"
-                    style={{
-                      width: `${(event.participants / event.maxParticipants) * 100}%`,
-                    }}
-                  />
-                </div>
-
-                {/* 참여 신청 버튼 */}
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = `/events/${event.id}`;
-                  }}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 transition-colors font-semibold shadow-lg"
-                >
-                  💖 참여 신청하기
-                </button>
               </div>
-            </Card>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* 일반 이벤트 섹션 */}
-        {regularEvents.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">다른 이벤트</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularEvents.map((event) => (
-                <Card
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                  padding="none"
-                  className="overflow-hidden"
-                >
-                  {/* 티켓 스타일 헤더 */}
-                  <div className="h-48 bg-gradient-to-br from-paju-blue to-paju-green relative overflow-hidden">
-                    {event.image && (
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-900">
-                      {event.type}
-                    </div>
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-paju-warm text-white rounded-full text-xs font-medium">
-                      {event.status}
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <TicketIcon className="w-12 h-12 text-white/30" />
-                    </div>
+              {/* 컨텐츠 영역 */}
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">
+                    {categories.find(c => c.id === event.category)?.label}
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-rose-600 transition-colors">
+                  {event.title}
+                </h3>
+
+                <div className="mt-auto">
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {event.tags.map((tag, i) => (
+                      <span key={i} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
 
-                  {/* 티켓 내용 */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">{event.title}</h3>
-                    <div className="space-y-3 text-sm mb-4">
-                      <div className="flex items-center text-gray-700">
-                        <CalendarIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                        <span className="font-medium">{event.date}</span>
-                      </div>
-                      <div className="flex items-center text-gray-700">
-                        <ClockIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center text-gray-700">
-                        <MapPinIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                        <span className="line-clamp-1">{event.location}</span>
-                      </div>
-                      <div className="flex items-center text-gray-700">
-                        <UserGroupIcon className="w-5 h-5 mr-2 text-paju-blue" />
-                        <span>
-                          {event.participants}/{event.maxParticipants}명 참여
-                        </span>
-                      </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <UserGroupIcon className="w-4 h-4 mr-1.5 text-gray-400" />
+                      <span>{event.participants}/{event.maxParticipants}명</span>
                     </div>
-
-                    {/* 참여 진행률 */}
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                      <div
-                        className="bg-paju-blue h-2 rounded-full transition-all"
-                        style={{
-                          width: `${(event.participants / event.maxParticipants) * 100}%`,
-                        }}
-                      />
-                    </div>
-
-                    {/* 참여 신청 버튼 */}
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = `/events/${event.id}`;
-                      }}
-                      className="w-full px-4 py-3 bg-paju-blue text-white rounded-lg hover:bg-paju-blue-dark transition-colors font-semibold"
-                    >
-                      참여 신청하기
+                    <button className="text-sm font-bold text-rose-500 flex items-center group-hover:translate-x-1 transition-transform">
+                      참여하기
+                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* 플로팅 작성 버튼 */}
+        <Link
+          href="/events/new"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-rose-500 text-white rounded-full px-8 py-4 shadow-lg shadow-rose-500/30 hover:bg-rose-600 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 z-50 font-bold text-lg"
+          onClick={(e) => {
+            e.preventDefault();
+            alert("준비 중입니다");
+          }}
+        >
+          <SparklesIcon className="w-6 h-6" />
+          설레는 만남 주최하기
+        </Link>
       </div>
     </div>
   );

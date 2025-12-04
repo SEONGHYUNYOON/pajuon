@@ -14,6 +14,7 @@ export default function AdminPage() {
         comments: 0,
     });
     const [recentPosts, setRecentPosts] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -70,6 +71,15 @@ export default function AdminPage() {
                 .limit(10);
 
             setRecentPosts(posts || []);
+
+            // Load users
+            const { data: userList } = await supabase
+                .from("profiles")
+                .select("*")
+                .order("created_at", { ascending: false })
+                .limit(20);
+
+            setUsers(userList || []);
         } catch (error) {
             console.error("Failed to load admin data:", error);
         } finally {
@@ -206,6 +216,52 @@ export default function AdminPage() {
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* User Management */}
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900">사용자 관리</h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                <tr>
+                                    <th className="px-6 py-3 font-medium">이름/닉네임</th>
+                                    <th className="px-6 py-3 font-medium">이메일</th>
+                                    <th className="px-6 py-3 font-medium">지역</th>
+                                    <th className="px-6 py-3 font-medium">가입일</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {users.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                                            사용자가 없습니다.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    users.map((user) => (
+                                        <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <p className="text-sm font-medium text-gray-900">{user.name || "-"}</p>
+                                                <p className="text-xs text-gray-500">{user.nickname}</p>
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                                {user.email || "-"}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                                {user.location || "-"}
+                                            </td>
+                                            <td className="px-6 py-4 text-xs text-gray-500">
+                                                {new Date(user.created_at).toLocaleDateString()}
                                             </td>
                                         </tr>
                                     ))

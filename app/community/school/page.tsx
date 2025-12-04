@@ -14,11 +14,19 @@ export default function SchoolPage() {
         { id: 1, name: "김철수", year: "2000년 졸업", status: "동창회장" },
         { id: 2, name: "이영희", year: "2000년 졸업", status: "총무" },
         { id: 3, name: "박민수", year: "2001년 졸업", status: "" },
+        { id: 4, name: "정수진", year: "2001년 졸업", status: "" },
+        { id: 5, name: "최동훈", year: "2002년 졸업", status: "반장" },
+        { id: 6, name: "강지영", year: "2002년 졸업", status: "" },
+        { id: 7, name: "윤호성", year: "2003년 졸업", status: "" },
+        { id: 8, name: "장미란", year: "2003년 졸업", status: "체육부장" },
+        { id: 9, name: "오세훈", year: "2004년 졸업", status: "" },
+        { id: 10, name: "신지혜", year: "2004년 졸업", status: "" },
+        { id: 11, name: "한재석", year: "2005년 졸업", status: "" },
+        { id: 12, name: "배수지", year: "2005년 졸업", status: "홍보부장" },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            {/* 헤더 */}
+        <div className="pb-20">
             <div className="bg-white px-4 py-6 sticky top-0 z-10 border-b border-gray-100 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
@@ -49,10 +57,10 @@ export default function SchoolPage() {
                                     <button
                                         key={school}
                                         onClick={() => setSelectedSchool(school)}
-                                        className="w-full text-left px-4 py-3 rounded-xl hover:bg-purple-50 text-gray-700 hover:text-purple-700 transition-colors flex items-center justify-between group"
+                                        className="w-full px-4 py-3 rounded-xl hover:bg-purple-50 text-gray-700 hover:text-purple-700 transition-colors flex items-center justify-center relative group"
                                     >
-                                        <span>{school}</span>
-                                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-purple-400" />
+                                        <span className="font-medium">{school}</span>
+                                        <ChevronRight className="absolute right-4 w-4 h-4 text-gray-300 group-hover:text-purple-400" />
                                     </button>
                                 ))}
                             </div>

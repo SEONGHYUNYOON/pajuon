@@ -5,123 +5,83 @@ import Link from "next/link";
 import { MapPinIcon, ClockIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { Plus, Pencil } from "lucide-react";
 
-const jobTypes = [
+const jobCategories = [
   { id: "all", label: "전체" },
-  { id: "part-time", label: "알바" },
-  { id: "full-time", label: "정규직" },
-  { id: "daily", label: "일용직" },
+  { id: "restaurant", label: "카페/식당" },
+  { id: "education", label: "교육/학원" },
+  { id: "office", label: "사무/관리" },
+  { id: "production", label: "생산/건설" },
+  { id: "service", label: "서비스/판매" },
+  { id: "other", label: "기타" },
 ];
 
-// 더미 구인구직 데이터 (10개)
-const jobs = [
-  {
-    id: 1,
-    title: "운정 카페 주말 알바",
-    type: "part-time",
-    wage: "시급 1.2만원",
-    location: "운정동",
-    hours: "주말 10:00-18:00",
-    company: "카페 파주",
-    description: "주말 근무 가능하신 분 모집합니다. 경력 무관, 친절하신 분 우대",
-  },
-  {
-    id: 2,
-    title: "문산 물류센터 당일지급",
-    type: "daily",
-    wage: "일당 15만원",
-    location: "문산읍",
-    hours: "평일 09:00-18:00",
-    company: "문산 물류센터",
-    description: "당일 지급, 체력 좋으신 분 우대. 경력 무관",
-  },
-  {
-    id: 3,
-    title: "운정동 치킨집 주방 알바",
-    type: "part-time",
-    wage: "시급 1.1만원",
-    location: "운정동",
-    hours: "평일 저녁 18:00-22:00",
-    company: "BBQ 운정점",
-    description: "저녁 시간대 근무 가능하신 분. 주 3일 이상",
-  },
-  {
-    id: 4,
-    title: "파주시청 행정직 채용",
-    type: "full-time",
-    wage: "월급 280만원",
-    location: "금촌동",
-    hours: "평일 09:00-18:00",
-    company: "파주시청",
-    description: "대학 졸업 이상, 행정 관련 자격증 우대",
-  },
-  {
-    id: 5,
-    title: "금촌동 PC방 주말 알바",
-    type: "part-time",
-    wage: "시급 1.0만원",
-    location: "금촌동",
-    hours: "주말 12:00-20:00",
-    company: "네트워크 PC방",
-    description: "주말 근무 가능하신 대학생 우대",
-  },
-  {
-    id: 6,
-    title: "출판도시 인쇄소 일용직",
-    type: "daily",
-    wage: "일당 12만원",
-    location: "출판도시",
-    hours: "평일 08:00-17:00",
-    company: "파주 인쇄소",
-    description: "인쇄 작업 보조, 당일 지급",
-  },
-  {
-    id: 7,
-    title: "헤이리 카페 주말 알바",
-    type: "part-time",
-    wage: "시급 1.3만원",
-    location: "헤이리 예술마을",
-    hours: "주말 11:00-19:00",
-    company: "카페 헤이리",
-    description: "예술마을 카페 근무, 고객 서비스 우수자 우대",
-  },
-  {
-    id: 8,
-    title: "운정동 백화점 판매직",
-    type: "full-time",
-    wage: "월급 240만원 + 성과금",
-    location: "운정동",
-    hours: "평일 10:00-20:00 (교대근무)",
-    company: "파주백화점",
-    description: "의류 판매 경력 우대, 고객 서비스 마인드 중요",
-  },
-  {
-    id: 9,
-    title: "교하동 중국집 배달",
-    type: "part-time",
-    wage: "시급 1.1만원 + 배달비",
-    location: "교하동",
-    hours: "평일 저녁 17:00-22:00",
-    company: "중화요리",
-    description: "오토바이 면허 필수, 배달 경험 우대",
-  },
-  {
-    id: 10,
-    title: "파주시청 청소 일용직",
-    type: "daily",
-    wage: "일당 10만원",
-    location: "금촌동",
-    hours: "평일 06:00-10:00",
-    company: "파주시청",
-    description: "청소 작업, 조용한 시간대 근무",
-  },
-];
+interface Job {
+  id: number;
+  title: string;
+  category: string;
+  type: "part-time" | "full-time" | "daily";
+  wage: string;
+  location: string;
+  hours: string;
+  company: string;
+  description: string;
+  createdAt: Date;
+}
+
+// 더미 데이터 생성기
+const generateJobs = (): Job[] => {
+  const jobs: Job[] = [];
+  const locations = ["운정동", "금촌동", "문산읍", "교하동", "탄현면", "광탄면", "월롱면"];
+  const companies = ["스타벅스", "파주학원", "LG디스플레이 협력사", "GS25", "파주시청", "이마트", "쿠팡 물류센터"];
+
+  const categoryData = {
+    restaurant: ["카페 알바", "홀서빙", "주방보조", "바리스타", "제과제빵"],
+    education: ["영어 강사", "수학 강사", "학원 차량 운행", "보조 교사", "채점 알바"],
+    office: ["사무보조", "경리/회계", "총무", "데이터 입력", "비서"],
+    production: ["생산직", "포장/검수", "물류센터", "지게차 운전", "건설 현장"],
+    service: ["편의점", "매장 관리", "캐셔", "주차 관리", "청소"],
+    other: ["배달", "단기 알바", "행사 보조", "모델", "기타"],
+  };
+
+  let idCounter = 1;
+
+  Object.entries(categoryData).forEach(([catId, titles]) => {
+    // 각 카테고리별 5개 이상 생성
+    for (let i = 0; i < 6; i++) {
+      const title = titles[i % titles.length];
+      const type = Math.random() > 0.6 ? "full-time" : Math.random() > 0.3 ? "part-time" : "daily";
+      const wage = type === "daily"
+        ? `일급 ${10 + Math.floor(Math.random() * 10)}만원`
+        : type === "full-time"
+          ? `월급 ${200 + Math.floor(Math.random() * 100)}만원`
+          : `시급 ${10000 + Math.floor(Math.random() * 5000)}원`;
+
+      jobs.push({
+        id: idCounter++,
+        title: `${title} 구합니다 (${i + 1})`,
+        category: catId,
+        type: type,
+        wage: wage,
+        location: locations[Math.floor(Math.random() * locations.length)],
+        hours: type === "full-time" ? "09:00 - 18:00" : "협의 가능",
+        company: companies[Math.floor(Math.random() * companies.length)],
+        description: "성실하고 책임감 강하신 분 모집합니다. 초보 가능.",
+        createdAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000),
+      });
+    }
+  });
+
+  return jobs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+};
+
+const jobs = generateJobs();
 
 export default function JobsPage() {
-  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const filteredJobs = selectedType === "all"
+  const filteredJobs = selectedCategory === "all"
     ? jobs
-    : jobs.filter(job => job.type === selectedType);
+    : jobs.filter(job => job.category === selectedCategory);
 
   return (
     <main className="flex flex-col items-center w-full min-h-screen bg-[#F8F9FA] py-6">
@@ -132,19 +92,18 @@ export default function JobsPage() {
           <p className="text-gray-500 text-sm">파주 지역 구인구직 정보</p>
         </div>
 
-        {/* 필터 - 당근마켓 스타일 */}
-        <div className="flex flex-wrap gap-2 justify-center px-2">
-          {jobTypes.map((type) => (
+        {/* 필터 - 가로 스크롤 가능 */}
+        <div className="flex overflow-x-auto pb-2 gap-2 px-2 no-scrollbar">
+          {jobCategories.map((cat) => (
             <button
-              key={type.id}
-              onClick={() => setSelectedType(type.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
-                selectedType === type.id
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === cat.id
                   ? "bg-[#FF6F0F] text-white shadow-sm"
                   : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-              }`}
+                }`}
             >
-              {type.label}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -166,7 +125,7 @@ export default function JobsPage() {
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-base font-semibold text-gray-900 flex-1 pr-3 leading-snug">{job.title}</h3>
                   <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
-                    {new Date().toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                    {job.createdAt.toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
                   </span>
                 </div>
 
@@ -175,13 +134,13 @@ export default function JobsPage() {
                   <div className="flex items-baseline gap-1 mb-3">
                     <span className="text-xl font-bold text-[#FF6F0F]">{job.wage}</span>
                   </div>
-                  
+
                   {/* 지역 정보 - 더 직관적으로 */}
-                  <div className="flex items-center gap-2 mb-2.5 px-2 py-1.5 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2.5 px-2 py-1.5 bg-gray-50 rounded-lg w-fit">
                     <MapPinIcon className="w-4 h-4 text-[#FF6F0F] flex-shrink-0" />
                     <span className="text-sm font-semibold text-gray-900">{job.location}</span>
                   </div>
-                  
+
                   <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
                     <div className="flex items-center gap-1.5">
                       <ClockIcon className="w-4 h-4 text-gray-400" />
@@ -193,14 +152,16 @@ export default function JobsPage() {
 
                 {/* 하단: 태그 뱃지 - 당근마켓 스타일 */}
                 <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
-                    job.type === "full-time"
+                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${job.type === "full-time"
                       ? "bg-[#E8F5E9] text-[#2E7D32]"
                       : job.type === "part-time"
-                      ? "bg-[#E3F2FD] text-[#1565C0]"
-                      : "bg-[#FFF3E0] text-[#E65100]"
-                  }`}>
-                    {jobTypes.find(t => t.id === job.type)?.label}
+                        ? "bg-[#E3F2FD] text-[#1565C0]"
+                        : "bg-[#FFF3E0] text-[#E65100]"
+                    }`}>
+                    {job.type === "full-time" ? "정규직" : job.type === "part-time" ? "알바" : "일용직"}
+                  </span>
+                  <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                    {jobCategories.find(c => c.id === job.category)?.label}
                   </span>
                 </div>
               </Link>
