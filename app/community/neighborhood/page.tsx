@@ -71,15 +71,15 @@ export default function NeighborhoodPage() {
           <p className="text-gray-600">우리 동네 이웃들과 소소한 이야기를 나눠보세요</p>
         </div>
 
-        {/* 탭 (중앙 정렬) - 알약 모양 버튼 */}
-        <div className="mb-6 flex justify-center flex-wrap gap-2">
+        {/* 탭 (중앙 정렬 & 사이즈 확대) */}
+        <div className="mb-10 flex justify-center flex-wrap gap-3">
           {neighborhoods.map((neighborhood) => (
             <button
               key={neighborhood.id}
               onClick={() => setSelectedNeighborhood(neighborhood.id)}
-              className={`py-2 px-4 rounded-full text-sm font-bold whitespace-nowrap transition-all ${selectedNeighborhood === neighborhood.id
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
+              className={`py-3 px-6 rounded-full text-lg font-bold whitespace-nowrap transition-all ${selectedNeighborhood === neighborhood.id
+                ? "bg-blue-600 text-white shadow-lg transform scale-105"
+                : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
                 }`}
             >
               {neighborhood.label}

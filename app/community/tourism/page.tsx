@@ -86,18 +86,18 @@ export default function TourismPage() {
           <p className="text-gray-600 text-lg">파주의 핫플레이스와 생활 정보를 한눈에</p>
         </div>
 
-        {/* 카테고리 탭 */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        {/* 카테고리 탭 (중앙 정렬 & 사이즈 확대) */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm flex items-center gap-2 ${selectedCategory === cat.id
-                  ? "bg-gray-900 text-white shadow-md transform scale-105"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+              className={`px-8 py-4 rounded-full text-lg font-bold transition-all shadow-sm flex items-center gap-3 ${selectedCategory === cat.id
+                ? "bg-gray-900 text-white shadow-lg transform scale-105"
+                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
-              <span>{cat.icon}</span>
+              <span className="text-2xl">{cat.icon}</span>
               {cat.label}
             </button>
           ))}

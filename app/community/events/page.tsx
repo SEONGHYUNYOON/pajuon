@@ -109,17 +109,18 @@ export default function EventsPage() {
         </div>
 
         {/* 탭 메뉴 */}
-        <div className="flex overflow-x-auto pb-4 gap-3 mb-8 no-scrollbar justify-start md:justify-center">
+        {/* 탭 메뉴 (중앙 정렬 & 사이즈 확대) */}
+        <div className="flex flex-wrap justify-center gap-4 mb-10">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`flex items-center px-5 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all shadow-sm ${selectedCategory === cat.id
-                  ? "bg-rose-500 text-white shadow-rose-200 ring-2 ring-rose-300"
-                  : "bg-white text-gray-600 hover:bg-rose-50 border border-gray-100"
+              className={`flex items-center px-8 py-4 rounded-full text-lg font-bold whitespace-nowrap transition-all shadow-sm ${selectedCategory === cat.id
+                ? "bg-rose-500 text-white shadow-lg ring-2 ring-rose-300 transform scale-105"
+                : "bg-white text-gray-600 hover:bg-rose-50 border border-gray-100"
                 }`}
             >
-              <span className="mr-2 text-lg">{cat.icon}</span>
+              <span className="mr-3 text-2xl">{cat.icon}</span>
               {cat.label}
             </button>
           ))}

@@ -135,20 +135,20 @@ export default function LifeInfoPage() {
                 </div>
             </div>
 
-            {/* 퀵 메뉴 (아이콘 그리드) */}
-            <div className="bg-white px-4 pb-6 mb-4 border-b border-gray-100">
-                <div className="grid grid-cols-5 gap-2">
+            {/* 퀵 메뉴 (아이콘 그리드 - 중앙 정렬 & 사이즈 확대) */}
+            <div className="bg-white px-4 pb-8 mb-4 border-b border-gray-100">
+                <div className="flex flex-wrap justify-center gap-6">
                     {categories.map((cat) => (
                         <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(selectedCategory === cat.id ? "all" : cat.id)}
-                            className={`flex flex-col items-center p-2 rounded-xl transition-all ${selectedCategory === cat.id ? "bg-blue-50 ring-2 ring-blue-200" : "hover:bg-gray-50"
+                            className={`flex flex-col items-center p-4 rounded-2xl transition-all ${selectedCategory === cat.id ? "bg-blue-50 ring-4 ring-blue-100 transform scale-105" : "hover:bg-gray-50"
                                 }`}
                         >
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl mb-2 ${cat.color} bg-opacity-20`}>
+                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-3 ${cat.color} bg-opacity-20 shadow-sm`}>
                                 {cat.icon}
                             </div>
-                            <span className={`text-xs font-medium text-center ${selectedCategory === cat.id ? "text-blue-700 font-bold" : "text-gray-600"
+                            <span className={`text-base font-bold text-center ${selectedCategory === cat.id ? "text-blue-700" : "text-gray-700"
                                 }`}>
                                 {cat.label.split("/")[0]}
                             </span>
